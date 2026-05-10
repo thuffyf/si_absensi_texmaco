@@ -4,7 +4,7 @@
 <!-- Dashboard Header -->
 <div class="mb-8 animate-fade-in">
     <h1 class="text-4xl font-bold text-gradient mb-2">Selamat datang kembali, Admin! 👋</h1>
-    <p class="text-gray-400">Monitoring absensi siswa real-time | Kamis, 09 Mei 2024</p>
+    <p class="text-slate-500">Monitoring absensi siswa real-time | Kamis, 09 Mei 2024</p>
 </div>
 
 <!-- Top Stats Row -->
@@ -19,7 +19,7 @@
                     <span>↑</span> 12 dari kemarin
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl shadow-glow-cyan-sm">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-2xl">
                 ✓
             </div>
         </div>
@@ -35,7 +35,7 @@
                     <span>↓</span> 5 dari kemarin
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-2xl shadow-glow-cyan-sm">
+            <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">
                 📋
             </div>
         </div>
@@ -51,7 +51,7 @@
                     <span>↑</span> 3 dari kemarin
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center text-2xl shadow-glow-cyan-sm">
+            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-2xl">
                 🏥
             </div>
         </div>
@@ -67,7 +67,7 @@
                     <span>↑</span> 2 dari kemarin
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-neon-blue/20 flex items-center justify-center text-2xl shadow-glow-cyan-sm">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
                 ✕
             </div>
         </div>
@@ -82,9 +82,9 @@
             <div>
                 <p class="stat-label">Scan Berhasil</p>
                 <div class="stat-number">1.240</div>
-                <p class="text-xs text-gray-400 mt-2">Total scan hari ini</p>
+                <p class="text-xs text-slate-500 mt-2">Total scan hari ini</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-xl">📡</div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl">📡</div>
         </div>
     </div>
 
@@ -94,9 +94,9 @@
             <div>
                 <p class="stat-label">Scan Gagal</p>
                 <div class="stat-number">8</div>
-                <p class="text-xs text-gray-400 mt-2">Perlu dikonfirmasi</p>
+                <p class="text-xs text-slate-500 mt-2">Perlu dikonfirmasi</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center text-xl">⚠️</div>
+            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-xl">⚠️</div>
         </div>
     </div>
 
@@ -106,9 +106,9 @@
             <div>
                 <p class="stat-label">Kartu Tidak Terdaftar</p>
                 <div class="stat-number">3</div>
-                <p class="text-xs text-gray-400 mt-2">Perlu pendaftaran</p>
+                <p class="text-xs text-slate-500 mt-2">Perlu pendaftaran</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-xl">🔑</div>
+            <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-xl">🔑</div>
         </div>
     </div>
 </div>
@@ -128,29 +128,29 @@
         <!-- Chart -->
         <div class="h-64 flex items-end gap-2 justify-between">
             <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-neon-cyan/30 to-neon-cyan rounded-t-lg" style="height: 70%;" title="Senin: 285 siswa"></div>
-                <p class="text-xs text-gray-400 mt-2">Senin</p>
-                <p class="text-sm font-bold text-neon-cyan">285</p>
+                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 70%;" title="Senin: 285 siswa"></div>
+                <p class="text-xs text-slate-500 mt-2">Senin</p>
+                <p class="text-sm font-bold text-sky-600">285</p>
             </div>
             <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-neon-cyan/30 to-neon-cyan rounded-t-lg" style="height: 75%;" title="Selasa: 290 siswa"></div>
-                <p class="text-xs text-gray-400 mt-2">Selasa</p>
-                <p class="text-sm font-bold text-neon-cyan">290</p>
+                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 75%;" title="Selasa: 290 siswa"></div>
+                <p class="text-xs text-slate-500 mt-2">Selasa</p>
+                <p class="text-sm font-bold text-sky-600">290</p>
             </div>
             <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-neon-cyan/30 to-neon-cyan rounded-t-lg" style="height: 68%;" title="Rabu: 275 siswa"></div>
-                <p class="text-xs text-gray-400 mt-2">Rabu</p>
-                <p class="text-sm font-bold text-neon-cyan">275</p>
+                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 68%;" title="Rabu: 275 siswa"></div>
+                <p class="text-xs text-slate-500 mt-2">Rabu</p>
+                <p class="text-sm font-bold text-sky-600">275</p>
             </div>
             <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-neon-cyan/30 to-neon-cyan rounded-t-lg" style="height: 72%;" title="Kamis: 280 siswa"></div>
-                <p class="text-xs text-gray-400 mt-2">Kamis</p>
-                <p class="text-sm font-bold text-neon-cyan">280</p>
+                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 72%;" title="Kamis: 280 siswa"></div>
+                <p class="text-xs text-slate-500 mt-2">Kamis</p>
+                <p class="text-sm font-bold text-sky-600">280</p>
             </div>
             <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-neon-cyan/30 to-neon-cyan rounded-t-lg" style="height: 65%;" title="Jumat: 260 siswa"></div>
-                <p class="text-xs text-gray-400 mt-2">Jumat</p>
-                <p class="text-sm font-bold text-neon-cyan">260</p>
+                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 65%;" title="Jumat: 260 siswa"></div>
+                <p class="text-xs text-slate-500 mt-2">Jumat</p>
+                <p class="text-sm font-bold text-sky-600">260</p>
             </div>
         </div>
     </div>
@@ -164,10 +164,10 @@
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm text-gray-300">Hadir</span>
-                    <span class="text-sm font-bold text-neon-cyan">89%</span>
+                    <span class="text-sm font-bold text-sky-600">89%</span>
                 </div>
                 <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-neon-cyan to-neon-blue w-[89%]" style="width: 89%;"></div>
+                    <div class="h-full bg-gradient-to-r from-sky-500 to-blue-600 w-[89%]" style="width: 89%;"></div>
                 </div>
             </div>
 
@@ -197,23 +197,23 @@
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm text-gray-300">Alpha</span>
-                    <span class="text-sm font-bold text-neon-blue">1%</span>
+                    <span class="text-sm font-bold text-sky-600">1%</span>
                 </div>
                 <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-neon-blue to-neon-blue" style="width: 1%;"></div>
+                    <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 w-[89%]" style="width: 1%;"></div>
                 </div>
             </div>
         </div>
 
         <!-- Legend -->
-        <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-neon-cyan/10">
+        <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-slate-200">
             <div>
                 <p class="text-2xl font-bold text-gradient">340</p>
-                <p class="text-xs text-gray-400">Total Siswa</p>
+                <p class="text-xs text-slate-500">Total Siswa</p>
             </div>
             <div>
-                <p class="text-2xl font-bold text-neon-cyan">93.5%</p>
-                <p class="text-xs text-gray-400">Kehadiran</p>
+                <p class="text-2xl font-bold text-sky-600">93.5%</p>
+                <p class="text-xs text-slate-500">Kehadiran</p>
             </div>
         </div>
     </div>
@@ -228,12 +228,12 @@
                 <span class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
                 Aktivitas Real-Time (5 Menit Terakhir)
             </h3>
-            <a href="#" class="text-neon-cyan text-sm hover:text-neon-cyan/80">Lihat Semua →</a>
+            <a href="#" class="text-sky-600 text-sm hover:text-sky-700">Lihat Semua →</a>
         </div>
 
         <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-glass-light/10 border border-neon-cyan/10 transition-all animate-slide-in">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-cyan to-neon-blue flex items-center justify-center font-bold shadow-glow-cyan-sm">👨</div>
+            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-slate-200 transition-all animate-slide-in">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center font-bold text-white">👨</div>
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-white truncate">Rafa Prakasa</p>
                     <p class="text-xs text-gray-400">NIM: 12001 | Kelas: XII IPA 1</p>
@@ -244,8 +244,8 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-glass-light/10 border border-neon-cyan/10 transition-all animate-slide-in" style="animation-delay: 0.1s;">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center font-bold shadow-glow-cyan-sm">👩</div>
+            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-slate-200 transition-all animate-slide-in" style="animation-delay: 0.1s;">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center font-bold text-white">👩</div>
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-white truncate">Silvi Lestari</p>
                     <p class="text-xs text-gray-400">NIM: 12002 | Kelas: XII IPA 1</p>
@@ -256,7 +256,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-glass-light/10 border border-yellow-500/10 transition-all animate-slide-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-yellow-300 transition-all animate-slide-in" style="animation-delay: 0.2s;">
                 <div class="w-12 h-12 rounded-full bg-gray-500 flex items-center justify-center font-bold">👨</div>
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-white truncate">Adi Pratama</p>
@@ -268,8 +268,8 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-glass-light/10 border border-neon-cyan/10 transition-all animate-slide-in" style="animation-delay: 0.3s;">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-neon-purple flex items-center justify-center font-bold shadow-glow-cyan-sm">👩</div>
+            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-slate-200 transition-all animate-slide-in" style="animation-delay: 0.3s;">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center font-bold text-white">👩</div>
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-white truncate">Mira Putri</p>
                     <p class="text-xs text-gray-400">NIM: 12004 | Kelas: XII IPA 2</p>
@@ -280,7 +280,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-glass-light/10 border border-red-500/10 transition-all animate-slide-in" style="animation-delay: 0.4s;">
+            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-red-300 transition-all animate-slide-in" style="animation-delay: 0.4s;">
                 <div class="w-12 h-12 rounded-full bg-gray-500 flex items-center justify-center font-bold">👨</div>
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-white truncate">Danu Wijaya</p>
@@ -318,7 +318,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-400">Last Scan:</span>
-                        <span class="text-neon-cyan">1s ago</span>
+                        <span class="text-sky-600">1s ago</span>
                     </div>
                 </div>
             </div>
@@ -342,13 +342,13 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-400">Last Scan:</span>
-                        <span class="text-neon-cyan">3s ago</span>
+                        <span class="text-sky-600">3s ago</span>
                     </div>
                 </div>
             </div>
 
             <!-- Device 3 -->
-            <div class="p-4 rounded-xl bg-glass-light/10 border border-yellow-500/30">
+            <div class="p-4 rounded-xl bg-slate-50 border border-yellow-300">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <p class="font-semibold text-white">Kantor TU</p>
@@ -372,7 +372,7 @@
             </div>
 
             <!-- Device 4 -->
-            <div class="p-4 rounded-xl bg-glass-light/10 border border-red-500/30">
+            <div class="p-4 rounded-xl bg-slate-50 border border-red-300">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <p class="font-semibold text-white">Gudang</p>
