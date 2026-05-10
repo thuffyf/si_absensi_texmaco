@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +19,25 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
+
+Route::post('/login', function (Request $request) {
+    $request->validate([
+        'username' => 'required|email',
+        'password' => 'required|string',
+        'status' => 'required|in:siswa,tata_usaha,guru',
+    ]);
+
+    $user = User::where('email', $request->username)->first();
+
+    if ($user && Hash::check($request->password, $user->password) && $request->status === 'tata_usaha') {
+        Auth::login($user);
+        return redirect()->route('dashboard');
+    }
+
+    return back()->withErrors([
+        'login' => 'Email, password, atau status tidak valid untuk akses Tata Usaha.',
+    ])->withInput($request->only('username','status'));
+})->name('login.submit');
 
 // Dashboard Routes (Protected by auth middleware)
 Route::middleware(['auth'])->group(function () {

@@ -10,7 +10,7 @@
     <div class="w-full max-w-5xl">
         <div class="grid grid-cols-1 md:grid-cols-[0.95fr_1.05fr] gap-5">
             <!-- Left panel -->
-            <div class= "flex flex-col justify-center px-6 py-10"">
+            <div class="flex flex-col justify-center px-6 py-10">
                 <div class="space-y-6">
                 </div>
             </div>
@@ -22,10 +22,18 @@
                         <img src="{{ asset('images/Texmaco Teks.jpeg') }}" alt="TEXMACO" class="mx-auto h-20 object-contain" />
                     </div>
 
-                    <form action="#" method="POST" class="space-y-5">
+                    <form action="{{ route('login.submit') }}" method="POST" class="space-y-5">
+                        @csrf
+
+                        @if ($errors->has('login'))
+                            <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                {{ $errors->first('login') }}
+                            </div>
+                        @endif
+
                         <div>
-                            <input id="username" name="username" type="text" required placeholder="Username"
-                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 placeholder-slate-400" />
+                            <input id="username" name="username" type="email" required placeholder="Username"
+                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 placeholder-slate-400" value="{{ old('username') }}" />
                         </div>
 
                         <div>
@@ -36,10 +44,10 @@
                         <div>
                             <select id="status" name="status" required
                                 class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
-                                <option value="" disabled selected>Silahkan pilih status</option>
-                                <option value="siswa">SITEXA Siswa</option>
-                                <option value="tata_usaha">SITEXA Tata Usaha</option>
-                                <option value="guru">SITEXA Guru</option>
+                                <option value="" disabled {{ old('status') ? '' : 'selected' }}>Silahkan pilih status</option>
+                                <option value="siswa" {{ old('status') === 'siswa' ? 'selected' : '' }}>SITEXA Siswa</option>
+                                <option value="tata_usaha" {{ old('status') === 'tata_usaha' ? 'selected' : '' }}>SITEXA Tata Usaha</option>
+                                <option value="guru" {{ old('status') === 'guru' ? 'selected' : '' }}>SITEXA Guru</option>
                             </select>
                         </div>
 
