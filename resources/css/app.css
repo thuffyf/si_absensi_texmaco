@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    @apply transition-colors duration-300;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-dark-bg;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-neon-cyan/30 rounded-full hover:bg-neon-cyan/50;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply bg-dark-bg text-white font-sans;
+    background-image:
+        radial-gradient(
+            circle at 20% 50%,
+            rgba(0, 217, 255, 0.05) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(181, 55, 242, 0.05) 0%,
+            transparent 50%
+        );
+}
+
+/* ========== Glassmorphism Effects ========== */
+
+.glass-effect {
+    @apply bg-glass-medium/10 backdrop-blur-xl border border-glass-light rounded-2xl;
+}
+
+.glass-dark-effect {
+    @apply bg-glass-dark/20 backdrop-blur-lg border border-glass-light/30 rounded-2xl;
+}
+
+.glass-card {
+    @apply glass-effect shadow-glass hover:shadow-glass-hover;
+}
+
+.glass-card-dark {
+    @apply glass-dark-effect shadow-glass;
+}
+
+/* ========== Text Gradients ========== */
+
+.text-gradient {
+    @apply bg-gradient-to-r from-neon-cyan to-neon-blue bg-clip-text text-transparent;
+}
+
+.text-gradient-purple {
+    @apply bg-gradient-to-r from-neon-purple to-neon-cyan bg-clip-text text-transparent;
+}
+
+/* ========== Button Styles ========== */
+
+.btn-primary {
+    @apply px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-neon-cyan to-neon-blue text-dark-bg shadow-glow-cyan hover:shadow-glow-cyan-lg transform hover:scale-105 active:scale-95 transition-all duration-200;
+}
+
+.btn-secondary {
+    @apply px-6 py-3 rounded-xl font-semibold glass-effect border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan/10 transform hover:scale-105 active:scale-95 transition-all duration-200;
+}
+
+.btn-danger {
+    @apply px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200;
+}
+
+.btn-success {
+    @apply px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200;
+}
+
+.btn-icon {
+    @apply p-3 rounded-xl glass-effect border-neon-cyan/30 text-neon-cyan hover:bg-neon-cyan/10 hover:border-neon-cyan/50 transition-all duration-200;
+}
+
+/* ========== Dashboard Cards ========== */
+
+.stat-card {
+    @apply glass-card p-6 rounded-2xl border border-neon-cyan/20 hover:border-neon-cyan/50;
+}
+
+.stat-card:hover {
+    @apply shadow-glow-cyan;
+}
+
+.stat-number {
+    @apply text-4xl font-bold text-gradient mb-2;
+}
+
+.stat-label {
+    @apply text-gray-300 text-sm font-medium;
+}
+
+.stat-change {
+    @apply text-xs font-semibold mt-3 flex items-center gap-1;
+}
+
+.stat-change.positive {
+    @apply text-emerald-400;
+}
+
+.stat-change.negative {
+    @apply text-red-400;
+}
+
+/* ========== Table Styles ========== */
+
+.data-table {
+    @apply w-full;
+}
+
+.data-table thead {
+    @apply border-b border-neon-cyan/20 bg-glass-dark/50;
+}
+
+.data-table th {
+    @apply px-6 py-4 text-left text-sm font-semibold text-neon-cyan uppercase tracking-wider;
+}
+
+.data-table tbody tr {
+    @apply border-b border-dark-border/50 hover:bg-glass-light/10 transition-colors;
+}
+
+.data-table td {
+    @apply px-6 py-4 text-sm;
+}
+
+.data-table tbody tr:hover {
+    @apply bg-neon-cyan/5;
+}
+
+/* ========== Status Badges ========== */
+
+.badge-success {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold;
+}
+
+.badge-warning {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold;
+}
+
+.badge-danger {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold;
+}
+
+.badge-info {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-blue/20 text-neon-blue border border-neon-blue/30 text-xs font-semibold;
+}
+
+.badge-neon {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30 text-xs font-semibold shadow-glow-cyan-sm;
+}
+
+/* ========== Loading Skeleton ========== */
+
+@keyframes skeleton-loading {
+    0%,
+    100% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton {
+    @apply bg-gradient-to-r from-glass-light/20 via-glass-medium/40 to-glass-light/20;
+    animation: skeleton-loading 2s infinite;
+    background-size: 200% 100%;
+}
+
+/* ========== Input Styles ========== */
+
+.input-field {
+    @apply w-full px-4 py-3 rounded-xl glass-effect border border-neon-cyan/20 text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan/50 focus:shadow-glow-cyan-sm transition-all duration-200;
+}
+
+.input-field:focus {
+    @apply bg-glass-medium/20;
+}
+
+/* ========== Scrollbar Custom ========== */
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-neon-cyan/30 rounded-full hover:bg-neon-cyan/50;
+}
+
+/* ========== Responsive Typography ========== */
+
+@media (max-width: 768px) {
+    .stat-number {
+        @apply text-2xl;
+    }
+
+    .data-table td {
+        @apply px-3 py-3 text-xs;
+    }
+}
+
+/* ========== Animations ========== */
+
+@keyframes neon-flicker {
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        text-shadow:
+            0 0 10px rgba(0, 217, 255, 0.5),
+            0 0 20px rgba(0, 217, 255, 0.3);
+    }
+    20%,
+    24%,
+    55% {
+        text-shadow: 0 0 5px rgba(0, 217, 255, 0.2);
+    }
+}
+
+.neon-text {
+    animation: neon-flicker 0.15s ease-in-out infinite;
+}
