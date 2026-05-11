@@ -1,399 +1,126 @@
 @extends('layouts.app')
 
+@section('title', 'Dashboard — SITEXA Absensi')
+@section('page_title', 'Dashboard')
+@section('page_subtitle', 'SITEXA Absensi Texmaco Purwasari')
+
 @section('content')
-<!-- Dashboard Header -->
-<div class="mb-8 animate-fade-in">
-    <h1 class="text-4xl font-bold text-gradient mb-2">Selamat datang kembali, Admin! 👋</h1>
-    <p class="text-slate-500">Monitoring absensi siswa real-time | Kamis, 09 Mei 2024</p>
-</div>
+@php
+    $points = [
+        ['x' => 40, 'y' => 140, 'label' => 'Senin', 'val' => 29],
+        ['x' => 136, 'y' => 118, 'label' => 'Selasa', 'val' => 32],
+        ['x' => 232, 'y' => 112, 'label' => 'Rabu', 'val' => 33],
+        ['x' => 328, 'y' => 132, 'label' => 'Kamis', 'val' => 27],
+        ['x' => 424, 'y' => 126, 'label' => 'Jumat', 'val' => 28],
+    ];
+    $avg = round(array_sum(array_column($points, 'val')) / count($points), 1);
+    $maxVal = max(array_column($points, 'val'));
+    $maxDay = collect($points)->firstWhere('val', $maxVal)['label'] ?? '-';
+    $weekStart = \Carbon\Carbon::now()->locale('id')->startOfWeek(\Carbon\Carbon::MONDAY);
+    $weekEnd = $weekStart->copy()->addDays(4);
+@endphp
 
-<!-- Top Stats Row -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
-    <!-- Stat 1: Siswa Hadir -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Siswa Hadir</p>
-                <div class="stat-number">285</div>
-                <div class="stat-change positive">
-                    <span>↑</span> 12 dari kemarin
-                </div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-2xl">
-                ✓
-            </div>
-        </div>
-    </div>
-
-    <!-- Stat 2: Siswa Izin -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Siswa Izin</p>
-                <div class="stat-number">28</div>
-                <div class="stat-change positive">
-                    <span>↓</span> 5 dari kemarin
-                </div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">
-                📋
-            </div>
-        </div>
-    </div>
-
-    <!-- Stat 3: Siswa Sakit -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Siswa Sakit</p>
-                <div class="stat-number">15</div>
-                <div class="stat-change negative">
-                    <span>↑</span> 3 dari kemarin
-                </div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-2xl">
-                🏥
-            </div>
-        </div>
-    </div>
-
-    <!-- Stat 4: Siswa Alpha -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Siswa Alpha</p>
-                <div class="stat-number">12</div>
-                <div class="stat-change negative">
-                    <span>↑</span> 2 dari kemarin
-                </div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
-                ✕
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Secondary Stats -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fade-in">
-    <!-- Scan NFC Berhasil -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Scan Berhasil</p>
-                <div class="stat-number">1.240</div>
-                <p class="text-xs text-slate-500 mt-2">Total scan hari ini</p>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl">📡</div>
-        </div>
-    </div>
-
-    <!-- Scan Gagal -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Scan Gagal</p>
-                <div class="stat-number">8</div>
-                <p class="text-xs text-slate-500 mt-2">Perlu dikonfirmasi</p>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-xl">⚠️</div>
-        </div>
-    </div>
-
-    <!-- Kartu Tidak Terdaftar -->
-    <div class="stat-card">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="stat-label">Kartu Tidak Terdaftar</p>
-                <div class="stat-number">3</div>
-                <p class="text-xs text-slate-500 mt-2">Perlu pendaftaran</p>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-xl">🔑</div>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in">
-    <!-- Attendance Chart -->
-    <div class="glass-card p-6 rounded-2xl">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-bold text-white">Grafik Absensi Mingguan</h3>
-            <select class="input-field text-sm py-2 px-3 w-32">
-                <option>Minggu ini</option>
-                <option>Bulan ini</option>
-            </select>
-        </div>
-        
-        <!-- Chart -->
-        <div class="h-64 flex items-end gap-2 justify-between">
-            <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 70%;" title="Senin: 285 siswa"></div>
-                <p class="text-xs text-slate-500 mt-2">Senin</p>
-                <p class="text-sm font-bold text-sky-600">285</p>
-            </div>
-            <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 75%;" title="Selasa: 290 siswa"></div>
-                <p class="text-xs text-slate-500 mt-2">Selasa</p>
-                <p class="text-sm font-bold text-sky-600">290</p>
-            </div>
-            <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 68%;" title="Rabu: 275 siswa"></div>
-                <p class="text-xs text-slate-500 mt-2">Rabu</p>
-                <p class="text-sm font-bold text-sky-600">275</p>
-            </div>
-            <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 72%;" title="Kamis: 280 siswa"></div>
-                <p class="text-xs text-slate-500 mt-2">Kamis</p>
-                <p class="text-sm font-bold text-sky-600">280</p>
-            </div>
-            <div class="flex-1 flex flex-col items-center">
-                <div class="w-full bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg" style="height: 65%;" title="Jumat: 260 siswa"></div>
-                <p class="text-xs text-slate-500 mt-2">Jumat</p>
-                <p class="text-sm font-bold text-sky-600">260</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Status Distribution -->
-    <div class="glass-card p-6 rounded-2xl">
-        <h3 class="text-lg font-bold text-white mb-6">Distribusi Status Absensi</h3>
-        
-        <div class="space-y-4">
-            <!-- Hadir -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-300">Hadir</span>
-                    <span class="text-sm font-bold text-sky-600">89%</span>
-                </div>
-                <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-sky-500 to-blue-600 w-[89%]" style="width: 89%;"></div>
-                </div>
-            </div>
-
-            <!-- Izin -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-300">Izin</span>
-                    <span class="text-sm font-bold text-yellow-300">7%</span>
-                </div>
-                <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-yellow-400 to-yellow-500" style="width: 7%;"></div>
-                </div>
-            </div>
-
-            <!-- Sakit -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-300">Sakit</span>
-                    <span class="text-sm font-bold text-red-300">3%</span>
-                </div>
-                <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-red-400 to-red-500" style="width: 3%;"></div>
-                </div>
-            </div>
-
-            <!-- Alpha -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-300">Alpha</span>
-                    <span class="text-sm font-bold text-sky-600">1%</span>
-                </div>
-                <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 w-[89%]" style="width: 1%;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Legend -->
-        <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-slate-200">
-            <div>
-                <p class="text-2xl font-bold text-gradient">340</p>
-                <p class="text-xs text-slate-500">Total Siswa</p>
-            </div>
-            <div>
-                <p class="text-2xl font-bold text-sky-600">93.5%</p>
-                <p class="text-xs text-slate-500">Kehadiran</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Real-time Monitor Section -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
-    <!-- Recent Activity -->
-    <div class="lg:col-span-2 glass-card p-6 rounded-2xl">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                <span class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
-                Aktivitas Real-Time (5 Menit Terakhir)
-            </h3>
-            <a href="#" class="text-sky-600 text-sm hover:text-sky-700">Lihat Semua →</a>
-        </div>
-
-        <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-slate-200 transition-all animate-slide-in">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center font-bold text-white">👨</div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-white truncate">Rafa Prakasa</p>
-                    <p class="text-xs text-gray-400">NIM: 12001 | Kelas: XII IPA 1</p>
-                </div>
-                <div class="flex flex-col items-end">
-                    <span class="badge-success">Hadir</span>
-                    <p class="text-xs text-gray-400 mt-1">07:45:23</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-slate-200 transition-all animate-slide-in" style="animation-delay: 0.1s;">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center font-bold text-white">👩</div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-white truncate">Silvi Lestari</p>
-                    <p class="text-xs text-gray-400">NIM: 12002 | Kelas: XII IPA 1</p>
-                </div>
-                <div class="flex flex-col items-end">
-                    <span class="badge-success">Hadir</span>
-                    <p class="text-xs text-gray-400 mt-1">07:44:52</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-yellow-300 transition-all animate-slide-in" style="animation-delay: 0.2s;">
-                <div class="w-12 h-12 rounded-full bg-gray-500 flex items-center justify-center font-bold">👨</div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-white truncate">Adi Pratama</p>
-                    <p class="text-xs text-gray-400">NIM: 12003 | Kelas: XII IPA 1</p>
-                </div>
-                <div class="flex flex-col items-end">
-                    <span class="badge-warning">Izin</span>
-                    <p class="text-xs text-gray-400 mt-1">07:43:15</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-slate-200 transition-all animate-slide-in" style="animation-delay: 0.3s;">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center font-bold text-white">👩</div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-white truncate">Mira Putri</p>
-                    <p class="text-xs text-gray-400">NIM: 12004 | Kelas: XII IPA 2</p>
-                </div>
-                <div class="flex flex-col items-end">
-                    <span class="badge-success">Hadir</span>
-                    <p class="text-xs text-gray-400 mt-1">07:42:41</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 border border-red-300 transition-all animate-slide-in" style="animation-delay: 0.4s;">
-                <div class="w-12 h-12 rounded-full bg-gray-500 flex items-center justify-center font-bold">👨</div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-white truncate">Danu Wijaya</p>
-                    <p class="text-xs text-gray-400">NIM: 12005 | Kelas: XII IPA 2</p>
-                </div>
-                <div class="flex flex-col items-end">
-                    <span class="badge-danger">Sakit</span>
-                    <p class="text-xs text-gray-400 mt-1">07:15:30</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NFC Device Status -->
-    <div class="glass-card p-6 rounded-2xl">
-        <h3 class="text-lg font-bold text-white mb-6">Status Alat NFC</h3>
-
-        <div class="space-y-4">
-            <!-- Device 1 -->
-            <div class="p-4 rounded-xl bg-glass-light/10 border border-emerald-500/30">
-                <div class="flex items-start justify-between mb-3">
+<div class="mx-auto flex w-full max-w-none flex-col gap-4 max-lg:space-y-1 lg:h-full lg:min-h-0 lg:gap-4 lg:overflow-hidden">
+    <div class="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5 lg:overflow-hidden">
+        <!-- Statistik (lebih lebar) -->
+        <section class="flex min-h-0 flex-col lg:col-span-9 lg:overflow-hidden">
+            <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
+                <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <p class="font-semibold text-white">Pintu Utama</p>
-                        <p class="text-xs text-gray-400">Gate 1</p>
+                        <h2 class="text-xl font-bold text-slate-900 lg:text-2xl">Statistik Setiap Hari</h2>
+                        <p class="mt-1 text-sm text-slate-500 lg:text-base">Jumlah siswa tap in per hari kerja</p>
                     </div>
-                    <span class="flex items-center gap-1 text-emerald-400 text-sm font-bold">
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        Online
-                    </span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Scan:</span>
-                        <span class="text-white font-semibold">245</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Last Scan:</span>
-                        <span class="text-sky-600">1s ago</span>
+                    <div class="flex shrink-0 flex-wrap items-center gap-2">
+                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 lg:text-sm">
+                            {{ $weekStart->translatedFormat('d MMM') }} — {{ $weekEnd->translatedFormat('d MMM Y') }}
+                        </span>
+                        <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800 lg:text-sm">Minggu ini</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Device 2 -->
-            <div class="p-4 rounded-xl bg-glass-light/10 border border-emerald-500/30">
-                <div class="flex items-start justify-between mb-3">
-                    <div>
-                        <p class="font-semibold text-white">Pintu Belakang</p>
-                        <p class="text-xs text-gray-400">Gate 2</p>
+                <div class="mt-4 grid shrink-0 grid-cols-2 gap-3 sm:grid-cols-4 lg:mt-5 lg:gap-4">
+                    <div class="rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-4 lg:p-5">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 lg:text-sm">Rata-rata / hari</p>
+                        <p class="mt-2 text-3xl font-bold tabular-nums text-slate-900 lg:text-4xl xl:text-5xl">{{ $avg }}</p>
                     </div>
-                    <span class="flex items-center gap-1 text-emerald-400 text-sm font-bold">
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        Online
-                    </span>
+                    <div class="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-white p-4 lg:p-5">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-sky-800 lg:text-sm">Puncak minggu</p>
+                        <p class="mt-2 text-3xl font-bold tabular-nums text-sky-900 lg:text-4xl xl:text-5xl">{{ $maxVal }}</p>
+                        <p class="mt-1 text-sm text-sky-800/90 lg:text-base">{{ $maxDay }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-white p-4 lg:p-5">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-emerald-900/90 lg:text-sm">vs minggu lalu</p>
+                        <p class="mt-2 text-3xl font-bold tabular-nums text-emerald-800 lg:text-4xl xl:text-5xl">+4%</p>
+                        <p class="mt-1 text-sm text-emerald-800/90">Volume naik</p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-100 bg-white p-4 lg:p-5">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 lg:text-sm">Rentang</p>
+                        <p class="mt-2 text-3xl font-bold tabular-nums text-slate-900 lg:text-4xl xl:text-5xl">27–33</p>
+                        <p class="mt-1 text-sm text-slate-500">Min — max</p>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Scan:</span>
-                        <span class="text-white font-semibold">189</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Last Scan:</span>
-                        <span class="text-sky-600">3s ago</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Device 3 -->
-            <div class="p-4 rounded-xl bg-slate-50 border border-yellow-300">
-                <div class="flex items-start justify-between mb-3">
-                    <div>
-                        <p class="font-semibold text-white">Kantor TU</p>
-                        <p class="text-xs text-gray-400">Gate 3</p>
-                    </div>
-                    <span class="flex items-center gap-1 text-yellow-400 text-sm font-bold">
-                        <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                        Idle
-                    </span>
+                <div class="mt-4 min-h-0 flex-1 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/40 p-3 lg:mt-5 lg:flex lg:items-stretch lg:justify-center lg:p-4">
+                    <svg viewBox="0 0 520 200" class="h-48 w-full max-lg:min-w-[300px] lg:h-full lg:min-h-[12rem] lg:max-h-none lg:w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grafik garis statistik per hari">
+                        <defs>
+                            <linearGradient id="lineFill" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.22" />
+                                <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        @foreach ([170, 140, 110, 85] as $gy)
+                            <line x1="28" y1="{{ $gy }}" x2="480" y2="{{ $gy }}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 6" />
+                        @endforeach
+                        <text x="24" y="184" text-anchor="end" fill="#94a3b8" font-size="11">0</text>
+                        <text x="24" y="124" text-anchor="end" fill="#94a3b8" font-size="11">20</text>
+                        <text x="24" y="94" text-anchor="end" fill="#94a3b8" font-size="11">35</text>
+                        <text x="4" y="72" fill="#64748b" font-size="11" font-weight="600">Tap in</text>
+                        <polygon fill="url(#lineFill)" points="40,140 136,118 232,112 328,132 424,126 424,188 40,188" />
+                        <polyline
+                            fill="none"
+                            stroke="#0284c7"
+                            stroke-width="3.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            points="40,140 136,118 232,112 328,132 424,126"
+                        />
+                        @foreach ($points as $p)
+                            <circle cx="{{ $p['x'] }}" cy="{{ $p['y'] }}" r="6" fill="#ffffff" stroke="#0284c7" stroke-width="2.5" />
+                            <text x="{{ $p['x'] }}" y="196" text-anchor="middle" fill="#64748b" font-size="12" font-weight="600">{{ $p['label'] }}</text>
+                            <text x="{{ $p['x'] }}" y="{{ $p['y'] - 14 }}" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">{{ $p['val'] }}</text>
+                        @endforeach
+                    </svg>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Scan:</span>
-                        <span class="text-white font-semibold">0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Last Scan:</span>
-                        <span class="text-gray-500">--</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Device 4 -->
-            <div class="p-4 rounded-xl bg-slate-50 border border-red-300">
-                <div class="flex items-start justify-between mb-3">
-                    <div>
-                        <p class="font-semibold text-white">Gudang</p>
-                        <p class="text-xs text-gray-400">Gate 4</p>
-                    </div>
-                    <span class="flex items-center gap-1 text-red-400 text-sm font-bold">
-                        <span class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
-                        Offline
-                    </span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Scan:</span>
-                        <span class="text-white font-semibold">125</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Last Online:</span>
-                        <span class="text-red-400">12m ago</span>
-                    </div>
+                <div class="mt-3 flex shrink-0 flex-col gap-2 rounded-2xl border border-sky-100 bg-sky-50/50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between lg:mt-4 lg:px-5 lg:py-3.5">
+                    <p class="text-sm text-slate-700 lg:text-base">
+                        <span class="font-semibold text-sky-900">Ringkas:</span> pola minggu ini stabil; Kamis sedikit turun.
+                    </p>
+                    <a href="{{ route('reports.absensi') }}" class="shrink-0 text-sm font-semibold text-sky-700 underline-offset-2 hover:underline lg:text-base">Laporan detail</a>
                 </div>
             </div>
+        </section>
+
+        <!-- Kanan (lebih sempit) -->
+        <div class="flex min-h-0 flex-col gap-4 lg:col-span-3 lg:gap-4 lg:overflow-hidden">
+            <section class="shrink-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
+                <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500 lg:text-sm">Jumlah Siswa Tap In</h2>
+                <p class="mt-2 text-5xl font-bold tabular-nums text-slate-900 lg:text-6xl xl:text-7xl">28</p>
+                <p class="mt-2 text-sm text-slate-500 lg:text-base">Hari ini</p>
+                <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100 lg:h-3">
+                    <div class="h-full w-[82%] rounded-full bg-gradient-to-r from-sky-500 to-blue-600"></div>
+                </div>
+                <p class="mt-2 text-xs leading-snug text-slate-500 lg:text-sm">Perkiraan vs kuota harian (contoh).</p>
+            </section>
+
+            <section class="min-h-0 flex-1 overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm max-lg:min-h-[8rem] lg:flex lg:flex-col lg:p-5">
+                <h2 class="shrink-0 text-lg font-bold text-slate-900 lg:text-xl">Catatan</h2>
+                <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600 lg:mt-3 lg:flex-1 lg:space-y-2 lg:text-base lg:leading-snug lg:overflow-hidden">
+                    <li>Pastikan NFC gerbang online sebelum jam masuk.</li>
+                    <li>Data grafik dapat dihubungkan ke database nanti.</li>
+                    <li>Export laporan dari menu Laporan.</li>
+                </ul>
+            </section>
         </div>
     </div>
 </div>

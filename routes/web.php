@@ -93,6 +93,11 @@ Route::middleware(['auth'])->group(function () {
         return view('requests.izin-sakit');
     })->name('requests.izin-sakit');
 
+    // Notifikasi: persetujuan laporan guru (izin / alpha)
+    Route::get('/notifikasi/persetujuan-guru', function () {
+        return view('notifications.guru-persetujuan');
+    })->name('notifications.guru-approvals');
+
     // Laporan Absensi
     Route::get('/laporan/absensi', function () {
         return view('reports.absensi');

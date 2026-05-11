@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', 'NFC Monitor — SITEXA Absensi')
+@section('page_title', 'NFC Monitor')
+
 @section('content')
 <!-- Header -->
 <div class="mb-8 animate-fade-in">

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', 'Izin & Sakit — SITEXA Absensi')
+@section('page_title', 'Izin & Sakit')
+
 @section('content')
 <!-- Header -->
 <div class="mb-8 animate-fade-in">

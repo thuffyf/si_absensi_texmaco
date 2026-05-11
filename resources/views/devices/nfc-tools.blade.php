@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', 'Alat NFC — SITEXA Absensi')
+@section('page_title', 'Alat NFC')
+
 @section('content')
 <!-- Header -->
 <div class="mb-8 animate-fade-in">

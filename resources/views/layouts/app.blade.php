@@ -3,175 +3,258 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Sistem Absensi NFC Texmaco</title>
+    <title>@yield('title', 'SITEXA Absensi — Texmaco Purwasari')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 text-slate-900">
-    <div id="app" class="min-h-screen flex">
+<body @class(['min-h-screen text-slate-900 font-sans antialiased', 'lg:h-dvh lg:overflow-hidden' => request()->routeIs('dashboard')])>
+    <!-- Latar gradasi (selaras login) -->
+    <div class="pointer-events-none fixed inset-0 z-0 bg-gradient-to-br from-blue-50 via-slate-50 to-slate-100" aria-hidden="true"></div>
+
+    <div id="layout-root" @class(['relative z-10 flex min-h-screen', 'lg:h-full lg:min-h-0' => request()->routeIs('dashboard')])>
+        <!-- Backdrop mobile -->
+        <div
+            id="sidebar-backdrop"
+            class="fixed inset-0 z-40 hidden bg-slate-900/35 backdrop-blur-[2px]"
+            aria-hidden="true"
+        ></div>
+
         <!-- Sidebar -->
-        <aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col z-50 shadow-sm">
-            <!-- Logo -->
-            <div class="p-6 border-b border-slate-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-lg font-bold text-white shadow-md">
-                        ⚡
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-slate-900">NFC Admin</h1>
-                        <p class="text-xs text-slate-500">Texmaco School</p>
-                    </div>
-                </div>
+        <aside
+            id="admin-sidebar"
+            class="sidebar-shell fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-sky-100/80 bg-gradient-to-b from-sky-50/90 via-white to-slate-50/95 shadow-[4px_0_24px_-8px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[width,margin,transform] duration-200 ease-out -translate-x-full lg:translate-x-0"
+        >
+            <div class="relative flex shrink-0 items-center border-b border-sky-100/90 bg-white/60 px-3 py-3 backdrop-blur-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 w-1 rounded-r-full bg-gradient-to-b from-sky-500 to-blue-600 opacity-90" aria-hidden="true"></div>
+                <button
+                    type="button"
+                    id="sidebar-toggle"
+                    class="inline-flex rounded-xl p-2.5 text-slate-700 ring-1 ring-slate-200/80 hover:bg-white hover:ring-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-300"
+                    aria-controls="admin-sidebar"
+                    aria-expanded="false"
+                    aria-label="Buka atau tutup menu"
+                >
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
             </div>
 
-            <!-- Navigation -->
-            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <a href="#" class="nav-item-light active" data-page="dashboard">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 9l-5-5m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9"></path>
-                    </svg>
-                    <span>Dashboard</span>
+            <nav class="flex flex-1 flex-col gap-1 overflow-y-auto p-3 pt-4" aria-label="Menu utama">
+                <p class="sidebar-brand-hide mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Menu</p>
+                <a
+                    href="{{ route('dashboard') }}"
+                    title="Dashboard"
+                    class="nav-texmaco {{ request()->routeIs('dashboard') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-text">Dashboard</span>
                 </a>
-                <a href="#" class="nav-item-light" data-page="monitoring-nfc">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>NFC Monitor</span>
+                <a
+                    href="{{ route('students.index') }}"
+                    title="Data Siswa"
+                    class="nav-texmaco {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-text">Data Siswa</span>
                 </a>
-                <a href="#" class="nav-item-light" data-page="siswa">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM16 16a5 5 0 010 10H4a5 5 0 010-10h12z"></path>
-                    </svg>
-                    <span>Data Siswa</span>
+                <a
+                    href="{{ route('schedules.index') }}"
+                    title="Jadwal"
+                    class="nav-texmaco {{ request()->routeIs('schedules.index') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-text">Jadwal</span>
                 </a>
-                <a href="#" class="nav-item-light" data-page="guru">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17.25m20-11.002c2.3 1.713 3.8 4.75 3.8 8.002 0 5.591-4.445 10.269-9.8 10.269"></path>
-                    </svg>
-                    <span>Data Guru</span>
-                </a>
-                <a href="#" class="nav-item-light" data-page="jadwal">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span>Jadwal</span>
-                </a>
-                <a href="#" class="nav-item-light" data-page="request-izin">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>Izin & Sakit</span>
-                </a>
-                <a href="#" class="nav-item-light" data-page="laporan">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <span>Laporan</span>
-                </a>
-                <a href="#" class="nav-item-light" data-page="alat">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span>Alat NFC</span>
-                </a>
-                <a href="#" class="nav-item-light" data-page="settings">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>Pengaturan</span>
+                <a
+                    href="{{ route('reports.absensi') }}"
+                    title="Laporan"
+                    class="nav-texmaco {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-text">Laporan</span>
                 </a>
             </nav>
 
-            <!-- Profile -->
-            <div class="p-4 border-t border-slate-200">
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center font-bold text-white">👨</div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold truncate text-slate-900">Admin TU</p>
-                        <p class="text-xs text-slate-500 truncate">admin@texmaco.id</p>
-                    </div>
-                </div>
+            <div class="sidebar-brand-hide mt-auto border-t border-sky-100/80 bg-white/50 p-4 text-[11px] leading-relaxed text-slate-500 backdrop-blur-sm">
+                <p class="font-medium text-slate-600">Panel Tata Usaha</p>
+                <p class="mt-1 text-slate-400">Kelola absensi &amp; laporan harian.</p>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 lg:ml-64">
-            <!-- Top Navbar -->
-            <nav class="fixed top-0 right-0 left-0 lg:left-64 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-40 shadow-sm">
-                <div class="flex items-center gap-4">
-                    <!-- Mobile Menu Toggle -->
-                    <button class="lg:hidden p-2 rounded-lg hover:bg-glass-light/20">
-                        <svg class="w-6 h-6 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        <!-- Konten utama -->
+        <div
+            id="main-shell"
+            @class([
+                'flex min-h-screen flex-1 flex-col transition-[margin] duration-200 ease-out lg:ml-64',
+                'lg:h-full lg:min-h-0 lg:overflow-hidden' => request()->routeIs('dashboard'),
+            ])
+        >
+            <header class="sticky top-0 z-30 flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur-sm sm:px-6 @hasSection('page_subtitle') min-h-[4.25rem] py-2 @else h-16 @endif">
+                <div class="flex min-w-0 flex-1 items-center gap-3">
+                    <button
+                        type="button"
+                        id="sidebar-toggle-header"
+                        class="inline-flex shrink-0 rounded-xl p-2 text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-200 lg:hidden"
+                        aria-controls="admin-sidebar"
+                        aria-expanded="false"
+                        aria-label="Buka menu"
+                    >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                    <h2 class="text-xl font-bold text-slate-900 hidden sm:block" id="page-title">Dashboard</h2>
+                    <div class="min-w-0 leading-tight">
+                        <h1 class="truncate text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+                            @yield('page_title', 'SITEXA Absensi')
+                        </h1>
+                        @hasSection('page_subtitle')
+                            <p class="truncate text-xs font-medium text-slate-500 sm:text-sm">
+                                @yield('page_subtitle')
+                            </p>
+                        @endif
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <!-- Search -->
-                    <div class="hidden md:flex items-center">
-                        <div class="relative">
-                            <input type="text" placeholder="Cari..." class="w-48 rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 placeholder-slate-400" />
-                        </div>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="hidden sm:block">
+                        <label class="sr-only" for="global-search">Cari</label>
+                        <input
+                            id="global-search"
+                            type="search"
+                            placeholder="Cari..."
+                            class="w-40 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 md:w-48"
+                        />
                     </div>
 
-                    <!-- Notifications -->
-                    <button class="p-3 rounded-xl hover:bg-slate-100 transition-colors relative" id="notification-btn">
-                        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    <a
+                        href="{{ route('notifications.guru-approvals') }}"
+                        class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
+                        id="notification-btn"
+                        aria-label="Persetujuan izin dan alpha dari guru"
+                    >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                    </button>
+                        <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" title="Menunggu tindakan"></span>
+                    </a>
 
-                    <!-- User Menu -->
-                    <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-semibold text-slate-900">Admin TU</p>
-                            <p class="text-xs text-slate-500">Administrator</p>
+                    <div class="flex items-center gap-2 border-l border-slate-200 pl-3 sm:gap-3 sm:pl-4">
+                        <div class="hidden text-right text-sm sm:block">
+                            <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Admin' }}</p>
+                            <p class="text-xs text-slate-500">{{ auth()->user()->email ?? 'Tata Usaha' }}</p>
                         </div>
-                        <button class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-md hover:shadow-lg transition-shadow">👨</button>
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700" aria-hidden="true">
+                            {{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                        </span>
                     </div>
                 </div>
-            </nav>
+            </header>
 
-            <!-- Content Area -->
-            <div class="pt-20 pb-8">
-                <div class="px-6" id="content-area">
+            <main
+                @class([
+                    'flex-1 px-4 py-6 sm:px-6',
+                    'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden lg:py-3 lg:pb-4' => request()->routeIs('dashboard'),
+                ])
+            >
+                <div id="content-area" class="{{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }}">
                     @yield('content')
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
     <style>
-        .nav-item-light {
-            @apply flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 group;
+        .nav-texmaco {
+            @apply relative block rounded-xl border border-transparent px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm transition-all hover:border-sky-100 hover:bg-white hover:text-slate-900 hover:shadow-md;
         }
-        
-        .nav-item-light.active {
-            @apply text-sky-600 bg-sky-50 border-r-4 border-sky-600;
+        .nav-texmaco-active {
+            @apply border border-sky-200 border-l-4 border-l-sky-600 bg-gradient-to-r from-sky-50 to-white pl-3 text-sky-900 shadow-sm;
         }
-        
-        .nav-item-light svg {
-            @apply text-slate-400 group-hover:text-sky-600;
+        #layout-root.sidebar-collapsed #admin-sidebar {
+            @apply lg:w-16;
         }
-        
-        .nav-item-light.active svg {
-            @apply text-sky-600;
+        #layout-root.sidebar-collapsed #admin-sidebar .nav-texmaco {
+            @apply lg:px-2 lg:text-center;
         }
-
-        .nav-item.active {
-            @apply text-neon-cyan bg-neon-cyan/10 border-l-2 border-neon-cyan;
+        #layout-root.sidebar-collapsed #main-shell {
+            @apply lg:ml-16;
         }
-
-        .nav-item svg {
-            @apply w-5 h-5 group-hover:text-neon-cyan transition-colors;
-        }
-
-        .nav-item.active svg {
-            @apply text-neon-cyan;
+        @media (min-width: 1024px) {
+            #layout-root.sidebar-collapsed #admin-sidebar .nav-text {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+            #layout-root.sidebar-collapsed #admin-sidebar .sidebar-brand-hide {
+                display: none;
+            }
         }
     </style>
+
+    <script>
+        (function () {
+            var root = document.getElementById("layout-root");
+            var sidebar = document.getElementById("admin-sidebar");
+            var backdrop = document.getElementById("sidebar-backdrop");
+            var toggle = document.getElementById("sidebar-toggle");
+            var toggleHeader = document.getElementById("sidebar-toggle-header");
+
+            function isLarge() {
+                return window.matchMedia("(min-width: 1024px)").matches;
+            }
+
+            function setMobileOpen(open) {
+                if (!sidebar || !backdrop) return;
+                if (open) {
+                    sidebar.classList.remove("-translate-x-full");
+                    sidebar.classList.add("translate-x-0");
+                    backdrop.classList.remove("hidden");
+                } else {
+                    sidebar.classList.add("-translate-x-full");
+                    sidebar.classList.remove("translate-x-0");
+                    backdrop.classList.add("hidden");
+                }
+                if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+                if (toggleHeader) toggleHeader.setAttribute("aria-expanded", open ? "true" : "false");
+            }
+
+            function closeMobileIfNeeded() {
+                if (!isLarge()) setMobileOpen(false);
+            }
+
+            if (toggle) {
+                toggle.addEventListener("click", function () {
+                    if (isLarge()) {
+                        root.classList.toggle("sidebar-collapsed");
+                        return;
+                    }
+                    var open = sidebar.classList.contains("-translate-x-full");
+                    setMobileOpen(open);
+                });
+            }
+
+            if (toggleHeader) {
+                toggleHeader.addEventListener("click", function () {
+                    var open = sidebar.classList.contains("-translate-x-full");
+                    setMobileOpen(open);
+                });
+            }
+
+            if (backdrop) {
+                backdrop.addEventListener("click", function () {
+                    setMobileOpen(false);
+                });
+            }
+
+            window.addEventListener("resize", function () {
+                if (isLarge()) {
+                    setMobileOpen(false);
+                    backdrop.classList.add("hidden");
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

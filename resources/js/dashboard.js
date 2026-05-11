@@ -132,7 +132,7 @@ function initializeAnimations() {
 function initializeNotifications() {
     const notificationBtn = document.getElementById("notification-btn");
 
-    if (notificationBtn) {
+    if (notificationBtn && notificationBtn.tagName !== "A") {
         notificationBtn.addEventListener("click", function () {
             showNotificationPanel();
         });
