@@ -201,9 +201,16 @@
                 <label class="text-sm font-semibold text-neon-cyan mb-2 block">Nama Lengkap</label>
                 <input type="text" class="input-field" value="Admin Tata Usaha" />
             </div>
-            <div>
-                <label class="text-sm font-semibold text-neon-cyan mb-2 block">Email</label>
-                <input type="email" class="input-field" value="admin@texmaco.sch.id" />
+            <div class="col-span-full">
+                <label class="text-sm font-semibold text-neon-cyan mb-2 block">Email Admin (maks 5)</label>
+                <div class="grid grid-cols-1 gap-3">
+                    <input type="email" class="input-field" value="admin@texmaco.sch.id" placeholder="Email Admin 1" />
+                    <input type="email" class="input-field" value="admin2@texmaco.sch.id" placeholder="Email Admin 2" />
+                    <input type="email" class="input-field" value="admin3@texmaco.sch.id" placeholder="Email Admin 3" />
+                    <input type="email" class="input-field" value="admin4@texmaco.sch.id" placeholder="Email Admin 4" />
+                    <input type="email" class="input-field" value="admin5@texmaco.sch.id" placeholder="Email Admin 5" />
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Gunakan hingga 5 alamat email admin untuk anggota kelompok atau departemen lain.</p>
             </div>
             <div>
                 <label class="text-sm font-semibold text-neon-cyan mb-2 block">Telepon</label>
