@@ -29,7 +29,25 @@ Route::post('/login', function (Request $request) {
 
     $user = User::where('email', $request->username)->first();
 
-    if ($user && Hash::check($request->password, $user->password) && $request->status === 'tata_usaha') {
+    $passwordOk = false;
+    if ($user) {
+        $stored = (string) $user->password;
+        $looksHashed = (bool) preg_match('/^\$2[aby]\$\d{2}\$.+/', $stored);
+
+        if ($looksHashed) {
+            $passwordOk = Hash::check($request->password, $stored);
+        } else {
+            // Mode percobaan: jika password di DB masih plaintext, izinkan sekali,
+            // lalu upgrade ke hash agar berikutnya aman.
+            $passwordOk = hash_equals($stored, (string) $request->password);
+            if ($passwordOk) {
+                $user->password = Hash::make($request->password);
+                $user->save();
+            }
+        }
+    }
+
+    if ($user && $passwordOk && $request->status === 'tata_usaha') {
         Auth::login($user);
         return redirect()->route('dashboard');
     }
