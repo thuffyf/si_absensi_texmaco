@@ -32,7 +32,7 @@
                     </div>
                     <div class="flex shrink-0 flex-wrap items-center gap-2">
                         <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 lg:text-sm">
-                            {{ $weekStart->translatedFormat('d MMM') }} — {{ $weekEnd->translatedFormat('d MMM Y') }}
+                            {{ $weekStart->format('d') }} — {{ $weekEnd->format('d M Y') }}
                         </span>
                         <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800 lg:text-sm">Minggu ini</span>
                     </div>

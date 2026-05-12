@@ -72,6 +72,18 @@
             </div>
         </form>
     </div>
+
+    <!-- Logout Section -->
+    <div class="glass-card p-8 border-t-2 border-red-200">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4">Keluar</h2>
+        <p class="text-sm text-slate-600 mb-6">Klik tombol di bawah untuk keluar dari akun Anda.</p>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="px-6 py-2.5 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-colors">
+                🚪 Logout
+            </button>
+        </form>
+    </div>
 </div>
 
 <script>
