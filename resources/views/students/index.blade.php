@@ -4,77 +4,87 @@
 @section('page_title', 'Data Siswa')
 
 @section('content')
-<!-- Header -->
 <div class="mb-8 animate-fade-in">
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
             <h1 class="text-4xl font-bold text-gradient mb-2">👥 Data Siswa</h1>
             <p class="text-gray-400">Kelola data siswa dan status NFC</p>
         </div>
-        <button class="btn-primary">
-            + Tambah Siswa
-        </button>
     </div>
 </div>
 
-<!-- Filter & Search -->
+@if(session('success'))
+    <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <ul class="list-disc pl-5">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="glass-card p-6 rounded-2xl mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <!-- Search -->
-        <div class="lg:col-span-2">
-            <input type="text" class="input-field w-full" placeholder="🔍 Cari nama, NIM, atau kelas..." />
-        </div>
-
-        <!-- Filter Kelas -->
-        <select class="input-field text-sm">
-            <option>Semua Kelas</option>
-            <option>XII IPA 1</option>
-            <option>XII IPA 2</option>
-            <option>XII IPS 1</option>
-            <option>XII IPS 2</option>
-            <option>XI IPA 1</option>
-            <option>XI IPA 2</option>
+    <h2 class="text-lg font-bold text-white mb-4">Tambah Siswa</h2>
+    <form method="POST" action="{{ route('students.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        @csrf
+        <input name="nim" value="{{ old('nim') }}" class="input-field" placeholder="NIM" required />
+        <input name="name" value="{{ old('name') }}" class="input-field" placeholder="Nama siswa" required />
+        <input name="email" value="{{ old('email') }}" class="input-field" placeholder="Email (opsional)" />
+        <input name="class_name" value="{{ old('class_name') }}" class="input-field" placeholder="Kelas" required />
+        <input name="major" value="{{ old('major') }}" class="input-field" placeholder="Jurusan" />
+        <select name="status" class="input-field text-sm" required>
+            <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
+            <option value="tidak_aktif" @selected(old('status') === 'tidak_aktif')>Tidak aktif</option>
+            <option value="lulus" @selected(old('status') === 'lulus')>Lulus</option>
         </select>
-
-        <!-- Filter Status -->
-        <select class="input-field text-sm">
-            <option>Semua Status</option>
-            <option>Aktif</option>
-            <option>Tidak Aktif</option>
-            <option>Lulus</option>
+        <select name="nfc_type" class="input-field text-sm" required>
+            <option value="belum_terdaftar" @selected(old('nfc_type') === 'belum_terdaftar')>Belum terdaftar</option>
+            <option value="kartu" @selected(old('nfc_type') === 'kartu')>Kartu</option>
+            <option value="handphone" @selected(old('nfc_type') === 'handphone')>Handphone</option>
         </select>
-
-        <!-- Filter NFC -->
-        <select class="input-field text-sm">
-            <option>Semua NFC</option>
-            <option>Kartu NFC</option>
-            <option>HP/Handphone</option>
-            <option>Belum Terdaftar</option>
-        </select>
-    </div>
-
-    <!-- Filter Actions -->
-    <div class="flex gap-2 mt-4">
-        <button class="btn-secondary text-sm">
-            🔄 Reset Filter
-        </button>
-        <button class="btn-secondary text-sm">
-            📥 Import CSV
-        </button>
-        <button class="btn-secondary text-sm">
-            📤 Export Excel
-        </button>
-    </div>
+        <input name="uid_kartu" value="{{ old('uid_kartu') }}" class="input-field" placeholder="UID kartu (opsional)" />
+        <input name="phone" value="{{ old('phone') }}" class="input-field" placeholder="No telepon" />
+        <input name="username" value="{{ old('username') }}" class="input-field" placeholder="Username (opsional)" />
+        <input name="password" type="password" class="input-field" placeholder="Password (opsional)" />
+        <button type="submit" class="btn-primary col-span-1 md:col-span-2 lg:col-span-4">Simpan Siswa</button>
+    </form>
 </div>
 
-<!-- Data Table -->
+<div class="glass-card p-6 rounded-2xl mb-6">
+    <form method="GET" action="{{ route('students.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="lg:col-span-2">
+            <input type="text" name="search" value="{{ request('search') }}" class="input-field w-full" placeholder="Cari nama, NIM, atau kelas" />
+        </div>
+        <input type="text" name="class" value="{{ request('class') }}" class="input-field text-sm" placeholder="Kelas" />
+        <select name="status" class="input-field text-sm">
+            <option value="">Semua Status</option>
+            <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
+            <option value="tidak_aktif" @selected(request('status') === 'tidak_aktif')>Tidak aktif</option>
+            <option value="lulus" @selected(request('status') === 'lulus')>Lulus</option>
+        </select>
+        <select name="nfc" class="input-field text-sm">
+            <option value="">Semua NFC</option>
+            <option value="kartu" @selected(request('nfc') === 'kartu')>Kartu NFC</option>
+            <option value="handphone" @selected(request('nfc') === 'handphone')>Handphone</option>
+            <option value="belum_terdaftar" @selected(request('nfc') === 'belum_terdaftar')>Belum terdaftar</option>
+        </select>
+        <div class="flex gap-2 lg:col-span-5">
+            <button class="btn-secondary text-sm" type="submit">Terapkan Filter</button>
+            <a href="{{ route('students.index') }}" class="btn-secondary text-sm">Reset</a>
+        </div>
+    </form>
+</div>
+
 <div class="glass-card p-6 rounded-2xl overflow-x-auto">
     <table class="data-table">
         <thead>
             <tr>
-                <th class="w-12">
-                    <input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" />
-                </th>
                 <th>Foto & Nama</th>
                 <th>NIM / NIS</th>
                 <th>Kelas</th>
@@ -85,229 +95,66 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Row 1 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-neon-cyan to-neon-blue flex items-center justify-center font-bold shadow-glow-cyan-sm">👨</div>
-                        <div>
-                            <p class="font-semibold text-white">Rafa Prakasa</p>
-                            <p class="text-xs text-gray-400">rafa.prakasa@student.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12001</span></td>
-                <td>XII IPA 1</td>
-                <td>IPA</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-neon">Kartu NFC</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm" title="View">👁️</button>
-                        <button class="btn-icon text-sm" title="Edit">✏️</button>
-                        <button class="btn-icon text-sm" title="Delete">🗑️</button>
-                    </div>
-                </td>
-            </tr>
+            @php
+                $statusClasses = [
+                    'aktif' => 'badge-success',
+                    'tidak_aktif' => 'badge-warning',
+                    'lulus' => 'badge-info',
+                ];
+                $nfcClasses = [
+                    'kartu' => 'badge-neon',
+                    'handphone' => 'badge-info',
+                    'belum_terdaftar' => 'badge-warning',
+                ];
+            @endphp
 
-            <!-- Row 2 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-neon-purple flex items-center justify-center font-bold shadow-glow-cyan-sm">👩</div>
-                        <div>
-                            <p class="font-semibold text-white">Silvi Lestari</p>
-                            <p class="text-xs text-gray-400">silvi.lestari@student.com</p>
+            @forelse($students as $student)
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-neon-cyan to-neon-blue flex items-center justify-center font-bold shadow-glow-cyan-sm">
+                                {{ strtoupper(substr($student->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">{{ $student->name }}</p>
+                                <p class="text-xs text-gray-400">{{ $student->email ?? '-' }}</p>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12002</span></td>
-                <td>XII IPA 1</td>
-                <td>IPA</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-neon">Kartu NFC</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Row 3 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center font-bold shadow-glow-cyan-sm">👨</div>
-                        <div>
-                            <p class="font-semibold text-white">Adi Pratama</p>
-                            <p class="text-xs text-gray-400">adi.pratama@student.com</p>
+                    </td>
+                    <td><span class="font-mono text-neon-cyan">{{ $student->nim }}</span></td>
+                    <td>{{ $student->class_name }}</td>
+                    <td>{{ $student->major ?? '-' }}</td>
+                    <td>
+                        <span class="{{ $statusClasses[$student->status] ?? 'badge-info' }}">
+                            {{ ucfirst(str_replace('_', ' ', $student->status)) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="{{ $nfcClasses[$student->nfc_type] ?? 'badge-info' }}">
+                            {{ ucfirst(str_replace('_', ' ', $student->nfc_type)) }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="flex justify-end gap-2">
+                            <a class="btn-icon text-sm" href="{{ route('students.edit', $student) }}" title="Edit">✏️</a>
+                            <form method="POST" action="{{ route('students.destroy', $student) }}" onsubmit="return confirm('Hapus siswa ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn-icon text-sm" type="submit" title="Delete">🗑️</button>
+                            </form>
                         </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12003</span></td>
-                <td>XII IPA 1</td>
-                <td>IPA</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-info">HP/Handphone</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Row 4 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center font-bold shadow-glow-cyan-sm">👩</div>
-                        <div>
-                            <p class="font-semibold text-white">Mira Putri</p>
-                            <p class="text-xs text-gray-400">mira.putri@student.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12004</span></td>
-                <td>XII IPA 2</td>
-                <td>IPA</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-neon">Kartu NFC</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Row 5 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center font-bold shadow-glow-cyan-sm">👨</div>
-                        <div>
-                            <p class="font-semibold text-white">Danu Wijaya</p>
-                            <p class="text-xs text-gray-400">danu.wijaya@student.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12005</span></td>
-                <td>XII IPA 2</td>
-                <td>IPA</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-warning">Belum Terdaftar</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Row 6 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center font-bold shadow-glow-cyan-sm">👨</div>
-                        <div>
-                            <p class="font-semibold text-white">Budi Santoso</p>
-                            <p class="text-xs text-gray-400">budi.santoso@student.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12006</span></td>
-                <td>XII IPS 1</td>
-                <td>IPS</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-neon">Kartu NFC</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Row 7 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center font-bold shadow-glow-cyan-sm">👩</div>
-                        <div>
-                            <p class="font-semibold text-white">Ani Wijaya</p>
-                            <p class="text-xs text-gray-400">ani.wijaya@student.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12007</span></td>
-                <td>XII IPS 1</td>
-                <td>IPS</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-info">HP/Handphone</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Row 8 -->
-            <tr>
-                <td><input type="checkbox" class="w-4 h-4 rounded border-neon-cyan/30 accent-neon-cyan cursor-pointer" /></td>
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-bold shadow-glow-cyan-sm">👨</div>
-                        <div>
-                            <p class="font-semibold text-white">Citra Kusuma</p>
-                            <p class="text-xs text-gray-400">citra.kusuma@student.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="font-mono text-neon-cyan">12008</span></td>
-                <td>XI IPA 1</td>
-                <td>IPA</td>
-                <td><span class="badge-success">Aktif</span></td>
-                <td><span class="badge-neon">Kartu NFC</span></td>
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <button class="btn-icon text-sm">👁️</button>
-                        <button class="btn-icon text-sm">✏️</button>
-                        <button class="btn-icon text-sm">🗑️</button>
-                    </div>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="py-6 text-center text-sm text-gray-400">Belum ada data siswa.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
+</div>
 
-    <!-- Pagination -->
-    <div class="flex items-center justify-between mt-6 pt-6 border-t border-neon-cyan/10">
-        <div class="text-sm text-gray-400">
-            Menampilkan <span class="text-neon-cyan font-bold">1-8</span> dari <span class="text-neon-cyan font-bold">340</span> siswa
-        </div>
-        <div class="flex items-center gap-2">
-            <button class="px-3 py-2 rounded-lg glass-effect hover:bg-neon-cyan/10 text-sm">← Sebelumnya</button>
-            <button class="px-3 py-2 rounded-lg bg-neon-cyan text-dark-bg font-bold text-sm">1</button>
-            <button class="px-3 py-2 rounded-lg glass-effect hover:bg-neon-cyan/10 text-sm">2</button>
-            <button class="px-3 py-2 rounded-lg glass-effect hover:bg-neon-cyan/10 text-sm">3</button>
-            <span class="text-gray-400">...</span>
-            <button class="px-3 py-2 rounded-lg glass-effect hover:bg-neon-cyan/10 text-sm">Selanjutnya →</button>
-        </div>
-    </div>
+<div class="mt-4">
+    {{ $students->links() }}
 </div>
 @endsection

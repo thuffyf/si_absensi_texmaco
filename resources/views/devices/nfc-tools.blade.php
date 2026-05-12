@@ -4,326 +4,162 @@
 @section('page_title', 'Alat NFC')
 
 @section('content')
-<!-- Header -->
 <div class="mb-8 animate-fade-in">
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
             <h1 class="text-4xl font-bold text-gradient mb-2">📡 Monitoring Alat NFC</h1>
             <p class="text-gray-400">Kelola dan monitor status alat tap-in NFC di berbagai lokasi</p>
         </div>
-        <button class="btn-primary">
-            + Tambah Alat
-        </button>
     </div>
 </div>
 
-<!-- Overall Stats -->
+@if(session('success'))
+    <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <ul class="list-disc pl-5">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@php
+    $totalDevices = $devices->count();
+    $onlineCount = $devices->where('status', 'online')->count();
+    $idleCount = $devices->where('status', 'idle')->count();
+    $offlineCount = $devices->where('status', 'offline')->count();
+@endphp
+
+<div class="glass-card p-6 rounded-2xl mb-6">
+    <h2 class="text-lg font-bold text-white mb-4">Tambah Alat NFC</h2>
+    <form method="POST" action="{{ route('devices.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        @csrf
+        <input name="name" value="{{ old('name') }}" class="input-field" placeholder="Nama alat" required />
+        <input name="location" value="{{ old('location') }}" class="input-field" placeholder="Lokasi" />
+        <input name="ip_address" value="{{ old('ip_address') }}" class="input-field" placeholder="IP Address" />
+        <select name="status" class="input-field text-sm" required>
+            <option value="online" @selected(old('status') === 'online')>Online</option>
+            <option value="idle" @selected(old('status') === 'idle')>Idle</option>
+            <option value="offline" @selected(old('status') === 'offline')>Offline</option>
+        </select>
+        <input name="scan_today" type="number" min="0" value="{{ old('scan_today') }}" class="input-field" placeholder="Scan hari ini" />
+        <input name="success_rate" type="number" min="0" max="100" step="0.01" value="{{ old('success_rate') }}" class="input-field" placeholder="Success rate (%)" />
+        <button type="submit" class="btn-primary col-span-1 md:col-span-2 lg:col-span-4">Simpan Alat</button>
+    </form>
+</div>
+
+<div class="glass-card p-6 rounded-2xl mb-6">
+    <form method="GET" action="{{ route('devices.nfc-tools') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select name="status" class="input-field text-sm">
+            <option value="">Semua Status</option>
+            <option value="online" @selected(request('status') === 'online')>Online</option>
+            <option value="idle" @selected(request('status') === 'idle')>Idle</option>
+            <option value="offline" @selected(request('status') === 'offline')>Offline</option>
+        </select>
+        <div class="flex gap-2">
+            <button class="btn-secondary text-sm" type="submit">Terapkan Filter</button>
+            <a href="{{ route('devices.nfc-tools') }}" class="btn-secondary text-sm">Reset</a>
+        </div>
+    </form>
+</div>
+
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-fade-in">
     <div class="stat-card">
         <p class="stat-label">Total Alat</p>
-        <div class="stat-number">4</div>
+        <div class="stat-number">{{ $totalDevices }}</div>
         <p class="text-xs text-emerald-400 mt-2">Aktif</p>
     </div>
     <div class="stat-card">
         <p class="stat-label">Online</p>
-        <div class="stat-number">3</div>
-        <p class="text-xs text-emerald-400 mt-2">75% Aktif</p>
+        <div class="stat-number">{{ $onlineCount }}</div>
+        <p class="text-xs text-emerald-400 mt-2">{{ $totalDevices ? round(($onlineCount / $totalDevices) * 100) : 0 }}% Aktif</p>
+    </div>
+    <div class="stat-card">
+        <p class="stat-label">Idle</p>
+        <div class="stat-number">{{ $idleCount }}</div>
+        <p class="text-xs text-yellow-400 mt-2">Perlu perhatian</p>
     </div>
     <div class="stat-card">
         <p class="stat-label">Offline</p>
-        <div class="stat-number">1</div>
-        <p class="text-xs text-yellow-400 mt-2">Perlu Maintenance</p>
-    </div>
-    <div class="stat-card">
-        <p class="stat-label">Total Scan Hari Ini</p>
-        <div class="stat-number">1.240</div>
-        <p class="text-xs text-neon-cyan mt-2">Success Rate: 99.4%</p>
+        <div class="stat-number">{{ $offlineCount }}</div>
+        <p class="text-xs text-red-400 mt-2">Perlu maintenance</p>
     </div>
 </div>
 
-<!-- Device Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- Device 1 - Online -->
-    <div class="glass-card p-6 rounded-2xl border-2 border-emerald-500/30 hover:border-emerald-500/50 transition-all animate-fade-in">
-        <div class="flex items-start justify-between mb-4">
-            <div>
-                <h3 class="text-lg font-bold text-white">Pintu Utama</h3>
-                <p class="text-xs text-gray-400">Gate 1</p>
-            </div>
-            <span class="flex items-center gap-1 text-emerald-400 text-sm font-bold">
-                <span class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
-                Online
-            </span>
-        </div>
+    @php
+        $statusClasses = [
+            'online' => 'text-emerald-400',
+            'idle' => 'text-yellow-400',
+            'offline' => 'text-red-400',
+        ];
+        $borderClasses = [
+            'online' => 'border-emerald-500/30',
+            'idle' => 'border-yellow-500/30',
+            'offline' => 'border-red-500/30',
+        ];
+    @endphp
 
-        <!-- Device Icon -->
-        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl mb-4">
-            📡
-        </div>
+    @forelse($devices as $device)
+        <div class="glass-card p-6 rounded-2xl border-2 {{ $borderClasses[$device->status] ?? 'border-neon-cyan/30' }} hover:border-neon-cyan/50 transition-all">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white">{{ $device->name }}</h3>
+                    <p class="text-xs text-gray-400">{{ $device->location ?? 'Lokasi belum diisi' }}</p>
+                </div>
+                <span class="flex items-center gap-1 {{ $statusClasses[$device->status] ?? 'text-gray-400' }} text-sm font-bold">
+                    <span class="w-3 h-3 rounded-full bg-current"></span>
+                    {{ ucfirst($device->status) }}
+                </span>
+            </div>
 
-        <!-- Details -->
-        <div class="space-y-3 mb-4 pb-4 border-b border-neon-cyan/10">
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">IP Address</span>
-                <span class="text-neon-cyan font-mono">192.168.1.100</span>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl mb-4">
+                📡
             </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Uptime</span>
-                <span class="text-white font-semibold">15 jam</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Last Check</span>
-                <span class="text-white font-semibold">1 detik lalu</span>
-            </div>
-        </div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Scan Hari Ini</p>
-                <p class="text-lg font-bold text-neon-cyan">245</p>
+            <div class="space-y-3 mb-4 pb-4 border-b border-neon-cyan/10">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-400">IP Address</span>
+                    <span class="text-neon-cyan font-mono">{{ $device->ip_address ?? '-' }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-400">Last Seen</span>
+                    <span class="text-white font-semibold">{{ optional($device->last_seen_at)->diffForHumans() ?? '-' }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-400">Last Scan</span>
+                    <span class="text-white font-semibold">{{ optional($device->last_scan_at)->diffForHumans() ?? '-' }}</span>
+                </div>
             </div>
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Success Rate</p>
-                <p class="text-lg font-bold text-emerald-400">100%</p>
-            </div>
-        </div>
 
-        <!-- Actions -->
-        <div class="flex gap-2">
-            <button class="btn-secondary text-xs flex-1">
-                ✏️ Edit
-            </button>
-            <button class="btn-secondary text-xs flex-1">
-                📊 Detail
-            </button>
-        </div>
-    </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <div class="bg-glass-light/10 rounded-lg p-3 text-center">
+                    <p class="text-xs text-gray-400">Scan Hari Ini</p>
+                    <p class="text-lg font-bold text-neon-cyan">{{ $device->scan_today }}</p>
+                </div>
+                <div class="bg-glass-light/10 rounded-lg p-3 text-center">
+                    <p class="text-xs text-gray-400">Success Rate</p>
+                    <p class="text-lg font-bold text-emerald-400">{{ number_format($device->success_rate, 1) }}%</p>
+                </div>
+            </div>
 
-    <!-- Device 2 - Online -->
-    <div class="glass-card p-6 rounded-2xl border-2 border-emerald-500/30 hover:border-emerald-500/50 transition-all animate-fade-in" style="animation-delay: 0.1s;">
-        <div class="flex items-start justify-between mb-4">
-            <div>
-                <h3 class="text-lg font-bold text-white">Pintu Belakang</h3>
-                <p class="text-xs text-gray-400">Gate 2</p>
-            </div>
-            <span class="flex items-center gap-1 text-emerald-400 text-sm font-bold">
-                <span class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
-                Online
-            </span>
-        </div>
-
-        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl mb-4">
-            📡
-        </div>
-
-        <div class="space-y-3 mb-4 pb-4 border-b border-neon-cyan/10">
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">IP Address</span>
-                <span class="text-neon-cyan font-mono">192.168.1.101</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Uptime</span>
-                <span class="text-white font-semibold">14 jam</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Last Check</span>
-                <span class="text-white font-semibold">2 detik lalu</span>
+            <div class="flex gap-2">
+                <a class="btn-secondary text-xs flex-1" href="{{ route('devices.edit', $device) }}">✏️ Edit</a>
+                <form method="POST" action="{{ route('devices.destroy', $device) }}" onsubmit="return confirm('Hapus alat ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn-icon text-xs" type="submit">🗑️</button>
+                </form>
             </div>
         </div>
-
-        <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Scan Hari Ini</p>
-                <p class="text-lg font-bold text-neon-cyan">189</p>
-            </div>
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Success Rate</p>
-                <p class="text-lg font-bold text-emerald-400">98.9%</p>
-            </div>
-        </div>
-
-        <div class="flex gap-2">
-            <button class="btn-secondary text-xs flex-1">
-                ✏️ Edit
-            </button>
-            <button class="btn-secondary text-xs flex-1">
-                📊 Detail
-            </button>
-        </div>
-    </div>
-
-    <!-- Device 3 - Idle -->
-    <div class="glass-card p-6 rounded-2xl border-2 border-yellow-500/30 hover:border-yellow-500/50 transition-all animate-fade-in" style="animation-delay: 0.2s;">
-        <div class="flex items-start justify-between mb-4">
-            <div>
-                <h3 class="text-lg font-bold text-white">Kantor TU</h3>
-                <p class="text-xs text-gray-400">Gate 3</p>
-            </div>
-            <span class="flex items-center gap-1 text-yellow-400 text-sm font-bold">
-                <span class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></span>
-                Idle
-            </span>
-        </div>
-
-        <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-2xl mb-4">
-            📡
-        </div>
-
-        <div class="space-y-3 mb-4 pb-4 border-b border-neon-cyan/10">
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">IP Address</span>
-                <span class="text-neon-cyan font-mono">192.168.1.102</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Uptime</span>
-                <span class="text-white font-semibold">12 jam</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Last Check</span>
-                <span class="text-white font-semibold">30 detik lalu</span>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Scan Hari Ini</p>
-                <p class="text-lg font-bold text-yellow-400">0</p>
-            </div>
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Status</p>
-                <p class="text-lg font-bold text-yellow-400">Idle</p>
-            </div>
-        </div>
-
-        <div class="flex gap-2">
-            <button class="btn-secondary text-xs flex-1">
-                ✏️ Edit
-            </button>
-            <button class="btn-secondary text-xs flex-1">
-                📊 Detail
-            </button>
-        </div>
-    </div>
-
-    <!-- Device 4 - Offline -->
-    <div class="glass-card p-6 rounded-2xl border-2 border-red-500/30 hover:border-red-500/50 transition-all animate-fade-in" style="animation-delay: 0.3s;">
-        <div class="flex items-start justify-between mb-4">
-            <div>
-                <h3 class="text-lg font-bold text-white">Gudang</h3>
-                <p class="text-xs text-gray-400">Gate 4</p>
-            </div>
-            <span class="flex items-center gap-1 text-red-400 text-sm font-bold">
-                <span class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></span>
-                Offline
-            </span>
-        </div>
-
-        <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center text-2xl mb-4 opacity-50">
-            📡
-        </div>
-
-        <div class="space-y-3 mb-4 pb-4 border-b border-neon-cyan/10">
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">IP Address</span>
-                <span class="text-gray-500 font-mono">192.168.1.103</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Last Online</span>
-                <span class="text-red-400 font-semibold">12 menit lalu</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-400">Status</span>
-                <span class="text-red-400 font-semibold">Connection Lost</span>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Last Scan</p>
-                <p class="text-lg font-bold text-gray-500">--</p>
-            </div>
-            <div class="bg-glass-light/10 rounded-lg p-3 text-center">
-                <p class="text-xs text-gray-400">Downtime</p>
-                <p class="text-lg font-bold text-red-400">12m</p>
-            </div>
-        </div>
-
-        <div class="flex gap-2">
-            <button class="btn-secondary text-xs flex-1">
-                ✏️ Edit
-            </button>
-            <button class="btn-danger text-xs flex-1">
-                ⚠️ Alert
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Device History & Logs -->
-<div class="glass-card p-6 rounded-2xl">
-    <h3 class="text-lg font-bold text-white mb-6">📋 Riwayat Aktivitas Alat</h3>
-    
-    <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-        <!-- Log 1 -->
-        <div class="flex items-center gap-4 p-4 rounded-xl border border-neon-cyan/10 hover:bg-glass-light/5">
-            <div class="w-3 h-3 bg-emerald-400 rounded-full flex-shrink-0"></div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-white">Gate 1 (Pintu Utama) - Online</p>
-                <p class="text-xs text-gray-400">Device terhubung kembali setelah restart</p>
-            </div>
-            <span class="text-xs text-neon-cyan font-mono whitespace-nowrap">07:30 (1h ago)</span>
-        </div>
-
-        <!-- Log 2 -->
-        <div class="flex items-center gap-4 p-4 rounded-xl border border-neon-cyan/10 hover:bg-glass-light/5">
-            <div class="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-white">Gate 3 (Kantor TU) - Idle</p>
-                <p class="text-xs text-gray-400">Tidak ada aktivitas scan dalam 30 menit terakhir</p>
-            </div>
-            <span class="text-xs text-neon-cyan font-mono whitespace-nowrap">06:45 (2h ago)</span>
-        </div>
-
-        <!-- Log 3 -->
-        <div class="flex items-center gap-4 p-4 rounded-xl border border-neon-cyan/10 hover:bg-glass-light/5">
-            <div class="w-3 h-3 bg-red-400 rounded-full flex-shrink-0"></div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-white">Gate 4 (Gudang) - Offline</p>
-                <p class="text-xs text-gray-400">Koneksi terputus, perlu pemeriksaan jaringan</p>
-            </div>
-            <span class="text-xs text-neon-cyan font-mono whitespace-nowrap">06:18 (2.5h ago)</span>
-        </div>
-
-        <!-- Log 4 -->
-        <div class="flex items-center gap-4 p-4 rounded-xl border border-neon-cyan/10 hover:bg-glass-light/5">
-            <div class="w-3 h-3 bg-emerald-400 rounded-full flex-shrink-0"></div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-white">Gate 2 (Pintu Belakang) - Scan Success</p>
-                <p class="text-xs text-gray-400">UID: A1-5F-8C-12 | Silvi Lestari berhasil di-scan</p>
-            </div>
-            <span class="text-xs text-neon-cyan font-mono whitespace-nowrap">07:44 (58m ago)</span>
-        </div>
-
-        <!-- Log 5 -->
-        <div class="flex items-center gap-4 p-4 rounded-xl border border-neon-cyan/10 hover:bg-glass-light/5">
-            <div class="w-3 h-3 bg-emerald-400 rounded-full flex-shrink-0"></div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-white">Gate 1 (Pintu Utama) - Scan Success</p>
-                <p class="text-xs text-gray-400">UID: E4-27-9B-04 | Rafa Prakasa berhasil di-scan</p>
-            </div>
-            <span class="text-xs text-neon-cyan font-mono whitespace-nowrap">07:45 (55m ago)</span>
-        </div>
-
-        <!-- Log 6 -->
-        <div class="flex items-center gap-4 p-4 rounded-xl border border-neon-cyan/10 hover:bg-glass-light/5">
-            <div class="w-3 h-3 bg-red-400 rounded-full flex-shrink-0"></div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-white">Gate 1 (Pintu Utama) - Scan Failed</p>
-                <p class="text-xs text-gray-400">Kartu tidak terdaftar - UID: 42-7C-E5-8B</p>
-            </div>
-            <span class="text-xs text-neon-cyan font-mono whitespace-nowrap">07:05 (1.5h ago)</span>
-        </div>
-    </div>
+    @empty
+        <div class="col-span-full text-center text-sm text-gray-400">Belum ada alat NFC.</div>
+    @endforelse
 </div>
 @endsection

@@ -44,6 +44,7 @@
                     title="Dashboard"
                     class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('dashboard') ? 'nav-texmaco-active' : '' }}"
                 >
+                    <span class="nav-icon" aria-hidden="true">DB</span>
                     <span class="nav-text">Dashboard</span>
                 </a>
                 <a
@@ -51,27 +52,71 @@
                     title="Data Siswa"
                     class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
                 >
+                    <span class="nav-icon" aria-hidden="true">DS</span>
                     <span class="nav-text">Data Siswa</span>
+                </a>
+                <a
+                    href="{{ route('teachers.index') }}"
+                    title="Data Guru"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('teachers.index') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-icon" aria-hidden="true">DG</span>
+                    <span class="nav-text">Data Guru</span>
                 </a>
                 <a
                     href="{{ route('schedules.index') }}"
                     title="Jadwal"
                     class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.index') ? 'nav-texmaco-active' : '' }}"
                 >
+                    <span class="nav-icon" aria-hidden="true">JD</span>
                     <span class="nav-text">Jadwal</span>
+                </a>
+                <a
+                    href="{{ route('requests.izin-sakit') }}"
+                    title="Izin & Sakit"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('requests.izin-sakit') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-icon" aria-hidden="true">IS</span>
+                    <span class="nav-text">Izin &amp; Sakit</span>
+                </a>
+                <a
+                    href="{{ route('monitoring.nfc') }}"
+                    title="Monitoring NFC"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-icon" aria-hidden="true">MN</span>
+                    <span class="nav-text">Monitoring NFC</span>
+                </a>
+                <a
+                    href="{{ route('devices.nfc-tools') }}"
+                    title="Alat NFC"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('devices.nfc-tools') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-icon" aria-hidden="true">AN</span>
+                    <span class="nav-text">Alat NFC</span>
                 </a>
                 <a
                     href="{{ route('reports.absensi') }}"
                     title="Laporan"
                     class="nav-texmaco {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
                 >
+                    <span class="nav-icon" aria-hidden="true">LP</span>
                     <span class="nav-text">Laporan</span>
+                </a>
+                <a
+                    href="{{ route('settings.index') }}"
+                    title="Pengaturan"
+                    class="nav-texmaco {{ request()->routeIs('settings.index') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-icon" aria-hidden="true">PG</span>
+                    <span class="nav-text">Pengaturan</span>
                 </a>
                 <a
                     href="{{ route('profile.index') }}"
                     title="Profil"
                     class="nav-texmaco {{ request()->routeIs('profile.index') ? 'nav-texmaco-active' : '' }}"
                 >
+                    <span class="nav-icon" aria-hidden="true">PR</span>
                     <span class="nav-text">Profil</span>
                 </a>
             </nav>
@@ -144,13 +189,30 @@
                             <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Admin' }}</p>
                             <p class="text-xs text-slate-500">{{ auth()->user()->email ?? 'Tata Usaha' }}</p>
                         </div>
-                        <a href="{{ route('profile.index') }}" class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700 transition-colors hover:ring-2 hover:ring-sky-300" aria-label="Buka halaman profil">
-                            @if(auth()->user()->photo)
-                                <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
-                            @else
-                                <span class="inline-flex h-full w-full items-center justify-center">{{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
-                            @endif
-                        </a>
+                        <div class="relative">
+                            <button
+                                type="button"
+                                id="profile-menu-button"
+                                class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700 transition-colors hover:ring-2 hover:ring-sky-300"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-label="Buka menu profil"
+                            >
+                                @if(auth()->user()->photo)
+                                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
+                                @else
+                                    <span class="inline-flex h-full w-full items-center justify-center">{{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
+                                @endif
+                            </button>
+                            <div id="profile-menu" class="profile-menu hidden" role="menu" aria-hidden="true">
+                                <a href="{{ route('profile.index') }}" class="profile-menu-item" role="menuitem">Profil</a>
+                                <div class="profile-menu-divider" role="separator"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="profile-menu-item w-full text-left" role="menuitem">Logout</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -167,40 +229,6 @@
             </main>
         </div>
     </div>
-
-    <style>
-        .nav-texmaco {
-            @apply relative block rounded-xl border border-transparent px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm transition-all hover:border-sky-100 hover:bg-white hover:text-slate-900 hover:shadow-md;
-        }
-        .nav-texmaco-active {
-            @apply border border-sky-200 border-l-4 border-l-sky-600 bg-gradient-to-r from-sky-50 to-white pl-3 text-sky-900 shadow-sm;
-        }
-        #layout-root.sidebar-collapsed #admin-sidebar {
-            @apply lg:w-16;
-        }
-        #layout-root.sidebar-collapsed #admin-sidebar .nav-texmaco {
-            @apply lg:px-2 lg:text-center;
-        }
-        #layout-root.sidebar-collapsed #main-shell {
-            @apply lg:ml-16;
-        }
-        @media (min-width: 1024px) {
-            #layout-root.sidebar-collapsed #admin-sidebar .nav-text {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border: 0;
-            }
-            #layout-root.sidebar-collapsed #admin-sidebar .sidebar-brand-hide {
-                display: none;
-            }
-        }
-    </style>
 
     <script>
         (function () {
@@ -256,6 +284,47 @@
                     setMobileOpen(false);
                 });
             }
+
+            var profileButton = document.getElementById("profile-menu-button");
+            var profileMenu = document.getElementById("profile-menu");
+
+            function closeProfileMenu() {
+                if (!profileMenu || !profileButton) return;
+                profileMenu.classList.add("hidden");
+                profileButton.setAttribute("aria-expanded", "false");
+                profileMenu.setAttribute("aria-hidden", "true");
+            }
+
+            function toggleProfileMenu() {
+                if (!profileMenu || !profileButton) return;
+                var isHidden = profileMenu.classList.contains("hidden");
+                if (isHidden) {
+                    profileMenu.classList.remove("hidden");
+                    profileButton.setAttribute("aria-expanded", "true");
+                    profileMenu.setAttribute("aria-hidden", "false");
+                } else {
+                    closeProfileMenu();
+                }
+            }
+
+            if (profileButton) {
+                profileButton.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    toggleProfileMenu();
+                });
+            }
+
+            document.addEventListener("click", function (event) {
+                if (!profileMenu || !profileButton) return;
+                if (profileMenu.contains(event.target) || profileButton.contains(event.target)) return;
+                closeProfileMenu();
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    closeProfileMenu();
+                }
+            });
 
             window.addEventListener("resize", function () {
                 if (isLarge()) {

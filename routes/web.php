@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\NfcDeviceController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +65,15 @@ Route::post('/login', function (Request $request) {
 
 // Dashboard Routes (Protected by auth middleware)
 Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', function (Request $request) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    })->name('logout');
+
     // Dashboard Utama
     Route::get('/', function () {
         return view('dashboard.index');
@@ -74,24 +89,31 @@ Route::middleware(['auth'])->group(function () {
     })->name('monitoring.nfc');
 
     // Data Siswa
-    Route::get('/siswa', function () {
-        return view('students.index');
-    })->name('students.index');
+    Route::get('/siswa', [StudentController::class, 'index'])->name('students.index');
+    Route::post('/siswa', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/siswa/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::put('/siswa/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::delete('/siswa/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
 
     // Data Guru
-    Route::get('/guru', function () {
-        return view('teachers.index');
-    })->name('teachers.index');
+    Route::get('/guru', [TeacherController::class, 'index'])->name('teachers.index');
+    Route::post('/guru', [TeacherController::class, 'store'])->name('teachers.store');
+    Route::get('/guru/{teacher}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
+    Route::put('/guru/{teacher}', [TeacherController::class, 'update'])->name('teachers.update');
+    Route::delete('/guru/{teacher}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
 
     // Jadwal Kelas
-    Route::get('/jadwal', function () {
-        return view('schedules.index');
-    })->name('schedules.index');
+    Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedules.index');
+    Route::post('/jadwal', [ScheduleController::class, 'store'])->name('schedules.store');
+    Route::get('/jadwal/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
+    Route::put('/jadwal/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+    Route::delete('/jadwal/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
     // Request Izin & Sakit
-    Route::get('/request-izin-sakit', function () {
-        return view('requests.izin-sakit');
-    })->name('requests.izin-sakit');
+    Route::get('/request-izin-sakit', [LeaveRequestController::class, 'index'])->name('requests.izin-sakit');
+    Route::post('/request-izin-sakit', [LeaveRequestController::class, 'store'])->name('requests.store');
+    Route::post('/request-izin-sakit/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('requests.approve');
+    Route::post('/request-izin-sakit/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('requests.reject');
 
     // Notifikasi: persetujuan laporan guru (izin / alpha)
     Route::get('/notifikasi/persetujuan-guru', function () {
@@ -99,14 +121,14 @@ Route::middleware(['auth'])->group(function () {
     })->name('notifications.guru-approvals');
 
     // Laporan Absensi
-    Route::get('/laporan/absensi', function () {
-        return view('reports.absensi');
-    })->name('reports.absensi');
+    Route::get('/laporan/absensi', [ReportController::class, 'absensi'])->name('reports.absensi');
 
     // Monitoring Alat NFC
-    Route::get('/alat-nfc', function () {
-        return view('devices.nfc-tools');
-    })->name('devices.nfc-tools');
+    Route::get('/alat-nfc', [NfcDeviceController::class, 'index'])->name('devices.nfc-tools');
+    Route::post('/alat-nfc', [NfcDeviceController::class, 'store'])->name('devices.store');
+    Route::get('/alat-nfc/{device}/edit', [NfcDeviceController::class, 'edit'])->name('devices.edit');
+    Route::put('/alat-nfc/{device}', [NfcDeviceController::class, 'update'])->name('devices.update');
+    Route::delete('/alat-nfc/{device}', [NfcDeviceController::class, 'destroy'])->name('devices.destroy');
 
     // Pengaturan Sistem
     Route::get('/settings', function () {

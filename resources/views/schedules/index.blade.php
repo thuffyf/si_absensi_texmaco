@@ -4,263 +4,119 @@
 @section('page_title', 'Jadwal')
 
 @section('content')
-<!-- Header -->
 <div class="mb-8 animate-fade-in">
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
             <h1 class="text-4xl font-bold text-gradient mb-2">📅 Data Jadwal Kelas</h1>
             <p class="text-gray-400">Kelola jadwal belajar dan monitoring kehadiran guru</p>
         </div>
-        <button class="btn-primary">
-            + Tambah Jadwal
-        </button>
     </div>
 </div>
 
-<!-- Filter -->
+@if(session('success'))
+    <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <ul class="list-disc pl-5">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="glass-card p-6 rounded-2xl mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <select class="input-field text-sm">
-            <option>Semua Kelas</option>
-            <option>XII IPA 1</option>
-            <option>XII IPA 2</option>
-            <option>XII IPS 1</option>
+    <h2 class="text-lg font-bold text-white mb-4">Tambah Jadwal</h2>
+    <form method="POST" action="{{ route('schedules.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        @csrf
+        <select name="teacher_id" class="input-field text-sm" required>
+            <option value="">Pilih guru</option>
+            @foreach($teachers as $teacher)
+                <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
+            @endforeach
         </select>
-        <select class="input-field text-sm">
-            <option>Semua Guru</option>
-            <option>Budi Santoso</option>
-            <option>Siti Nurhaliza</option>
+        <input name="class_name" value="{{ old('class_name') }}" class="input-field" placeholder="Kelas" required />
+        <input name="subject" value="{{ old('subject') }}" class="input-field" placeholder="Mata pelajaran" required />
+        <input name="day_of_week" value="{{ old('day_of_week') }}" class="input-field" placeholder="Hari (Senin, Selasa, ...)" required />
+        <input name="start_time" type="time" value="{{ old('start_time') }}" class="input-field" required />
+        <input name="end_time" type="time" value="{{ old('end_time') }}" class="input-field" required />
+        <input name="total_students" type="number" min="0" value="{{ old('total_students') }}" class="input-field" placeholder="Jumlah siswa" />
+        <select name="status" class="input-field text-sm" required>
+            <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
+            <option value="idle" @selected(old('status') === 'idle')>Idle</option>
         </select>
-        <select class="input-field text-sm">
-            <option>Semua Mata Pelajaran</option>
-            <option>Matematika</option>
-            <option>Bahasa Indonesia</option>
-            <option>Fisika</option>
-        </select>
-        <button class="btn-secondary text-sm">
-            🔍 Filter
-        </button>
-    </div>
+        <button type="submit" class="btn-primary col-span-1 md:col-span-2 lg:col-span-4">Simpan Jadwal</button>
+    </form>
 </div>
 
-<!-- Schedule Grid by Day -->
+<div class="glass-card p-6 rounded-2xl mb-6">
+    <form method="GET" action="{{ route('schedules.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <input type="text" name="class" value="{{ request('class') }}" class="input-field text-sm" placeholder="Kelas" />
+        <select name="teacher" class="input-field text-sm">
+            <option value="">Semua Guru</option>
+            @foreach($teachers as $teacher)
+                <option value="{{ $teacher->id }}" @selected(request('teacher') == $teacher->id)>{{ $teacher->name }}</option>
+            @endforeach
+        </select>
+        <input type="text" name="subject" value="{{ request('subject') }}" class="input-field text-sm" placeholder="Mata pelajaran" />
+        <div class="flex gap-2">
+            <button class="btn-secondary text-sm" type="submit">Terapkan Filter</button>
+            <a href="{{ route('schedules.index') }}" class="btn-secondary text-sm">Reset</a>
+        </div>
+    </form>
+</div>
+
 <div class="space-y-6">
-    <!-- Monday -->
-    <div>
-        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <span class="w-3 h-3 bg-neon-cyan rounded-full"></span>
-            Senin, 08 Mei 2024
-        </h3>
-        <div class="space-y-3">
-            <!-- Schedule 1 -->
-            <div class="glass-card p-6 rounded-2xl border border-neon-cyan/20 hover:border-neon-cyan/50 transition-all">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Jam</p>
-                        <p class="text-lg font-bold text-neon-cyan">07:00 - 08:30</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Kelas</p>
-                        <p class="font-semibold text-white">XII IPA 1</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Mata Pelajaran</p>
-                        <p class="font-semibold text-white">Matematika</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Guru</p>
-                        <p class="font-semibold text-white flex items-center gap-2">
-                            <span>Budi Santoso</span>
-                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Status</p>
-                        <div class="flex items-center gap-2">
-                            <span class="badge-success">Aktif</span>
-                            <button class="btn-icon text-xs">📊</button>
+    @forelse($schedulesByDay as $day => $items)
+        <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span class="w-3 h-3 bg-neon-cyan rounded-full"></span>
+                {{ $day }}
+            </h3>
+            <div class="space-y-3">
+                @foreach($items as $schedule)
+                    <div class="glass-card p-6 rounded-2xl border border-neon-cyan/20 hover:border-neon-cyan/50 transition-all">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-center">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Jam</p>
+                                <p class="text-lg font-bold text-neon-cyan">{{ $schedule->start_time }} - {{ $schedule->end_time }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Kelas</p>
+                                <p class="font-semibold text-white">{{ $schedule->class_name }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Mata Pelajaran</p>
+                                <p class="font-semibold text-white">{{ $schedule->subject }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Guru</p>
+                                <p class="font-semibold text-white">{{ $schedule->teacher?->name ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Jumlah Siswa</p>
+                                <p class="font-semibold text-white">{{ $schedule->total_students ?? '-' }}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="{{ $schedule->status === 'aktif' ? 'badge-success' : 'badge-warning' }}">{{ ucfirst($schedule->status) }}</span>
+                                <a class="btn-icon text-xs" href="{{ route('schedules.edit', $schedule) }}">✏️</a>
+                                <form method="POST" action="{{ route('schedules.destroy', $schedule) }}" onsubmit="return confirm('Hapus jadwal ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn-icon text-xs" type="submit">🗑️</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Schedule 2 -->
-            <div class="glass-card p-6 rounded-2xl border border-neon-cyan/20 hover:border-neon-cyan/50 transition-all">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Jam</p>
-                        <p class="text-lg font-bold text-neon-cyan">08:45 - 10:15</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Kelas</p>
-                        <p class="font-semibold text-white">XII IPA 2</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Mata Pelajaran</p>
-                        <p class="font-semibold text-white">Fisika</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Guru</p>
-                        <p class="font-semibold text-white flex items-center gap-2">
-                            <span>Siti Nurhaliza</span>
-                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Status</p>
-                        <div class="flex items-center gap-2">
-                            <span class="badge-success">Aktif</span>
-                            <button class="btn-icon text-xs">📊</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Schedule 3 -->
-            <div class="glass-card p-6 rounded-2xl border border-yellow-500/20">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Jam</p>
-                        <p class="text-lg font-bold text-yellow-400">10:30 - 12:00</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Kelas</p>
-                        <p class="font-semibold text-white">XII IPS 1</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Mata Pelajaran</p>
-                        <p class="font-semibold text-white">Sejarah</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Guru</p>
-                        <p class="font-semibold text-white flex items-center gap-2">
-                            <span>Hendra Gunawan</span>
-                            <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Status</p>
-                        <div class="flex items-center gap-2">
-                            <span class="badge-warning">Idle</span>
-                            <button class="btn-icon text-xs">📊</button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
-    </div>
-
-    <!-- Tuesday -->
-    <div>
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <span class="w-3 h-3 bg-neon-cyan rounded-full"></span>
-            Selasa, 09 Mei 2024 (Hari ini)
-        </h3>
-        <div class="space-y-3">
-            <!-- Schedule 1 -->
-            <div class="glass-card p-6 rounded-2xl border-2 border-neon-cyan/40 hover:border-neon-cyan/60 transition-all shadow-glow-cyan-sm">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Jam</p>
-                        <p class="text-lg font-bold text-neon-cyan">07:00 - 08:30</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Kelas</p>
-                        <p class="font-semibold text-white">XI IPA 1</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Mata Pelajaran</p>
-                        <p class="font-semibold text-white">Kimia</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Guru</p>
-                        <p class="font-semibold text-white flex items-center gap-2">
-                            <span>Ani Wijaya</span>
-                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Hadir / Jumlah Siswa</p>
-                        <div class="flex items-center gap-2">
-                            <span class="badge-success">42 / 42</span>
-                            <button class="btn-icon text-xs">📊</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Schedule 2 - Ongoing -->
-            <div class="glass-card p-6 rounded-2xl border-2 border-emerald-500/40 animate-pulse-glow">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
-                    <span class="text-emerald-400 text-xs font-bold uppercase">Sedang Berlangsung</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Jam</p>
-                        <p class="text-lg font-bold text-emerald-400">08:45 - 10:15</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Kelas</p>
-                        <p class="font-semibold text-white">XII IPA 1</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Mata Pelajaran</p>
-                        <p class="font-semibold text-white">Biologi</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Guru</p>
-                        <p class="font-semibold text-white flex items-center gap-2">
-                            <span>Citra Kusuma</span>
-                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">Hadir / Jumlah Siswa</p>
-                        <div class="flex items-center gap-2">
-                            <span class="badge-success">40 / 41</span>
-                            <button class="btn-icon text-xs">📊</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Attendance Summary -->
-<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="glass-card p-6 rounded-2xl">
-        <h4 class="text-lg font-bold text-white mb-4">Guru Hadir Hari Ini</h4>
-        <div class="space-y-2">
-            <p class="text-3xl font-bold text-neon-cyan">8 / 10</p>
-            <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-neon-cyan to-neon-blue" style="width: 80%;"></div>
-            </div>
-            <p class="text-xs text-gray-400">2 guru tidak hadir</p>
-        </div>
-    </div>
-
-    <div class="glass-card p-6 rounded-2xl">
-        <h4 class="text-lg font-bold text-white mb-4">Rata-rata Kehadiran Siswa</h4>
-        <div class="space-y-2">
-            <p class="text-3xl font-bold text-emerald-400">91.2%</p>
-            <div class="w-full h-3 bg-glass-light/20 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-emerald-400 to-green-500" style="width: 91.2%;"></div>
-            </div>
-            <p class="text-xs text-gray-400">dari total 340 siswa</p>
-        </div>
-    </div>
-
-    <div class="glass-card p-6 rounded-2xl">
-        <h4 class="text-lg font-bold text-white mb-4">Kelas Berlangsung</h4>
-        <div class="space-y-2">
-            <p class="text-3xl font-bold text-neon-cyan">3 / 12</p>
-            <p class="text-xs text-gray-400">kelas sedang aktif</p>
-            <button class="btn-secondary text-xs w-full mt-3">
-                👁️ Lihat Live
-            </button>
-        </div>
-    </div>
+    @empty
+        <div class="text-center text-sm text-gray-400">Belum ada jadwal.</div>
+    @endforelse
 </div>
 @endsection
