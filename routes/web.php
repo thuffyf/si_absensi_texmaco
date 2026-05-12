@@ -112,5 +112,31 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', function () {
         return view('settings.index');
     })->name('settings.index');
+
+    // Profile
+    Route::get('/profile', function () {
+        return view('profile.index');
+    })->name('profile.index');
+
+    Route::post('/profile', function (Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = auth()->user();
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            $photoPath = $request->file('photo')->store('profile-photos', 'public');
+            $user->photo = $photoPath;
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Profile berhasil diperbarui.');
+    })->name('profile.update');
 });
 

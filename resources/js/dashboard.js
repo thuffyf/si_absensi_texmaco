@@ -25,6 +25,9 @@ function initializeDashboard() {
  * Initialize sidebar navigation
  */
 function initializeNavigation() {
+    // Initialize sidebar toggle
+    initializeSidebarToggle();
+
     const navItems = document.querySelectorAll(".nav-item");
 
     navItems.forEach((item) => {
@@ -45,6 +48,46 @@ function initializeNavigation() {
             loadPageContent(page);
         });
     });
+}
+
+/**
+ * Initialize sidebar toggle functionality
+ */
+function initializeSidebarToggle() {
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebarToggleHeader = document.getElementById('sidebar-toggle-header');
+    const sidebar = document.getElementById('admin-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    const toggleSidebar = () => {
+        const isOpen = !sidebar.classList.contains('-translate-x-full');
+
+        if (window.innerWidth < 1024) { // Mobile
+            if (isOpen) {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            }
+        }
+    };
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+
+    if (sidebarToggleHeader) {
+        sidebarToggleHeader.addEventListener('click', toggleSidebar);
+    }
+
+    // Close sidebar when clicking backdrop
+    if (backdrop) {
+        backdrop.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+        });
+    }
 }
 
 /**

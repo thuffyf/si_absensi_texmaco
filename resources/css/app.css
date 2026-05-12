@@ -228,3 +228,13 @@ body {
     @apply text-sky-600 font-semibold;
 }
 
+/* ========== Navigation Styles ========== */
+
+.nav-texmaco {
+    @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-sky-50 hover:text-sky-700 transition-colors;
+}
+
+.nav-texmaco-active {
+    @apply bg-sky-100 text-sky-800;
+}
+

@@ -24,7 +24,6 @@
             class="sidebar-shell fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-sky-100/80 bg-gradient-to-b from-sky-50/90 via-white to-slate-50/95 shadow-[4px_0_24px_-8px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[width,margin,transform] duration-200 ease-out -translate-x-full lg:translate-x-0"
         >
             <div class="relative flex shrink-0 items-center border-b border-sky-100/90 bg-white/60 px-3 py-3 backdrop-blur-sm">
-                <div class="pointer-events-none absolute inset-y-0 left-0 w-1 rounded-r-full bg-gradient-to-b from-sky-500 to-blue-600 opacity-90" aria-hidden="true"></div>
                 <button
                     type="button"
                     id="sidebar-toggle"
@@ -40,25 +39,24 @@
             </div>
 
             <nav class="flex flex-1 flex-col gap-1 overflow-y-auto p-3 pt-4" aria-label="Menu utama">
-                <p class="sidebar-brand-hide mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Menu</p>
                 <a
                     href="{{ route('dashboard') }}"
                     title="Dashboard"
-                    class="nav-texmaco {{ request()->routeIs('dashboard') ? 'nav-texmaco-active' : '' }}"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('dashboard') ? 'nav-texmaco-active' : '' }}"
                 >
                     <span class="nav-text">Dashboard</span>
                 </a>
                 <a
                     href="{{ route('students.index') }}"
                     title="Data Siswa"
-                    class="nav-texmaco {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
                 >
                     <span class="nav-text">Data Siswa</span>
                 </a>
                 <a
                     href="{{ route('schedules.index') }}"
                     title="Jadwal"
-                    class="nav-texmaco {{ request()->routeIs('schedules.index') ? 'nav-texmaco-active' : '' }}"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.index') ? 'nav-texmaco-active' : '' }}"
                 >
                     <span class="nav-text">Jadwal</span>
                 </a>
@@ -68,6 +66,13 @@
                     class="nav-texmaco {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
                 >
                     <span class="nav-text">Laporan</span>
+                </a>
+                <a
+                    href="{{ route('profile.index') }}"
+                    title="Profil"
+                    class="nav-texmaco {{ request()->routeIs('profile.index') ? 'nav-texmaco-active' : '' }}"
+                >
+                    <span class="nav-text">Profil</span>
                 </a>
             </nav>
 
@@ -139,8 +144,12 @@
                             <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Admin' }}</p>
                             <p class="text-xs text-slate-500">{{ auth()->user()->email ?? 'Tata Usaha' }}</p>
                         </div>
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700" aria-hidden="true">
-                            {{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                        <span class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700" aria-hidden="true">
+                            @if(auth()->user()->photo)
+                                <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
+                            @else
+                                {{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                            @endif
                         </span>
                     </div>
                 </div>

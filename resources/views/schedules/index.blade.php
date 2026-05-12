@@ -47,7 +47,7 @@
 <div class="space-y-6">
     <!-- Monday -->
     <div>
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
             <span class="w-3 h-3 bg-neon-cyan rounded-full"></span>
             Senin, 08 Mei 2024
         </h3>
