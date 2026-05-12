@@ -144,13 +144,13 @@
                             <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Admin' }}</p>
                             <p class="text-xs text-slate-500">{{ auth()->user()->email ?? 'Tata Usaha' }}</p>
                         </div>
-                        <span class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700" aria-hidden="true">
+                        <a href="{{ route('profile.index') }}" class="flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700 transition-colors hover:ring-2 hover:ring-sky-300" aria-label="Buka halaman profil">
                             @if(auth()->user()->photo)
                                 <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
                             @else
-                                {{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                                <span class="inline-flex h-full w-full items-center justify-center">{{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
                             @endif
-                        </span>
+                        </a>
                     </div>
                 </div>
             </header>
