@@ -15,7 +15,7 @@ class ScheduleSeeder extends Seeder
         $schedules = [
             [
                 'teacher_nip' => '196812251992031003',
-                'class_name' => 'XII IPA 1',
+                'class_name' => 'XII TEI',
                 'subject' => 'Matematika',
                 'day_of_week' => 'Senin',
                 'start_time' => '07:00',
@@ -25,7 +25,7 @@ class ScheduleSeeder extends Seeder
             ],
             [
                 'teacher_nip' => '197503141998032001',
-                'class_name' => 'XII IPA 2',
+                'class_name' => 'XII TEI',
                 'subject' => 'Fisika',
                 'day_of_week' => 'Senin',
                 'start_time' => '08:45',
@@ -35,7 +35,7 @@ class ScheduleSeeder extends Seeder
             ],
             [
                 'teacher_nip' => '197001151995031001',
-                'class_name' => 'XII IPS 1',
+                'class_name' => 'XII TEI',
                 'subject' => 'Sejarah',
                 'day_of_week' => 'Senin',
                 'start_time' => '10:30',
@@ -45,7 +45,7 @@ class ScheduleSeeder extends Seeder
             ],
             [
                 'teacher_nip' => '197806231999031001',
-                'class_name' => 'XI IPA 1',
+                'class_name' => 'XI TEI',
                 'subject' => 'Kimia',
                 'day_of_week' => 'Selasa',
                 'start_time' => '07:00',
@@ -55,7 +55,7 @@ class ScheduleSeeder extends Seeder
             ],
             [
                 'teacher_nip' => '198203241998032001',
-                'class_name' => 'XII IPA 1',
+                'class_name' => 'XII TEI',
                 'subject' => 'Biologi',
                 'day_of_week' => 'Selasa',
                 'start_time' => '08:45',

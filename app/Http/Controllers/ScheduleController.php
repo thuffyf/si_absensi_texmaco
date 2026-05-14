@@ -2,14 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
+use App\Models\Homeroom;
 use App\Models\Schedule;
+use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class ScheduleController extends Controller
 {
+    private const TEI_CLASS_NAMES = ['X TEI', 'XI TEI', 'XII TEI'];
+
+    /** @var array<string, string> */
+    private const TEI_SLUGS = [
+        'X TEI' => 'x-tei',
+        'XI TEI' => 'xi-tei',
+        'XII TEI' => 'xii-tei',
+    ];
+
     public function index(Request $request)
     {
+        $homerooms = Homeroom::query()
+            ->whereIn('class_name', self::TEI_CLASS_NAMES)
+            ->get()
+            ->keyBy('class_name');
+
+        $todayLabel = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
+
+        $classCards = [];
+        foreach (self::TEI_CLASS_NAMES as $className) {
+            $classCards[] = [
+                'class_name' => $className,
+                'slug' => self::TEI_SLUGS[$className],
+                'homeroom_teacher_name' => $homerooms->get($className)?->homeroom_teacher_name ?? '—',
+                'student_count' => Student::query()->where('class_name', $className)->count(),
+            ];
+        }
+
         $query = Schedule::query()->with('teacher');
 
         if ($request->filled('class')) {
@@ -28,7 +58,36 @@ class ScheduleController extends Controller
         $schedulesByDay = $schedules->groupBy('day_of_week');
         $teachers = Teacher::orderBy('name')->get();
 
-        return view('schedules.index', compact('schedulesByDay', 'teachers'));
+        return view('schedules.index', compact('classCards', 'todayLabel', 'schedulesByDay', 'teachers'));
+    }
+
+    /**
+     * Ringkasan jumlah siswa hadir hari ini (zona waktu aplikasi: Asia/Jakarta, WIB UTC+7).
+     */
+    public function presence(string $slug)
+    {
+        $className = match ($slug) {
+            'x-tei' => 'X TEI',
+            'xi-tei' => 'XI TEI',
+            'xii-tei' => 'XII TEI',
+            default => abort(404),
+        };
+
+        $today = Carbon::now()->toDateString();
+
+        $hadirCount = Attendance::query()
+            ->whereDate('attendance_date', $today)
+            ->where('status', 'hadir')
+            ->whereHas('student', function ($q) use ($className) {
+                $q->where('class_name', $className);
+            })
+            ->count();
+
+        $totalStudents = Student::query()->where('class_name', $className)->count();
+
+        $todayLabel = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
+
+        return view('schedules.presence', compact('className', 'hadirCount', 'totalStudents', 'todayLabel', 'today'));
     }
 
     public function store(Request $request)
