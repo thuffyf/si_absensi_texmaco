@@ -62,7 +62,7 @@ class ScheduleController extends Controller
     }
 
     /**
-     * Ringkasan jumlah siswa hadir hari ini (zona waktu aplikasi: Asia/Jakarta, WIB UTC+7).
+     * Menampilkan 3 mata pelajaran yang sedang berlangsung hari ini.
      */
     public function presence(string $slug)
     {
@@ -73,21 +73,48 @@ class ScheduleController extends Controller
             default => abort(404),
         };
 
-        $today = Carbon::now()->toDateString();
-
-        $hadirCount = Attendance::query()
-            ->whereDate('attendance_date', $today)
-            ->where('status', 'hadir')
-            ->whereHas('student', function ($q) use ($className) {
-                $q->where('class_name', $className);
-            })
-            ->count();
-
-        $totalStudents = Student::query()->where('class_name', $className)->count();
-
         $todayLabel = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
+        $today = Carbon::now()->toDateString();
+        
+        // Get day name in Indonesian (Senin, Selasa, etc.)
+        $dayNames = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+        
+        $todayDayName = $dayNames[Carbon::now()->format('l')] ?? Carbon::now()->format('l');
+        
+        // Get current time for filtering
+        $currentTime = Carbon::now()->format('H:i');
+        
+        // Get schedules for this class on this day
+        $todaySchedules = Schedule::query()
+            ->where('class_name', $className)
+            ->where('day_of_week', $todayDayName)
+            ->with('teacher')
+            ->orderBy('start_time')
+            ->get();
+        
+        // Get 3 subjects that are currently running or about to run
+        $subjectsToday = $todaySchedules->map(function ($schedule) use ($currentTime) {
+            // Check if this subject is currently running
+            $isRunning = $currentTime >= $schedule->start_time && $currentTime <= $schedule->end_time;
+            
+            return [
+                'subject' => $schedule->subject,
+                'start_time' => $schedule->start_time,
+                'end_time' => $schedule->end_time,
+                'teacher_name' => $schedule->teacher?->name ?? '—',
+                'is_running' => $isRunning,
+            ];
+        })->take(3);
 
-        return view('schedules.presence', compact('className', 'hadirCount', 'totalStudents', 'todayLabel', 'today'));
+        return view('schedules.presence', compact('className', 'todayLabel', 'today', 'subjectsToday'));
     }
 
     public function store(Request $request)

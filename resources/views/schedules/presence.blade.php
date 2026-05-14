@@ -1,28 +1,53 @@
 @extends('layouts.app')
 
 @section('title', 'Kehadiran ' . $className . ' — SITEXA Absensi')
-@section('page_title', 'Kehadiran hari ini')
+@section('page_title', 'Mata Pelajaran Hari Ini')
 @section('page_subtitle', $className . ' · ' . $todayLabel . ' (WIB)')
 
 @section('content')
-<div class="mx-auto max-w-lg space-y-8 animate-fade-in">
+<div class="mx-auto max-w-4xl space-y-8 animate-fade-in">
     <div>
         <a href="{{ route('schedules.index') }}" class="text-sm font-semibold text-sky-700 hover:underline">← Kembali ke jadwal</a>
     </div>
 
-    <div class="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <p class="text-sm font-medium text-slate-500">Jumlah siswa hadir</p>
-        <p class="mt-2 text-5xl font-bold tabular-nums tracking-tight text-slate-900 sm:text-6xl">{{ $hadirCount }}</p>
-        <p class="mt-4 text-sm text-slate-600">
-            dari <span class="font-semibold text-slate-900">{{ $totalStudents }}</span> siswa terdaftar di kelas ini
-        </p>
-        <p class="mt-2 text-xs text-slate-500">
-            Tanggal sistem: {{ $today }} · status <span class="font-mono font-medium">hadir</span> pada tanggal tersebut (Asia/Jakarta).
-        </p>
+    <div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Mata Pelajaran Hari Ini</h2>
+        
+        @if($subjectsToday->count() > 0)
+            <div class="space-y-4">
+                @foreach($subjectsToday as $index => $subject)
+                    <div class="rounded-3xl border-2 {{ $subject['is_running'] ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white' }} p-8 shadow-sm {{ $subject['is_running'] ? 'ring-2 ring-emerald-200' : '' }}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-4 pb-3 border-b {{ $subject['is_running'] ? 'border-emerald-200' : 'border-slate-100' }}">
+                                    <h3 class="text-2xl font-bold {{ $subject['is_running'] ? 'text-emerald-900' : 'text-slate-900' }}">{{ $subject['subject'] }}</h3>
+                                    @if($subject['is_running'])
+                                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 text-sm font-semibold animate-pulse">
+                                            <span class="w-2 h-2 bg-emerald-600 rounded-full"></span>
+                                            Sedang Berlangsung
+                                        </span>
+                                    @endif
+                                </div>
+                                <dl class="space-y-3">
+                                    <div>
+                                        <dt class="text-xs font-semibold uppercase tracking-wide {{ $subject['is_running'] ? 'text-emerald-700' : 'text-slate-500' }}">Waktu</dt>
+                                        <dd class="mt-1 text-lg font-semibold {{ $subject['is_running'] ? 'text-emerald-900' : 'text-slate-900' }}">{{ $subject['start_time'] }} - {{ $subject['end_time'] }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-xs font-semibold uppercase tracking-wide {{ $subject['is_running'] ? 'text-emerald-700' : 'text-slate-500' }}">Guru Pengajar</dt>
+                                        <dd class="mt-1 font-medium {{ $subject['is_running'] ? 'text-emerald-800' : 'text-slate-800' }}">{{ $subject['teacher_name'] }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
+                <p class="text-slate-600">Tidak ada jadwal untuk hari ini</p>
+            </div>
+        @endif
     </div>
-
-    <p class="text-center text-sm text-slate-500">
-        Untuk rincian per siswa, buka <a href="{{ route('reports.absensi', ['class' => $className, 'start_date' => $today, 'end_date' => $today]) }}" class="font-semibold text-sky-700 hover:underline">Laporan absensi</a> dengan filter kelas dan tanggal yang sama.
-    </p>
 </div>
 @endsection
