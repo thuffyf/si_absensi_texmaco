@@ -66,7 +66,7 @@
                 <a
                     href="{{ route('schedules.index') }}"
                     title="Jadwal"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.index') ? 'nav-texmaco-active' : '' }}"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.*') ? 'nav-texmaco-active' : '' }}"
                 >
                     <span class="nav-icon" aria-hidden="true">JD</span>
                     <span class="nav-text">Jadwal</span>

@@ -103,6 +103,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/guru/{teacher}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
 
     // Jadwal Kelas
+    Route::get('/jadwal/hadir/{slug}', [ScheduleController::class, 'presence'])
+        ->name('schedules.presence')
+        ->where('slug', 'x-tei|xi-tei|xii-tei');
     Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedules.index');
     Route::post('/jadwal', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::get('/jadwal/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');

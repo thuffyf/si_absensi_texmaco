@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             TeacherSeeder::class,
+            HomeroomSeeder::class,
             StudentSeeder::class,
             ScheduleSeeder::class,
             NfcDeviceSeeder::class,
