@@ -49,6 +49,19 @@ class ReportController extends Controller
 
         $rows = $students->map(function ($student) use ($attendances) {
             $studentRecords = $attendances->where('student_id', $student->id);
+            $lastWithTime = $studentRecords
+                ->whereNotNull('attendance_time')
+                ->sortByDesc(function ($record) {
+                    $date = $record->attendance_date?->format('Y-m-d') ?? '';
+                    $time = (string) ($record->attendance_time ?? '');
+                    return $date . ' ' . $time;
+                })
+                ->first();
+
+            $lastTime = '-';
+            if ($lastWithTime && is_string($lastWithTime->attendance_time)) {
+                $lastTime = substr($lastWithTime->attendance_time, 0, 5);
+            }
 
             return [
                 'student' => $student,
@@ -57,6 +70,7 @@ class ReportController extends Controller
                 'sakit' => $studentRecords->where('status', 'sakit')->count(),
                 'alpha' => $studentRecords->where('status', 'alpha')->count(),
                 'total' => $studentRecords->count(),
+                'last_time' => $lastTime,
             ];
         });
 

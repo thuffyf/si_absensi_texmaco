@@ -83,6 +83,7 @@
                     <th>Nama Siswa</th>
                     <th>Kelas</th>
                     <th>Hadir</th>
+                    <th>Jam Hadir</th>
                     <th>Izin</th>
                     <th>Sakit</th>
                     <th>Alpha</th>
@@ -106,6 +107,7 @@
                         </td>
                         <td>{{ $student->class_name }}</td>
                         <td><span class="badge-success">{{ $row['hadir'] }}</span></td>
+                        <td>{{ $row['last_time'] }}</td>
                         <td><span class="badge-warning">{{ $row['izin'] }}</span></td>
                         <td><span class="badge-info">{{ $row['sakit'] }}</span></td>
                         <td><span class="badge-danger">{{ $row['alpha'] }}</span></td>

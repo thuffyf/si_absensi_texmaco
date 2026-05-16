@@ -33,8 +33,8 @@
         <input name="class_name" value="{{ old('class_name', $schedule->class_name) }}" class="input-field" placeholder="Kelas" required />
         <input name="subject" value="{{ old('subject', $schedule->subject) }}" class="input-field" placeholder="Mata pelajaran" required />
         <input name="day_of_week" value="{{ old('day_of_week', $schedule->day_of_week) }}" class="input-field" placeholder="Hari" required />
-        <input name="start_time" type="time" value="{{ old('start_time', $schedule->start_time) }}" class="input-field" required />
-        <input name="end_time" type="time" value="{{ old('end_time', $schedule->end_time) }}" class="input-field" required />
+        <input name="start_time" type="time" value="{{ old('start_time', $schedule->start_time?->format('H:i')) }}" class="input-field" required />
+        <input name="end_time" type="time" value="{{ old('end_time', $schedule->end_time?->format('H:i')) }}" class="input-field" required />
         <input name="total_students" type="number" min="0" value="{{ old('total_students', $schedule->total_students) }}" class="input-field" placeholder="Jumlah siswa" />
         <select name="status" class="input-field text-sm" required>
             <option value="aktif" @selected(old('status', $schedule->status) === 'aktif')>Aktif</option>

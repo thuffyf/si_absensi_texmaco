@@ -16,7 +16,7 @@ class StudentController extends Controller
             $search = $request->string('search');
             $query->where(function ($builder) use ($search) {
                 $builder->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('nim', 'like', '%' . $search . '%')
+                    ->orWhere('nis', 'like', '%' . $search . '%')
                     ->orWhere('class_name', 'like', '%' . $search . '%');
             });
         }
@@ -41,7 +41,7 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nim' => 'required|string|max:32|unique:students,nim',
+            'nis' => 'required|string|max:32|unique:students,nis',
             'name' => 'required|string|max:255',
             'username' => 'nullable|string|max:100|unique:students,username',
             'email' => 'nullable|email|max:255',
@@ -72,7 +72,7 @@ class StudentController extends Controller
     public function update(Request $request, Student $student)
     {
         $data = $request->validate([
-            'nim' => 'required|string|max:32|unique:students,nim,' . $student->id,
+            'nis' => 'required|string|max:32|unique:students,nis,' . $student->id,
             'name' => 'required|string|max:255',
             'username' => 'nullable|string|max:100|unique:students,username,' . $student->id,
             'email' => 'nullable|email|max:255',

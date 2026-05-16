@@ -11,12 +11,12 @@ class LeaveRequestSeeder extends Seeder
 {
     public function run(): void
     {
-        $students = Student::pluck('id', 'nim');
+        $students = Student::pluck('id', 'nis');
         $now = Carbon::now();
 
         $requests = [
             [
-                'nim' => '12001',
+            'nis' => '12001',
                 'type' => 'izin',
                 'start_date' => $now->copy()->subDays(1)->toDateString(),
                 'end_date' => $now->copy()->toDateString(),
@@ -25,7 +25,7 @@ class LeaveRequestSeeder extends Seeder
                 'requested_at' => $now->copy()->subHours(6),
             ],
             [
-                'nim' => '12002',
+                'nis' => '12002',
                 'type' => 'sakit',
                 'start_date' => $now->copy()->toDateString(),
                 'end_date' => $now->copy()->toDateString(),
@@ -34,7 +34,7 @@ class LeaveRequestSeeder extends Seeder
                 'requested_at' => $now->copy()->subHours(4),
             ],
             [
-                'nim' => '12004',
+                'nis' => '12004',
                 'type' => 'izin',
                 'start_date' => $now->copy()->subDays(3)->toDateString(),
                 'end_date' => $now->copy()->subDays(2)->toDateString(),
@@ -44,7 +44,7 @@ class LeaveRequestSeeder extends Seeder
                 'responded_at' => $now->copy()->subDays(3),
             ],
             [
-                'nim' => '12005',
+                'nis' => '12005',
                 'type' => 'sakit',
                 'start_date' => $now->copy()->subDays(5)->toDateString(),
                 'end_date' => $now->copy()->subDays(5)->toDateString(),
@@ -54,7 +54,7 @@ class LeaveRequestSeeder extends Seeder
                 'responded_at' => $now->copy()->subDays(5),
             ],
             [
-                'nim' => '12003',
+                'nis' => '12003',
                 'type' => 'izin',
                 'start_date' => $now->copy()->subDays(2)->toDateString(),
                 'end_date' => $now->copy()->subDays(2)->toDateString(),
@@ -66,7 +66,7 @@ class LeaveRequestSeeder extends Seeder
         ];
 
         foreach ($requests as $request) {
-            $studentId = $students->get($request['nim']);
+            $studentId = $students->get($request['nis']);
             if (!$studentId) {
                 continue;
             }

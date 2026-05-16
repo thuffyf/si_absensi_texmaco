@@ -88,7 +88,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="font-semibold text-white truncate">Rafa Prakasa</p>
-                            <p class="text-xs text-gray-400">NIM: 12001 | XII TEI</p>
+                            <p class="text-xs text-gray-400">NIS: 12001 | XII TEI</p>
                             <p class="text-xs text-gray-500 mt-1">UID Card: E4-27-9B-04</p>
                         </div>
                         <div class="text-right flex-shrink-0">
@@ -112,7 +112,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="font-semibold text-white truncate">Silvi Lestari</p>
-                            <p class="text-xs text-gray-400">NIM: 12002 | XII TEI</p>
+                            <p class="text-xs text-gray-400">NIS: 12002 | XII TEI</p>
                             <p class="text-xs text-gray-500 mt-1">UID Card: A1-5F-8C-12</p>
                         </div>
                         <div class="text-right flex-shrink-0">
@@ -136,7 +136,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="font-semibold text-white truncate">Adi Pratama</p>
-                            <p class="text-xs text-gray-400">NIM: 12003 | XII TEI</p>
+                            <p class="text-xs text-gray-400">NIS: 12003 | XII TEI</p>
                             <p class="text-xs text-gray-500 mt-1">UID Card: D3-8A-1F-67</p>
                         </div>
                         <div class="text-right flex-shrink-0">
@@ -160,7 +160,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="font-semibold text-white truncate">Mira Putri</p>
-                            <p class="text-xs text-gray-400">NIM: 12004 | XII TEI</p>
+                            <p class="text-xs text-gray-400">NIS: 12004 | XII TEI</p>
                             <p class="text-xs text-gray-500 mt-1">UID Card: F2-B4-3E-09</p>
                         </div>
                         <div class="text-right flex-shrink-0">
@@ -184,7 +184,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="font-semibold text-white truncate">Danu Wijaya</p>
-                            <p class="text-xs text-gray-400">NIM: 12005 | XII TEI</p>
+                            <p class="text-xs text-gray-400">NIS: 12005 | XII TEI</p>
                             <p class="text-xs text-gray-500 mt-1">UID Card: C6-9D-5A-14</p>
                         </div>
                         <div class="text-right flex-shrink-0">

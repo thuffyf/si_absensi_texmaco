@@ -42,7 +42,7 @@
         <select name="student_id" class="input-field text-sm" required>
             <option value="">Pilih siswa</option>
             @foreach($students as $student)
-                <option value="{{ $student->id }}" @selected(old('student_id') == $student->id)>{{ $student->name }} ({{ $student->nim }})</option>
+                <option value="{{ $student->id }}" @selected(old('student_id') == $student->id)>{{ $student->name }} ({{ $student->nis }})</option>
             @endforeach
         </select>
         <select name="type" class="input-field text-sm" required>
@@ -63,7 +63,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <h4 class="text-lg font-bold text-white">{{ $request->student?->name ?? '-' }}</h4>
-                    <p class="text-sm text-gray-400">NIM: {{ $request->student?->nim ?? '-' }}</p>
+                    <p class="text-sm text-gray-400">NIS: {{ $request->student?->nis ?? '-' }}</p>
                     <p class="text-sm text-gray-400">Kelas: {{ $request->student?->class_name ?? '-' }}</p>
                 </div>
                 <div>
@@ -101,7 +101,7 @@
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h4 class="font-semibold text-white">{{ $request->student?->name ?? '-' }}</h4>
-                        <p class="text-xs text-gray-400">NIM: {{ $request->student?->nim ?? '-' }} | {{ ucfirst($request->type) }}</p>
+                        <p class="text-xs text-gray-400">NIS: {{ $request->student?->nis ?? '-' }} | {{ ucfirst($request->type) }}</p>
                     </div>
                     <span class="badge-success">Disetujui</span>
                 </div>
@@ -122,7 +122,7 @@
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h4 class="font-semibold text-white">{{ $request->student?->name ?? '-' }}</h4>
-                        <p class="text-xs text-gray-400">NIM: {{ $request->student?->nim ?? '-' }} | {{ ucfirst($request->type) }}</p>
+                        <p class="text-xs text-gray-400">NIS: {{ $request->student?->nis ?? '-' }} | {{ ucfirst($request->type) }}</p>
                     </div>
                     <span class="badge-danger">Ditolak</span>
                 </div>

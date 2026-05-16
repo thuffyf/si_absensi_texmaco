@@ -12,7 +12,7 @@
             'jenis' => 'izin',
             'label' => 'Izin',
             'siswa' => 'Rafa Prakasa',
-            'nim' => '12001',
+            'nis' => '12001',
             'kelas' => 'XII TEI',
             'guru' => 'Drs. Bambang Wijaya, M.Pd.',
             'mapel' => 'Bahasa Indonesia',
@@ -24,7 +24,7 @@
             'jenis' => 'alpha',
             'label' => 'Alpha (tidak hadir)',
             'siswa' => 'Silvi Lestari',
-            'nim' => '12002',
+            'nis' => '12002',
             'kelas' => 'XII TEI',
             'guru' => 'Fitriani, S.Pd.',
             'mapel' => 'Matematika',
@@ -36,7 +36,7 @@
             'jenis' => 'izin',
             'label' => 'Izin',
             'siswa' => 'Adi Pratama',
-            'nim' => '12003',
+            'nis' => '12003',
             'kelas' => 'XII TEI',
             'guru' => 'Hendra Kusuma, S.Pd.',
             'mapel' => 'Fisika',
@@ -66,7 +66,7 @@
                             'bg-rose-100 text-rose-900' => $item['jenis'] === 'alpha',
                         ])>{{ $item['label'] }}</span>
                         <h2 class="mt-3 text-xl font-bold text-slate-900">{{ $item['siswa'] }}</h2>
-                        <p class="mt-1 text-sm text-slate-500">NIM {{ $item['nim'] }} · {{ $item['kelas'] }}</p>
+                        <p class="mt-1 text-sm text-slate-500">NIS {{ $item['nis'] }} · {{ $item['kelas'] }}</p>
                     </div>
                     <div class="text-right text-sm text-slate-600">
                         <p class="font-semibold text-slate-800">{{ $item['guru'] }}</p>

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -155,6 +156,9 @@ Route::middleware(['auth'])->group(function () {
         $user->email = $request->email;
 
         if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            if (!empty($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
             $photoPath = $request->file('photo')->store('profile-photos', 'public');
             $user->photo = $photoPath;
         }
@@ -163,5 +167,21 @@ Route::middleware(['auth'])->group(function () {
 
         return back()->with('success', 'Profile berhasil diperbarui.');
     })->name('profile.update');
+
+    Route::post('/profile/delete-photo', function () {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['success' => false], 401);
+        }
+
+        if (!empty($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
+            $user->photo = null;
+            $user->save();
+        }
+
+        return response()->json(['success' => true]);
+    })->name('profile.delete-photo');
 });
 

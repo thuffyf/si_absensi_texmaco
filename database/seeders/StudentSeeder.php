@@ -12,7 +12,7 @@ class StudentSeeder extends Seeder
     {
         $students = [
             [
-                'nim' => '12001',
+                'nis' => '12001',
                 'name' => 'Rafa Prakasa',
                 'username' => 'rafa',
                 'email' => 'rafa.prakasa@student.com',
@@ -26,7 +26,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0001-0001',
             ],
             [
-                'nim' => '12002',
+                'nis' => '12002',
                 'name' => 'Silvi Lestari',
                 'username' => 'silvi',
                 'email' => 'silvi.lestari@student.com',
@@ -40,7 +40,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0002-0002',
             ],
             [
-                'nim' => '12003',
+                'nis' => '12003',
                 'name' => 'Adi Pratama',
                 'username' => 'adi',
                 'email' => 'adi.pratama@student.com',
@@ -53,7 +53,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0003-0003',
             ],
             [
-                'nim' => '12004',
+                'nis' => '12004',
                 'name' => 'Mira Putri',
                 'username' => 'mira',
                 'email' => 'mira.putri@student.com',
@@ -67,7 +67,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0004-0004',
             ],
             [
-                'nim' => '12005',
+                'nis' => '12005',
                 'name' => 'Danu Wijaya',
                 'username' => 'danu',
                 'email' => 'danu.wijaya@student.com',
@@ -80,7 +80,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0005-0005',
             ],
             [
-                'nim' => '12006',
+                'nis' => '12006',
                 'name' => 'Budi Santoso',
                 'username' => 'budi',
                 'email' => 'budi.santoso@student.com',
@@ -94,7 +94,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0006-0006',
             ],
             [
-                'nim' => '12007',
+                'nis' => '12007',
                 'name' => 'Ani Wijaya',
                 'username' => 'ani',
                 'email' => 'ani.wijaya@student.com',
@@ -107,7 +107,7 @@ class StudentSeeder extends Seeder
                 'phone' => '0812-0007-0007',
             ],
             [
-                'nim' => '12008',
+                'nis' => '12008',
                 'name' => 'Citra Kusuma',
                 'username' => 'citra',
                 'email' => 'citra.kusuma@student.com',
@@ -124,7 +124,7 @@ class StudentSeeder extends Seeder
 
         foreach ($students as $student) {
             Student::updateOrCreate(
-                ['nim' => $student['nim']],
+                ['nis' => $student['nis']],
                 $student
             );
         }

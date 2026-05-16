@@ -14,12 +14,18 @@ class Teacher extends Model
         'name',
         'email',
         'password',
+        'api_token',
         'role',
         'subject',
         'phone',
         'date_of_birth',
         'status',
         'photo_path',
+    ];
+
+    protected $hidden = [
+        'password',
+        'api_token',
     ];
 
     protected $casts = [

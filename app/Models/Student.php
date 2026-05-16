@@ -10,11 +10,12 @@ class Student extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nim',
+        'nis',
         'name',
         'username',
         'email',
         'password',
+        'api_token',
         'date_of_birth',
         'class_name',
         'major',
@@ -23,6 +24,11 @@ class Student extends Model
         'uid_kartu',
         'phone',
         'photo_path',
+    ];
+
+    protected $hidden = [
+        'password',
+        'api_token',
     ];
 
     protected $casts = [
@@ -37,5 +43,10 @@ class Student extends Model
     public function leaveRequests()
     {
         return $this->hasMany(LeaveRequest::class);
+    }
+
+    public function devices()
+    {
+        return $this->hasMany(StudentDevice::class);
     }
 }

@@ -24,7 +24,7 @@
     <form method="POST" action="{{ route('students.update', $student) }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @csrf
         @method('PUT')
-        <input name="nim" value="{{ old('nim', $student->nim) }}" class="input-field" placeholder="NIM" required />
+        <input name="nis" value="{{ old('nis', $student->nis) }}" class="input-field" placeholder="NIS" required />
         <input name="name" value="{{ old('name', $student->name) }}" class="input-field" placeholder="Nama siswa" required />
         <input name="email" value="{{ old('email', $student->email) }}" class="input-field" placeholder="Email" />
         <input name="class_name" value="{{ old('class_name', $student->class_name) }}" class="input-field" placeholder="Kelas" required />

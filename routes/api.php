@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\MobileAuthController;
+use App\Http\Controllers\Api\MobileStudentController;
+use App\Http\Controllers\Api\MobileTeacherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +19,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('mobile')->group(function () {
+    Route::post('/login/student', [MobileAuthController::class, 'loginStudent']);
+    Route::post('/login/teacher', [MobileAuthController::class, 'loginTeacher']);
+    Route::post('/register', [MobileAuthController::class, 'registerDevice']);
+
+    Route::get('/student/summary', [MobileStudentController::class, 'summary']);
+    Route::get('/teacher/absences', [MobileTeacherController::class, 'absences']);
 });

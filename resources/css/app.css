@@ -183,6 +183,12 @@ body {
     @apply bg-white;
 }
 
+/* Hide native password reveal icon to avoid duplicate eye toggle */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
 /* ========== Scrollbar Custom ========== */
 
 .custom-scrollbar::-webkit-scrollbar {

@@ -75,6 +75,7 @@ class ScheduleController extends Controller
 
         $todayLabel = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
         $today = Carbon::now()->toDateString();
+        $now = Carbon::now();
         
         // Get day name in Indonesian (Senin, Selasa, etc.)
         $dayNames = [
@@ -89,9 +90,6 @@ class ScheduleController extends Controller
         
         $todayDayName = $dayNames[Carbon::now()->format('l')] ?? Carbon::now()->format('l');
         
-        // Get current time for filtering
-        $currentTime = Carbon::now()->format('H:i');
-        
         // Get schedules for this class on this day
         $todaySchedules = Schedule::query()
             ->where('class_name', $className)
@@ -101,14 +99,15 @@ class ScheduleController extends Controller
             ->get();
         
         // Get 3 subjects that are currently running or about to run
-        $subjectsToday = $todaySchedules->map(function ($schedule) use ($currentTime) {
-            // Check if this subject is currently running
-            $isRunning = $currentTime >= $schedule->start_time && $currentTime <= $schedule->end_time;
-            
+        $subjectsToday = $todaySchedules->map(function ($schedule) use ($now) {
+            $startTime = $this->parseScheduleTime($schedule->start_time, $now);
+            $endTime = $this->parseScheduleTime($schedule->end_time, $now);
+            $isRunning = $now->between($startTime, $endTime, true);
+
             return [
                 'subject' => $schedule->subject,
-                'start_time' => $schedule->start_time,
-                'end_time' => $schedule->end_time,
+                'start_time' => $startTime->format('H:i'),
+                'end_time' => $endTime->format('H:i'),
                 'teacher_name' => $schedule->teacher?->name ?? '—',
                 'is_running' => $isRunning,
             ];
@@ -125,7 +124,7 @@ class ScheduleController extends Controller
             'subject' => 'required|string|max:120',
             'day_of_week' => 'required|string|max:20',
             'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'total_students' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,idle',
         ]);
@@ -150,7 +149,7 @@ class ScheduleController extends Controller
             'subject' => 'required|string|max:120',
             'day_of_week' => 'required|string|max:20',
             'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'total_students' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,idle',
         ]);
@@ -165,5 +164,12 @@ class ScheduleController extends Controller
         $schedule->delete();
 
         return back()->with('success', 'Jadwal berhasil dihapus.');
+    }
+
+    private function parseScheduleTime(mixed $value, Carbon $reference): Carbon
+    {
+        $time = $value instanceof Carbon ? $value->copy() : Carbon::parse((string) $value);
+
+        return $time->setDate($reference->year, $reference->month, $reference->day);
     }
 }

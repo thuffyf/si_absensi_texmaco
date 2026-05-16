@@ -21,7 +21,7 @@ class Attendance extends Model
 
     protected $casts = [
         'attendance_date' => 'date',
-        'attendance_time' => 'datetime:H:i',
+        'attendance_time' => 'string',
     ];
 
     public function student()

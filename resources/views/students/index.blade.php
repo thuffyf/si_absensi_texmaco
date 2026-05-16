@@ -33,7 +33,7 @@
     <h2 class="text-lg font-bold text-white mb-4">Tambah Siswa</h2>
     <form method="POST" action="{{ route('students.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @csrf
-        <input name="nim" value="{{ old('nim') }}" class="input-field" placeholder="NIM" required />
+        <input name="nis" value="{{ old('nis') }}" class="input-field" placeholder="NIS" required />
         <input name="name" value="{{ old('name') }}" class="input-field" placeholder="Nama siswa" required />
         <input name="email" value="{{ old('email') }}" class="input-field" placeholder="Email (opsional)" />
         <input name="class_name" value="{{ old('class_name') }}" class="input-field" placeholder="Kelas" required />
@@ -59,7 +59,7 @@
 <div class="glass-card p-6 rounded-2xl mb-6">
     <form method="GET" action="{{ route('students.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="lg:col-span-2">
-            <input type="text" name="search" value="{{ request('search') }}" class="input-field w-full" placeholder="Cari nama, NIM, atau kelas" />
+            <input type="text" name="search" value="{{ request('search') }}" class="input-field w-full" placeholder="Cari nama, NIS, atau kelas" />
         </div>
         <input type="text" name="class" value="{{ request('class') }}" class="input-field text-sm" placeholder="Kelas" />
         <select name="status" class="input-field text-sm">
@@ -86,7 +86,7 @@
         <thead>
             <tr>
                 <th>Foto & Nama</th>
-                <th>NIM / NIS</th>
+                <th>NIS</th>
                 <th>Kelas</th>
                 <th>Jurusan</th>
                 <th>Status</th>
@@ -121,7 +121,7 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="font-mono text-neon-cyan">{{ $student->nim }}</span></td>
+                    <td><span class="font-mono text-neon-cyan">{{ $student->nis }}</span></td>
                     <td>{{ $student->class_name }}</td>
                     <td>{{ $student->major ?? '-' }}</td>
                     <td>

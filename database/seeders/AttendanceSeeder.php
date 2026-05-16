@@ -13,7 +13,7 @@ class AttendanceSeeder extends Seeder
 {
     public function run(): void
     {
-        $students = Student::orderBy('nim')->get();
+        $students = Student::orderBy('nis')->get();
         $deviceId = NfcDevice::orderBy('id')->value('id');
         $scheduleId = Schedule::orderBy('id')->value('id');
         $today = Carbon::today();
