@@ -162,6 +162,13 @@
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-4">
+                    @php
+                        $pendingIzinCount = \App\Models\LeaveRequest::query()
+                            ->where('status', 'pending')
+                            ->where('type', 'izin')
+                            ->count();
+                    @endphp
+
                     <div class="hidden sm:block">
                         <label class="sr-only" for="global-search">Cari</label>
                         <input
@@ -217,17 +224,22 @@
                 </div>
             </header>
 
-            <main
-                @class([
-                    'flex-1 px-4 py-6 sm:px-6',
-                    'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden lg:py-3 lg:pb-4' => request()->routeIs('dashboard'),
-                ])
-            >
-                <div id="content-area" class="{{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }}">
-                    @yield('content')
-                </div>
-            </main>
-        </div>
+                    @if($pendingIzinCount > 0)
+                        <a
+                            href="{{ route('requests.izin-sakit', ['status' => 'pending', 'type' => 'izin']) }}"
+                            class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
+                            id="notification-btn"
+                            aria-label="Ada {{ $pendingIzinCount }} izin menunggu persetujuan"
+                            title="{{ $pendingIzinCount }} izin menunggu persetujuan"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span class="absolute -right-1 -top-1 inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                                {{ $pendingIzinCount > 9 ? '9+' : $pendingIzinCount }}
+                            </span>
+                        </a>
+                    @endif
     </div>
 
     <script>
