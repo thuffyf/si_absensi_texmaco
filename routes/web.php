@@ -3,7 +3,6 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\MonitoringController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NfcDeviceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
@@ -115,14 +114,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/request-izin-sakit', [LeaveRequestController::class, 'store'])->name('requests.store');
     Route::patch('/request-izin-sakit/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('requests.approve');
     Route::patch('/request-izin-sakit/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('requests.reject');
-
-    // Notifikasi: persetujuan laporan guru (izin / alpha)
-    Route::get('/notifikasi/persetujuan-guru', [NotificationController::class, 'teacherApprovals'])
-        ->name('notifications.guru-approvals');
-    Route::patch('/notifikasi/persetujuan-guru/{leaveRequest}/approve', [NotificationController::class, 'approve'])
-        ->name('notifications.approve');
-    Route::patch('/notifikasi/persetujuan-guru/{leaveRequest}/reject', [NotificationController::class, 'reject'])
-        ->name('notifications.reject');
 
     // Laporan Absensi
     Route::get('/laporan/absensi', [ReportController::class, 'absensi'])->name('reports.absensi');

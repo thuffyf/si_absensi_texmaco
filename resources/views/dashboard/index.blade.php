@@ -2,7 +2,9 @@
 
 @section('title', 'Dashboard — SITEXA Absensi')
 @section('page_title', 'Dashboard')
-@section('page_subtitle', 'SITEXA Absensi Texmaco Purwasari')
+@section('page_subtitle')
+    SITEXA Absensi Texmaco Purwasari - Kelas {{ $targetClass }}
+@endsection
 
 @section('content')
 @php
@@ -10,33 +12,33 @@
     $weekEnd = $weekEnd->locale('id');
 @endphp
 
-<div class="mx-auto flex w-full max-w-none flex-col gap-4 max-lg:space-y-1 lg:h-full lg:min-h-0 lg:gap-4 lg:overflow-hidden">
-    <div class="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5 lg:overflow-hidden">
+<div class="mx-auto flex w-full max-w-none flex-col gap-3 max-lg:space-y-1 lg:h-full lg:min-h-0 lg:gap-3 lg:overflow-hidden">
+    <div class="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-12 lg:gap-4 lg:overflow-hidden">
         <!-- Statistik (lebih lebar) -->
         <section class="flex min-h-0 flex-col lg:col-span-9 lg:overflow-hidden">
-            <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
+            <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900 lg:text-2xl">Statistik Setiap Hari</h2>
-                        <p class="mt-1 text-sm text-slate-500 lg:text-base">Jumlah siswa tap in per hari kerja</p>
+                        <h2 class="text-lg font-bold text-slate-900 lg:text-xl">Statistik Kehadiran - {{ $targetClass }}</h2>
+                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Jumlah siswa tap in per hari kerja</p>
                     </div>
                     <div class="flex shrink-0 flex-wrap items-center gap-2">
-                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 lg:text-sm">
+                        <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
                             {{ $weekStart->format('d') }} — {{ $weekEnd->format('d M Y') }}
                         </span>
-                        <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800 lg:text-sm">Minggu ini</span>
+                        <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800">Minggu ini</span>
                     </div>
                 </div>
 
-                <div class="mt-4 grid shrink-0 grid-cols-2 gap-3 sm:grid-cols-4 lg:mt-5 lg:gap-4">
-                    <div class="rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-4 lg:p-5">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 lg:text-sm">Rata-rata / hari</p>
-                        <p class="mt-2 text-3xl font-bold tabular-nums text-slate-900 lg:text-4xl xl:text-5xl">{{ $avg }}</p>
+                <div class="mt-3 grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4 lg:mt-4 lg:gap-3">
+                    <div class="rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 lg:p-4">
+                        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 lg:text-xs">Rata-rata / hari</p>
+                        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900 lg:text-3xl">{{ $avgAttendance }}</p>
                     </div>
-                    <div class="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-white p-4 lg:p-5">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-sky-800 lg:text-sm">Puncak minggu</p>
-                        <p class="mt-2 text-3xl font-bold tabular-nums text-sky-900 lg:text-4xl xl:text-5xl">{{ $maxVal }}</p>
-                        <p class="mt-1 text-sm text-sky-800/90 lg:text-base">{{ $maxDay }}</p>
+                    <div class="rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50 to-white p-3 lg:p-4">
+                        <p class="text-[10px] font-semibold uppercase tracking-wide text-sky-800 lg:text-xs">Puncak minggu</p>
+                        <p class="mt-1 text-2xl font-bold tabular-nums text-sky-900 lg:text-3xl">{{ $maxAttendance }}</p>
+                        <p class="mt-0.5 text-xs text-sky-800/90 lg:text-sm">{{ $maxDay }}</p>
                     </div>
                     <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-white p-4 lg:p-5">
                         <p class="text-xs font-semibold uppercase tracking-wide text-emerald-900/90 lg:text-sm">vs minggu lalu</p>
@@ -50,8 +52,8 @@
                     </div>
                 </div>
 
-                <div class="mt-4 min-h-0 flex-1 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/40 p-3 lg:mt-5 lg:flex lg:items-stretch lg:justify-center lg:p-4">
-                    <svg viewBox="0 0 520 200" class="h-48 w-full max-lg:min-w-[300px] lg:h-full lg:min-h-[12rem] lg:max-h-none lg:w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grafik garis statistik per hari">
+                <div class="mt-3 min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40 p-2.5 lg:mt-4 lg:flex lg:items-stretch lg:justify-center lg:p-3">
+                    <svg viewBox="0 0 520 200" class="h-40 w-full max-lg:min-w-[300px] lg:h-full lg:min-h-[10rem] lg:max-h-none lg:w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grafik garis statistik per hari">
                         <defs>
                             <linearGradient id="lineFill" x1="0" x2="0" y1="0" y2="1">
                                 <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.22" />
@@ -62,17 +64,26 @@
                             <line x1="28" y1="{{ $gy }}" x2="480" y2="{{ $gy }}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 6" />
                         @endforeach
                         <text x="24" y="184" text-anchor="end" fill="#94a3b8" font-size="11">0</text>
-                        <text x="24" y="124" text-anchor="end" fill="#94a3b8" font-size="11">20</text>
-                        <text x="24" y="94" text-anchor="end" fill="#94a3b8" font-size="11">35</text>
+                        <text x="24" y="124" text-anchor="end" fill="#94a3b8" font-size="11">{{ round($maxVal * 0.6) }}</text>
+                        <text x="24" y="94" text-anchor="end" fill="#94a3b8" font-size="11">{{ $maxVal }}</text>
                         <text x="4" y="72" fill="#64748b" font-size="11" font-weight="600">Tap in</text>
-                        <polygon fill="url(#lineFill)" points="40,140 136,118 232,112 328,132 424,126 424,188 40,188" />
+                        @php
+                            $polygonPoints = '';
+                            $polylinePoints = '';
+                            foreach ($points as $p) {
+                                $polygonPoints .= $p['x'] . ',' . $p['y'] . ' ';
+                                $polylinePoints .= $p['x'] . ',' . $p['y'] . ' ';
+                            }
+                            $polygonPoints .= $points[count($points)-1]['x'] . ',188 ' . $points[0]['x'] . ',188';
+                        @endphp
+                        <polygon fill="url(#lineFill)" points="{{ $polygonPoints }}" />
                         <polyline
                             fill="none"
                             stroke="#0284c7"
                             stroke-width="3.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            points="40,140 136,118 232,112 328,132 424,126"
+                            points="{{ $polylinePoints }}"
                         />
                         @foreach ($points as $p)
                             <circle cx="{{ $p['x'] }}" cy="{{ $p['y'] }}" r="6" fill="#ffffff" stroke="#0284c7" stroke-width="2.5" />
@@ -86,7 +97,7 @@
                     <p class="text-sm text-slate-700 lg:text-base">
                         <span class="font-semibold text-sky-900">Ringkas:</span> {{ $summaryText }}
                     </p>
-                    <a href="{{ route('reports.absensi') }}" class="shrink-0 text-sm font-semibold text-sky-700 underline-offset-2 hover:underline lg:text-base">Laporan detail</a>
+                    <a href="{{ route('reports.absensi') }}" class="shrink-0 text-xs font-semibold text-sky-700 underline-offset-2 hover:underline lg:text-sm">Laporan detail</a>
                 </div>
             </div>
         </section>
@@ -103,13 +114,51 @@
                 <p class="mt-2 text-xs leading-snug text-slate-500 lg:text-sm">{{ $todayPercent }}% dari total siswa.</p>
             </section>
 
-            <section class="min-h-0 flex-1 overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm max-lg:min-h-[8rem] lg:flex lg:flex-col lg:p-5">
-                <h2 class="shrink-0 text-lg font-bold text-slate-900 lg:text-xl">Catatan</h2>
-                <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600 lg:mt-3 lg:flex-1 lg:space-y-2 lg:text-base lg:leading-snug lg:overflow-hidden">
-                    <li>Pastikan NFC gerbang online sebelum jam masuk.</li>
-                    <li>Data grafik dapat dihubungkan ke database nanti.</li>
-                    <li>Export laporan dari menu Laporan.</li>
-                </ul>
+            <!-- Status Perangkat NFC -->
+            <section class="shrink-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
+                <h2 class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 lg:text-xs">Status Perangkat NFC</h2>
+                <div class="mt-2 flex items-center gap-2.5">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full {{ $onlineDevices > 0 ? 'bg-emerald-100' : 'bg-red-100' }}">
+                        <svg class="h-4 w-4 {{ $onlineDevices > 0 ? 'text-emerald-600' : 'text-red-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            @if($onlineDevices > 0)
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v6"></path>
+                            @else
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 00-12.728 0M12 3v6"></path>
+                            @endif
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-base font-bold text-slate-900 lg:text-lg">{{ $onlineDevices }}/{{ $totalDevices }}</p>
+                        <p class="text-[10px] text-slate-500 lg:text-xs">Perangkat online</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tap In Terbaru -->
+            <section class="min-h-0 flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:flex lg:flex-col lg:p-4">
+                <h2 class="shrink-0 text-sm font-bold text-slate-900 lg:text-base">Tap In Terbaru</h2>
+                @if($recentTapIns->count() > 0)
+                    <div class="mt-2 flex-1 space-y-2 overflow-hidden lg:mt-2 lg:flex-1 lg:overflow-y-auto">
+                        @foreach($recentTapIns as $attendance)
+                            <div class="flex items-center gap-2 rounded-lg bg-slate-50 p-2">
+                                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-sky-100 text-[10px] font-bold text-sky-700">
+                                    {{ substr($attendance->student->name, 0, 1) }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="truncate text-xs font-medium text-slate-900 lg:text-sm">{{ $attendance->student->name }}</p>
+                                    <p class="text-[10px] text-slate-500 lg:text-xs">{{ $attendance->attendance_time }}</p>
+                                </div>
+                                @if($attendance->status === 'late')
+                                    <span class="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 lg:text-xs">Terlambat</span>
+                                @else
+                                    <span class="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800 lg:text-xs">Tepat</span>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="mt-2 text-xs text-slate-500 lg:text-sm">Belum ada data tap in hari ini.</p>
+                @endif
             </section>
         </div>
     </div>
