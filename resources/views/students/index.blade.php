@@ -72,13 +72,14 @@
                 <input name="name" value="{{ old('name') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama siswa" required />
                 <input name="email" value="{{ old('email') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email (opsional)" />
                 <select name="class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="X" @selected(old('class_name') === 'X')">X</option>
-                    <option value="XI" @selected(old('class_name') === 'XI')">XI</option>
-                    <option value="XII" @selected(old('class_name') === 'XII')">XII</option>
+                    <option value="X TEI" @selected(old('class_name') === 'X TEI')>X TEI</option>
+                    <option value="XI TEI" @selected(old('class_name') === 'XI TEI')>XI TEI</option>
+                    <option value="XII TEI" @selected(old('class_name') === 'XII TEI')>XII TEI</option>
                 </select>
                 <select name="major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                     <option value="TEI" @selected(old('major') === 'TEI')">TEI</option>
                 </select>
+                <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Tanggal Lahir" />
                 <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                     <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
                     <option value="tidak_aktif" @selected(old('status') === 'tidak_aktif')>Tidak aktif</option>

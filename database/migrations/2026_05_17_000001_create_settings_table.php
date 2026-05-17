@@ -8,11 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Skipped: schema already in English
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->json('data');
+            $table->timestamps();
+        });
     }
 
     public function down(): void
     {
-        // No-op
+        Schema::dropIfExists('settings');
     }
 };

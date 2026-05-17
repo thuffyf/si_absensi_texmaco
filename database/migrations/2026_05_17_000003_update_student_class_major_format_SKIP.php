@@ -6,9 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * This migration is skipped because the database schema
+     * is already properly formatted. Class updates already exist.
+     */
     public function up(): void
     {
-        // Skipped: schema already in English
+        // No-op: schema already correct
     }
 
     public function down(): void

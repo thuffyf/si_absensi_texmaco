@@ -33,13 +33,14 @@
             <input name="name" value="{{ old('name', $student->name) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama siswa" required />
             <input name="email" value="{{ old('email', $student->email) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
             <select name="class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                <option value="X" @selected(old('class_name', $student->class_name) === 'X')">X</option>
-                <option value="XI" @selected(old('class_name', $student->class_name) === 'XI')">XI</option>
-                <option value="XII" @selected(old('class_name', $student->class_name) === 'XII')">XII</option>
+                <option value="X TEI" @selected(old('class_name', $student->class_name) === 'X TEI')>X TEI</option>
+                <option value="XI TEI" @selected(old('class_name', $student->class_name) === 'XI TEI')>XI TEI</option>
+                <option value="XII TEI" @selected(old('class_name', $student->class_name) === 'XII TEI')>XII TEI</option>
             </select>
             <select name="major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                 <option value="TEI" @selected(old('major', $student->major) === 'TEI')">TEI</option>
             </select>
+            <input name="date_of_birth" type="date" value="{{ old('date_of_birth', $student->date_of_birth?->toDateString()) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
             <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                 <option value="aktif" @selected(old('status', $student->status) === 'aktif')>Aktif</option>
                 <option value="tidak_aktif" @selected(old('status', $student->status) === 'tidak_aktif')>Tidak aktif</option>

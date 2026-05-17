@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NfcDeviceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Models\User;
@@ -76,18 +80,11 @@ Route::middleware(['auth'])->group(function () {
     })->name('logout');
 
     // Dashboard Utama
-    Route::get('/', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
-    
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    });
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Monitoring NFC Real-Time
-    Route::get('/monitoring/nfc', function () {
-        return view('monitoring.nfc');
-    })->name('monitoring.nfc');
+    Route::get('/monitoring/nfc', [MonitoringController::class, 'nfc'])->name('monitoring.nfc');
 
     // Data Siswa
     Route::get('/siswa', [StudentController::class, 'index'])->name('students.index');
@@ -116,13 +113,16 @@ Route::middleware(['auth'])->group(function () {
     // Request Izin & Sakit
     Route::get('/request-izin-sakit', [LeaveRequestController::class, 'index'])->name('requests.izin-sakit');
     Route::post('/request-izin-sakit', [LeaveRequestController::class, 'store'])->name('requests.store');
-    Route::post('/request-izin-sakit/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('requests.approve');
-    Route::post('/request-izin-sakit/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('requests.reject');
+    Route::patch('/request-izin-sakit/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('requests.approve');
+    Route::patch('/request-izin-sakit/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('requests.reject');
 
     // Notifikasi: persetujuan laporan guru (izin / alpha)
-    Route::get('/notifikasi/persetujuan-guru', function () {
-        return view('notifications.guru-persetujuan');
-    })->name('notifications.guru-approvals');
+    Route::get('/notifikasi/persetujuan-guru', [NotificationController::class, 'teacherApprovals'])
+        ->name('notifications.guru-approvals');
+    Route::patch('/notifikasi/persetujuan-guru/{leaveRequest}/approve', [NotificationController::class, 'approve'])
+        ->name('notifications.approve');
+    Route::patch('/notifikasi/persetujuan-guru/{leaveRequest}/reject', [NotificationController::class, 'reject'])
+        ->name('notifications.reject');
 
     // Laporan Absensi
     Route::get('/laporan/absensi', [ReportController::class, 'absensi'])->name('reports.absensi');
@@ -135,9 +135,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/alat-nfc/{device}', [NfcDeviceController::class, 'destroy'])->name('devices.destroy');
 
     // Pengaturan Sistem
-    Route::get('/settings', function () {
-        return view('settings.index');
-    })->name('settings.index');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/settings/reset-defaults', [SettingsController::class, 'resetDefaults'])
+        ->name('settings.reset-defaults');
+    Route::post('/settings/export', [SettingsController::class, 'export'])->name('settings.export');
+    Route::post('/settings/cleanup', [SettingsController::class, 'cleanup'])->name('settings.cleanup');
+    Route::post('/settings/reset-data', [SettingsController::class, 'resetData'])->name('settings.reset-data');
+    Route::post('/settings/import-students', [SettingsController::class, 'importStudents'])
+        ->name('settings.import-students');
 
     // Profile
     Route::get('/profile', function () {

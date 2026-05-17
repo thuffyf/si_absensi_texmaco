@@ -42,25 +42,29 @@
 </div>
 
 <!-- Stats Overview -->
+@php
+    $successRate = $totalScans > 0 ? round(($successCount / $totalScans) * 100, 1) : 0;
+    $errorRate = $totalScans > 0 ? round(($failedCount / $totalScans) * 100, 1) : 0;
+@endphp
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-fade-in">
     <div class="stat-card">
         <p class="stat-label">Total Scan</p>
-        <div class="stat-number">1.240</div>
+        <div class="stat-number">{{ $totalScans }}</div>
         <p class="text-xs text-emerald-400 mt-2">Hari ini</p>
     </div>
     <div class="stat-card">
         <p class="stat-label">Scan Berhasil</p>
-        <div class="stat-number">1.232</div>
-        <p class="text-xs text-emerald-400 mt-2">99.4% Success Rate</p>
+        <div class="stat-number">{{ $successCount }}</div>
+        <p class="text-xs text-emerald-400 mt-2">{{ $successRate }}% Success Rate</p>
     </div>
     <div class="stat-card">
         <p class="stat-label">Scan Gagal</p>
-        <div class="stat-number">8</div>
-        <p class="text-xs text-red-400 mt-2">0.6% Error Rate</p>
+        <div class="stat-number">{{ $failedCount }}</div>
+        <p class="text-xs text-red-400 mt-2">{{ $errorRate }}% Error Rate</p>
     </div>
     <div class="stat-card">
         <p class="stat-label">Kartu Tidak Terdaftar</p>
-        <div class="stat-number">0</div>
+        <div class="stat-number">{{ $unknownCount }}</div>
         <p class="text-xs text-yellow-400 mt-2">Perlu Verifikasi</p>
     </div>
 </div>
@@ -79,149 +83,60 @@
 
         <!-- Event Items -->
         <div class="space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar">
-            <!-- Event 1 - Success -->
-            <div class="flex items-center gap-4 p-4 rounded-xl border border-emerald-500/20 hover:bg-glass-light/5 transition-all group animate-slide-in">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold shadow-glow-cyan-sm">✓</div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="font-semibold text-white truncate">Rafa Prakasa</p>
-                            <p class="text-xs text-gray-400">NIS: 12001 | XII TEI</p>
-                            <p class="text-xs text-gray-500 mt-1">UID Card: E4-27-9B-04</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="badge-success">Hadir</span>
-                            <p class="text-xs text-neon-cyan font-mono mt-1">07:45:23</p>
-                        </div>
+            @forelse($events as $event)
+                @php
+                    $borderClass = match ($event['status']) {
+                        'hadir' => 'border-emerald-500/20',
+                        'izin' => 'border-yellow-500/20',
+                        'sakit', 'alpha' => 'border-red-500/20',
+                        default => 'border-slate-500/20',
+                    };
+                    $iconClass = match ($event['status']) {
+                        'hadir' => 'from-emerald-400 to-emerald-500',
+                        'izin' => 'from-yellow-400 to-yellow-500',
+                        'sakit', 'alpha' => 'from-red-400 to-red-500',
+                        default => 'from-slate-400 to-slate-500',
+                    };
+                    $iconText = match ($event['status']) {
+                        'hadir' => '✓',
+                        'izin' => '⚠',
+                        'sakit', 'alpha' => '✕',
+                        default => '•',
+                    };
+                    $timeClass = match ($event['status']) {
+                        'hadir' => 'text-neon-cyan',
+                        'izin' => 'text-yellow-400',
+                        'sakit', 'alpha' => 'text-red-400',
+                        default => 'text-gray-400',
+                    };
+                @endphp
+                <div class="flex items-center gap-4 p-4 rounded-xl border {{ $borderClass }} hover:bg-glass-light/5 transition-all group">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $iconClass }} flex items-center justify-center text-white font-bold shadow-glow-cyan-sm">{{ $iconText }}</div>
                     </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs">
-                        <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">Pintu Utama</span>
-                        <span class="px-2 py-1 rounded bg-neon-blue/20 text-neon-blue">Scan OK</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event 2 - Success -->
-            <div class="flex items-center gap-4 p-4 rounded-xl border border-emerald-500/20 hover:bg-glass-light/5 transition-all group animate-slide-in" style="animation-delay: 0.1s;">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold shadow-glow-cyan-sm">✓</div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="font-semibold text-white truncate">Silvi Lestari</p>
-                            <p class="text-xs text-gray-400">NIS: 12002 | XII TEI</p>
-                            <p class="text-xs text-gray-500 mt-1">UID Card: A1-5F-8C-12</p>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="font-semibold text-white truncate">{{ $event['student_name'] }}</p>
+                                <p class="text-xs text-gray-400">NIS: {{ $event['nis'] }} | {{ $event['class_name'] }}</p>
+                                <p class="text-xs text-gray-500 mt-1">UID Card: {{ $event['uid_kartu'] }}</p>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <span class="{{ $event['badge_class'] }}">{{ $event['status_label'] }}</span>
+                                <p class="text-xs {{ $timeClass }} font-mono mt-1">{{ $event['time'] }}</p>
+                            </div>
                         </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="badge-success">Hadir</span>
-                            <p class="text-xs text-neon-cyan font-mono mt-1">07:44:52</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs">
-                        <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">Pintu Utama</span>
-                        <span class="px-2 py-1 rounded bg-neon-blue/20 text-neon-blue">Scan OK</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event 3 - Warning -->
-            <div class="flex items-center gap-4 p-4 rounded-xl border border-yellow-500/20 hover:bg-glass-light/5 transition-all group animate-slide-in" style="animation-delay: 0.2s;">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center text-white font-bold shadow-glow-cyan-sm">⚠</div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="font-semibold text-white truncate">Adi Pratama</p>
-                            <p class="text-xs text-gray-400">NIS: 12003 | XII TEI</p>
-                            <p class="text-xs text-gray-500 mt-1">UID Card: D3-8A-1F-67</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="badge-warning">Izin</span>
-                            <p class="text-xs text-yellow-400 font-mono mt-1">07:43:15</p>
+                        <div class="mt-3 flex items-center gap-2 text-xs">
+                            <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">{{ $event['device_name'] }}</span>
+                            <span class="px-2 py-1 rounded bg-neon-blue/20 text-neon-blue">Scan OK</span>
                         </div>
                     </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs">
-                        <span class="px-2 py-1 rounded bg-yellow-500/20 text-yellow-300">Pintu Utama</span>
-                        <span class="px-2 py-1 rounded bg-yellow-500/20 text-yellow-300">Izin Terverifikasi</span>
-                    </div>
                 </div>
-            </div>
-
-            <!-- Event 4 - Success -->
-            <div class="flex items-center gap-4 p-4 rounded-xl border border-emerald-500/20 hover:bg-glass-light/5 transition-all group animate-slide-in" style="animation-delay: 0.3s;">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold shadow-glow-cyan-sm">✓</div>
+            @empty
+                <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-gray-400">
+                    Belum ada event absensi hari ini.
                 </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="font-semibold text-white truncate">Mira Putri</p>
-                            <p class="text-xs text-gray-400">NIS: 12004 | XII TEI</p>
-                            <p class="text-xs text-gray-500 mt-1">UID Card: F2-B4-3E-09</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="badge-success">Hadir</span>
-                            <p class="text-xs text-neon-cyan font-mono mt-1">07:42:41</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs">
-                        <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">Pintu Belakang</span>
-                        <span class="px-2 py-1 rounded bg-neon-blue/20 text-neon-blue">Scan OK</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event 5 - Danger -->
-            <div class="flex items-center gap-4 p-4 rounded-xl border border-red-500/20 hover:bg-glass-light/5 transition-all group animate-slide-in" style="animation-delay: 0.4s;">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center text-white font-bold shadow-glow-cyan-sm">✕</div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="font-semibold text-white truncate">Danu Wijaya</p>
-                            <p class="text-xs text-gray-400">NIS: 12005 | XII TEI</p>
-                            <p class="text-xs text-gray-500 mt-1">UID Card: C6-9D-5A-14</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="badge-danger">Sakit</span>
-                            <p class="text-xs text-red-400 font-mono mt-1">07:15:30</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs">
-                        <span class="px-2 py-1 rounded bg-red-500/20 text-red-300">Pintu Utama</span>
-                        <span class="px-2 py-1 rounded bg-red-500/20 text-red-300">Sakit Terverifikasi</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event 6 - Error -->
-            <div class="flex items-center gap-4 p-4 rounded-xl border border-red-500/20 hover:bg-glass-light/5 transition-all group animate-slide-in" style="animation-delay: 0.5s;">
-                <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold shadow-lg">!</div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="font-semibold text-white truncate">Error: Kartu Tidak Terdaftar</p>
-                            <p class="text-xs text-gray-400">UID: 42-7C-E5-8B (Unknown)</p>
-                            <p class="text-xs text-gray-500 mt-1">Diperlukan pendaftaran ulang kartu</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="badge-danger">Error</span>
-                            <p class="text-xs text-red-400 font-mono mt-1">07:05:18</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs">
-                        <span class="px-2 py-1 rounded bg-red-500/20 text-red-300">Pintu Utama</span>
-                        <button class="px-2 py-1 rounded bg-neon-cyan/20 text-neon-cyan hover:bg-neon-cyan/30">Daftarkan Kartu</button>
-                    </div>
-                </div>
-            </div>
+            @endforelse
         </div>
     </div>
 
@@ -257,41 +172,31 @@
             <h4 class="text-lg font-bold text-white mb-4">Status Perangkat</h4>
 
             <div class="space-y-3">
-                <!-- Device 1 -->
-                <div class="p-3 rounded-lg bg-glass-light/10 border border-emerald-500/30">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-semibold text-white">Gate 1</span>
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                @forelse($devices as $device)
+                    @php
+                        $statusBorder = match ($device->status) {
+                            'online' => 'border-emerald-500/30',
+                            'idle' => 'border-yellow-500/30',
+                            'offline' => 'border-red-500/30',
+                            default => 'border-slate-500/30',
+                        };
+                        $statusDot = match ($device->status) {
+                            'online' => 'bg-emerald-400',
+                            'idle' => 'bg-yellow-400',
+                            'offline' => 'bg-red-400',
+                            default => 'bg-slate-400',
+                        };
+                    @endphp
+                    <div class="p-3 rounded-lg bg-glass-light/10 border {{ $statusBorder }}">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-white">{{ $device->name }}</span>
+                            <span class="w-2 h-2 {{ $statusDot }} rounded-full animate-pulse"></span>
+                        </div>
+                        <p class="text-xs text-gray-400">Scans: <span class="text-neon-cyan font-bold">{{ $device->scan_today }}</span></p>
                     </div>
-                    <p class="text-xs text-gray-400">Scans: <span class="text-neon-cyan font-bold">245</span></p>
-                </div>
-
-                <!-- Device 2 -->
-                <div class="p-3 rounded-lg bg-glass-light/10 border border-emerald-500/30">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-semibold text-white">Gate 2</span>
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                    </div>
-                    <p class="text-xs text-gray-400">Scans: <span class="text-neon-cyan font-bold">189</span></p>
-                </div>
-
-                <!-- Device 3 -->
-                <div class="p-3 rounded-lg bg-glass-light/10 border border-yellow-500/30">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-semibold text-white">Gate 3</span>
-                        <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                    </div>
-                    <p class="text-xs text-gray-400">Scans: <span class="text-gray-500">0</span></p>
-                </div>
-
-                <!-- Device 4 -->
-                <div class="p-3 rounded-lg bg-glass-light/10 border border-red-500/30">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-semibold text-white">Gate 4</span>
-                        <span class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
-                    </div>
-                    <p class="text-xs text-gray-400">Status: <span class="text-red-400 font-bold">Offline</span></p>
-                </div>
+                @empty
+                    <div class="text-xs text-gray-400">Belum ada perangkat NFC.</div>
+                @endforelse
             </div>
         </div>
 

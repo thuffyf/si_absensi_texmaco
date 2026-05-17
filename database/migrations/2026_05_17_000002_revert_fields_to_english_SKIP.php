@@ -6,9 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * This migration is skipped because the database schema
+     * already uses English column names from initial creation.
+     * Renaming migrations were already applied previously.
+     */
     public function up(): void
     {
-        // Skipped: schema already in English
+        // No-op: schema already in English
     }
 
     public function down(): void

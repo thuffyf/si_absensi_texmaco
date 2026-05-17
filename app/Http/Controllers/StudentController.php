@@ -46,13 +46,13 @@ class StudentController extends Controller
             'username' => 'nullable|string|max:100|unique:students,username',
             'email' => 'nullable|email|max:255',
             'password' => 'nullable|string|min:6',
-            'date_of_birth' => 'nullable|date',
             'class_name' => 'required|string|max:100',
             'major' => 'nullable|string|max:100',
             'status' => 'required|in:aktif,tidak_aktif,lulus',
             'nfc_type' => 'required|in:kartu,handphone,belum_terdaftar',
             'uid_kartu' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:50',
+            'date_of_birth' => 'nullable|date',
         ]);
 
         if (!empty($data['password'])) {
@@ -77,13 +77,13 @@ class StudentController extends Controller
             'username' => 'nullable|string|max:100|unique:students,username,' . $student->id,
             'email' => 'nullable|email|max:255',
             'password' => 'nullable|string|min:6',
-            'date_of_birth' => 'nullable|date',
             'class_name' => 'required|string|max:100',
             'major' => 'nullable|string|max:100',
             'status' => 'required|in:aktif,tidak_aktif,lulus',
             'nfc_type' => 'required|in:kartu,handphone,belum_terdaftar',
             'uid_kartu' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:50',
+            'date_of_birth' => 'nullable|date',
         ]);
 
         if (!empty($data['password'])) {
