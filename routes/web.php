@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NfcDeviceController;
 use App\Http\Controllers\ReportController;
@@ -76,13 +77,9 @@ Route::middleware(['auth'])->group(function () {
     })->name('logout');
 
     // Dashboard Utama
-    Route::get('/', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    });
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Monitoring NFC Real-Time
     Route::get('/monitoring/nfc', function () {

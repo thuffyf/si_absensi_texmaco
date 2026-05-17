@@ -6,11 +6,6 @@
 
 @section('content')
 <div class="mx-auto max-w-6xl space-y-8 animate-fade-in">
-    <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Ringkasan per kelas</h1>
-        <p class="mt-1 text-sm text-slate-600 sm:text-base">Pilih kelas untuk melihat kehadiran hari ini.</p>
-    </div>
-
     @if(session('success'))
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {{ session('success') }}
