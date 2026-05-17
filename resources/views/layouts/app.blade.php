@@ -179,17 +179,33 @@
                         />
                     </div>
 
-                    <a
-                        href="{{ route('notifications.guru-approvals') }}"
-                        class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
-                        id="notification-btn"
-                        aria-label="Persetujuan izin dan alpha dari guru"
-                    >
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" title="Menunggu tindakan"></span>
-                    </a>
+                    @if($pendingIzinCount > 0)
+                        <a
+                            href="{{ route('notifications.guru-approvals') }}"
+                            class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
+                            id="notification-btn"
+                            aria-label="Ada {{ $pendingIzinCount }} persetujuan izin/sakit dari guru"
+                            title="{{ $pendingIzinCount }} izin/sakit menunggu persetujuan guru"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span class="absolute -right-1 -top-1 inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                                {{ $pendingIzinCount > 9 ? '9+' : $pendingIzinCount }}
+                            </span>
+                        </a>
+                    @else
+                        <a
+                            href="{{ route('notifications.guru-approvals') }}"
+                            class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
+                            id="notification-btn"
+                            aria-label="Persetujuan izin dan alpha dari guru"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </a>
+                    @endif
 
                     <div class="flex items-center gap-2 border-l border-slate-200 pl-3 sm:gap-3 sm:pl-4">
                         <div class="hidden text-right text-sm sm:block">
@@ -224,22 +240,17 @@
                 </div>
             </header>
 
-                    @if($pendingIzinCount > 0)
-                        <a
-                            href="{{ route('requests.izin-sakit', ['status' => 'pending', 'type' => 'izin']) }}"
-                            class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
-                            id="notification-btn"
-                            aria-label="Ada {{ $pendingIzinCount }} izin menunggu persetujuan"
-                            title="{{ $pendingIzinCount }} izin menunggu persetujuan"
-                        >
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                            <span class="absolute -right-1 -top-1 inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
-                                {{ $pendingIzinCount > 9 ? '9+' : $pendingIzinCount }}
-                            </span>
-                        </a>
-                    @endif
+            <main
+                @class([
+                    'flex-1 px-4 py-6 sm:px-6',
+                    'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden lg:py-3 lg:pb-4' => request()->routeIs('dashboard'),
+                ])
+            >
+                <div id="content-area" class="{{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }}">
+                    @yield('content')
+                </div>
+            </main>
+        </div>
     </div>
 
     <script>
