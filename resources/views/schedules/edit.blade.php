@@ -30,7 +30,11 @@
                 <option value="{{ $teacher->id }}" @selected(old('teacher_id', $schedule->teacher_id) == $teacher->id)>{{ $teacher->name }}</option>
             @endforeach
         </select>
-        <input name="class_name" value="{{ old('class_name', $schedule->class_name) }}" class="input-field" placeholder="Kelas" required />
+        <select name="class_name" class="input-field text-sm" required>
+            <option value="X" @selected(old('class_name', $schedule->class_name) === 'X')">X</option>
+            <option value="XI" @selected(old('class_name', $schedule->class_name) === 'XI')">XI</option>
+            <option value="XII" @selected(old('class_name', $schedule->class_name) === 'XII')">XII</option>
+        </select>
         <input name="subject" value="{{ old('subject', $schedule->subject) }}" class="input-field" placeholder="Mata pelajaran" required />
         <input name="day_of_week" value="{{ old('day_of_week', $schedule->day_of_week) }}" class="input-field" placeholder="Hari" required />
         <input name="start_time" type="time" value="{{ old('start_time', $schedule->start_time?->format('H:i')) }}" class="input-field" required />
