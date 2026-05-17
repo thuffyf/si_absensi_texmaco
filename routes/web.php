@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\NfcDeviceController;
@@ -116,6 +117,11 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/request-izin-sakit/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('requests.approve');
     Route::patch('/request-izin-sakit/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('requests.reject');
 
+    // Absensi (formerly Izin & Sakit)
+    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    Route::post('/absensi/sync', [AbsensiController::class, 'syncFromExternal'])->name('absensi.sync');
+
     // Notifikasi Guru
     Route::get('/notifications/guru-approvals', [NotificationController::class, 'teacherApprovals'])->name('notifications.guru-approvals');
     Route::patch('/notifications/guru-approvals/{leaveRequest}/approve', [NotificationController::class, 'approve'])->name('notifications.approve');
@@ -123,13 +129,15 @@ Route::middleware(['auth'])->group(function () {
 
     // Laporan Absensi
     Route::get('/laporan/absensi', [ReportController::class, 'absensi'])->name('reports.absensi');
+    Route::get('/laporan/absensi/download-csv', [ReportController::class, 'downloadCsv'])->name('reports.absensi.download-csv');
+    Route::get('/laporan/absensi/download-pdf', [ReportController::class, 'downloadPdf'])->name('reports.absensi.download-pdf');
 
     // Monitoring Alat NFC
-    Route::get('/alat-nfc', [NfcDeviceController::class, 'index'])->name('devices.nfc-tools');
-    Route::post('/alat-nfc', [NfcDeviceController::class, 'store'])->name('devices.store');
-    Route::get('/alat-nfc/{device}/edit', [NfcDeviceController::class, 'edit'])->name('devices.edit');
-    Route::put('/alat-nfc/{device}', [NfcDeviceController::class, 'update'])->name('devices.update');
-    Route::delete('/alat-nfc/{device}', [NfcDeviceController::class, 'destroy'])->name('devices.destroy');
+    // Route::get('/alat-nfc', [NfcDeviceController::class, 'index'])->name('devices.nfc-tools');
+    // Route::post('/alat-nfc', [NfcDeviceController::class, 'store'])->name('devices.store');
+    // Route::get('/alat-nfc/{device}/edit', [NfcDeviceController::class, 'edit'])->name('devices.edit');
+    // Route::put('/alat-nfc/{device}', [NfcDeviceController::class, 'update'])->name('devices.update');
+    // Route::delete('/alat-nfc/{device}', [NfcDeviceController::class, 'destroy'])->name('devices.destroy');
 
     // Pengaturan Sistem
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');

@@ -207,4 +207,41 @@ class ApiClient {
       return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
     }
   }
+
+  Future<ApiResult> fetchStudentAbsensi({
+    required String token,
+    String? from,
+    String? until,
+  }) async {
+    final query = <String, String>{};
+    if (from != null && from.isNotEmpty) {
+      query['from'] = from;
+    }
+    if (until != null && until.isNotEmpty) {
+      query['until'] = until;
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/mobile/student/absensi',
+    ).replace(queryParameters: query.isEmpty ? null : query);
+
+    try {
+      final response = await _client
+          .get(uri, headers: _jsonHeaders(token: token))
+          .timeout(timeout);
+
+      final payload = response.body.isNotEmpty
+          ? jsonDecode(response.body) as Map<String, dynamic>
+          : <String, dynamic>{};
+
+      return ApiResult(
+        ok: response.statusCode >= 200 && response.statusCode < 300,
+        message: payload['message']?.toString() ?? 'Request selesai.',
+        statusCode: response.statusCode,
+        data: payload,
+      );
+    } catch (error) {
+      return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
+    }
+  }
 }

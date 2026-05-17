@@ -2,32 +2,21 @@
 
 @section('title', 'NFC Monitor — SITEXA Absensi')
 @section('page_title', 'NFC Monitor')
+@section('page_subtitle', 'Monitoring tap-in siswa secara real-time')
 
 @section('content')
-<!-- Header -->
-<div class="mb-8 animate-fade-in">
-    <h1 class="text-4xl font-bold text-gradient mb-2">📡 NFC Real-Time Monitor</h1>
-    <p class="text-gray-400">Monitoring tap-in siswa secara real-time dengan visualisasi interaktif</p>
-</div>
-
-<!-- Control & Filter -->
-<div class="glass-card p-6 rounded-2xl mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-    <div class="flex items-center gap-4 w-full md:w-auto">
-        <div class="flex-1 md:flex-initial">
-            <select class="input-field text-sm">
-                <option>Semua Pintu</option>
-                <option>Pintu Utama</option>
-                <option>Pintu Belakang</option>
-                <option>Kantor TU</option>
-            </select>
+<div class="mx-auto max-w-6xl space-y-8 animate-fade-in">
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm font-medium text-slate-500">Total Scan</p>
+            <p class="text-3xl font-bold text-slate-900 mt-2">1.240</p>
+            <p class="text-xs text-emerald-600 mt-2">Hari ini</p>
         </div>
-        <div class="flex-1 md:flex-initial">
-            <select class="input-field text-sm">
-                <option>Semua Status</option>
-                <option>Berhasil ✓</option>
-                <option>Gagal ✕</option>
-                <option>Tidak Terdaftar 🔑</option>
-            </select>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm font-medium text-slate-500">Scan Berhasil</p>
+            <p class="text-3xl font-bold text-slate-900 mt-2">1.232</p>
+            <p class="text-xs text-emerald-600 mt-2">99.4% Success Rate</p>
         </div>
     </div>
     <div class="flex items-center gap-3">
@@ -140,36 +129,103 @@
         </div>
     </div>
 
-    <!-- Side Panel - Statistics & Visualization -->
-    <div class="space-y-6">
-        <!-- Live Status -->
-        <div class="glass-card p-6 rounded-2xl">
-            <h4 class="text-lg font-bold text-white mb-4">Visualisasi Live</h4>
-            
-            <!-- Scan Animation -->
-            <div class="relative w-32 h-32 mx-auto mb-6">
-                <svg class="w-full h-full" viewBox="0 0 100 100">
-                    <!-- Background Circle -->
-                    <circle cx="50" cy="50" r="45" fill="rgba(0, 217, 255, 0.1)" stroke="rgba(0, 217, 255, 0.3)" stroke-width="0.5"/>
-                    
-                    <!-- Scanning Circles -->
-                    <circle class="animate-pulse" cx="50" cy="50" r="25" fill="none" stroke="rgba(0, 217, 255, 0.8)" stroke-width="1"/>
-                    <circle class="animate-pulse" cx="50" cy="50" r="35" fill="none" stroke="rgba(0, 217, 255, 0.4)" stroke-width="1" style="animation-delay: 0.3s;"/>
-                    
-                    <!-- Center Icon -->
-                    <text x="50" y="60" text-anchor="middle" font-size="35" fill="rgba(0, 217, 255, 0.8)">📡</text>
-                </svg>
-            </div>
-
-            <div class="text-center space-y-2">
-                <p class="text-neon-cyan font-mono text-sm font-bold">SCANNING...</p>
-                <p class="text-gray-400 text-xs">Menunggu tap kartu NFC</p>
-            </div>
+    <!-- Device Status -->
+    <div class="glass-card p-6 rounded-2xl">
+        <h3 class="text-lg font-bold text-white mb-6">Status Perangkat</h3>
+        <div class="space-y-3">
+            @forelse($devices as $device)
+                @php
+                    $statusBorder = match ($device->status) {
+                        'online' => 'border-emerald-500/30',
+                        'idle' => 'border-yellow-500/30',
+                        'offline' => 'border-red-500/30',
+                        default => 'border-slate-500/30',
+                    };
+                    $statusDot = match ($device->status) {
+                        'online' => 'bg-emerald-400',
+                        'idle' => 'bg-yellow-400',
+                        'offline' => 'bg-red-400',
+                        default => 'bg-slate-400',
+                    };
+                @endphp
+                <div class="p-3 rounded-lg bg-glass-light/10 border {{ $statusBorder }}">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-semibold text-white">{{ $device->name }}</span>
+                        <span class="w-2 h-2 {{ $statusDot }} rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-xs text-gray-400">Scans: <span class="text-neon-cyan font-bold">{{ $device->scan_today }}</span></p>
+                </div>
+            @empty
+                <div class="text-xs text-gray-400">Belum ada perangkat NFC.</div>
+            @endforelse
         </div>
+    </div>
+</div>
 
-        <!-- Device Status Monitor -->
-        <div class="glass-card p-6 rounded-2xl">
-            <h4 class="text-lg font-bold text-white mb-4">Status Perangkat</h4>
+    <!-- Control & Filter -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div class="flex flex-wrap gap-2">
+            <form method="GET" action="{{ route('monitoring.nfc') }}" class="flex gap-2">
+                <select name="gate" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua Pintu</option>
+                    <option value="main" @selected(request('gate') === 'main')">Pintu Utama</option>
+                    <option value="back" @selected(request('gate') === 'back')">Pintu Belakang</option>
+                    <option value="office" @selected(request('gate') === 'office')">Kantor TU</option>
+                </select>
+                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua Status</option>
+                    <option value="success" @selected(request('status') === 'success')">Berhasil</option>
+                    <option value="failed" @selected(request('status') === 'failed')">Gagal</option>
+                    <option value="unregistered" @selected(request('status') === 'unregistered')">Tidak Terdaftar</option>
+                </select>
+                <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Filter
+                </button>
+                <a href="{{ route('monitoring.nfc') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
+            </form>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="flex items-center gap-2 text-sky-600 text-sm font-semibold">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                Live Monitoring
+            </span>
+            <button class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Event Stream Table -->
+    <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="border-b border-slate-200 bg-slate-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nama Siswa</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">NIS</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Kelas</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">UID Card</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Pintu</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Waktu</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    @php
+                        $statusClasses = [
+                            'hadir' => 'inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800',
+                            'izin' => 'inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800',
+                            'sakit' => 'inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800',
+                            'alpha' => 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
+                            'error' => 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
+                        ];
+                    @endphp
 
             <div class="space-y-3">
                 @forelse($devices as $device)
@@ -199,20 +255,43 @@
                 @endforelse
             </div>
         </div>
+    </div>
 
-        <!-- Action Panel -->
-        <div class="glass-card p-6 rounded-2xl">
-            <h4 class="text-lg font-bold text-white mb-4">Aksi Cepat</h4>
-            <div class="space-y-2">
-                <button class="btn-secondary w-full text-sm">
-                    🔧 Troubleshoot
-                </button>
-                <button class="btn-secondary w-full text-sm">
-                    📊 Export Data
-                </button>
-                <button class="btn-secondary w-full text-sm">
-                    🔴 Berhenti Monitor
-                </button>
+    <!-- Device Status -->
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">Status Perangkat NFC</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-slate-900">Gate 1</span>
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                </div>
+                <p class="text-xs text-slate-600">Scans: <span class="font-semibold text-slate-900">245</span></p>
+                <p class="text-xs text-emerald-600 mt-1">Online</p>
+            </div>
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-slate-900">Gate 2</span>
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                </div>
+                <p class="text-xs text-slate-600">Scans: <span class="font-semibold text-slate-900">189</span></p>
+                <p class="text-xs text-emerald-600 mt-1">Online</p>
+            </div>
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-slate-900">Gate 3</span>
+                    <span class="w-2 h-2 bg-amber-500 rounded-full"></span>
+                </div>
+                <p class="text-xs text-slate-600">Scans: <span class="font-semibold text-slate-900">0</span></p>
+                <p class="text-xs text-amber-600 mt-1">Idle</p>
+            </div>
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-slate-900">Gate 4</span>
+                    <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                </div>
+                <p class="text-xs text-slate-600">Status: <span class="font-semibold text-red-600">Offline</span></p>
+                <p class="text-xs text-red-600 mt-1">Perlu perhatian</p>
             </div>
         </div>
     </div>

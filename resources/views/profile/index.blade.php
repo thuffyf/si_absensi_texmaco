@@ -1,13 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Profil - SITEXA Absensi')
+@section('title', 'Profil — SITEXA Absensi')
 @section('page_title', 'Profil')
 @section('page_subtitle', 'Kelola informasi pribadi Anda')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-8">
+<div class="mx-auto max-w-4xl space-y-8 animate-fade-in">
+    @if(session('success'))
+        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Profile Header -->
-    <div class="glass-card p-8">
+    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div class="flex items-center gap-6">
             <div class="relative">
                 <img id="profile-preview" src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=eff6ff&color=0284c7' }}" alt="Profile Photo" class="w-24 h-24 rounded-full object-cover border-4 border-sky-200">
@@ -20,7 +26,7 @@
                     @if(auth()->user()->photo)
                     <button type="button" id="delete-photo-btn" class="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors" title="Hapus Foto">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 011.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
                     </button>
                     @endif
@@ -35,14 +41,8 @@
     </div>
 
     <!-- Profile Form -->
-    <div class="glass-card p-8">
+    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <h2 class="text-xl font-semibold text-slate-900 mb-6">Informasi Pribadi</h2>
-
-        @if(session('success'))
-            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
@@ -57,7 +57,7 @@
             <div>
                 <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap</label>
                 <input type="text" id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required
-                    class="input-field">
+                    class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full">
                 @error('name')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -67,7 +67,7 @@
             <div>
                 <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
                 <input type="email" id="email" name="email" value="{{ old('email', auth()->user()->email) }}" required
-                    class="input-field">
+                    class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full">
                 @error('email')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -75,7 +75,10 @@
 
             <!-- Submit Button -->
             <div class="flex justify-end">
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
                     Simpan Perubahan
                 </button>
             </div>
@@ -83,13 +86,16 @@
     </div>
 
     <!-- Logout Section -->
-    <div class="glass-card p-8 border-t-2 border-red-200">
+    <div class="rounded-3xl border border-red-200 bg-white p-8 shadow-sm">
         <h2 class="text-xl font-semibold text-slate-900 mb-4">Keluar</h2>
         <p class="text-sm text-slate-600 mb-6">Klik tombol di bawah untuk keluar dari akun Anda.</p>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="px-6 py-2.5 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-colors">
-                🚪 Logout
+            <button type="submit" class="flex items-center justify-center rounded-xl bg-red-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
             </button>
         </form>
     </div>

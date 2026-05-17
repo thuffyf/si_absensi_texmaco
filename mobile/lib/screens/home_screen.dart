@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../services/api_client.dart';
 import '../services/token_service.dart';
@@ -30,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'alfa': 0,
     'total': 0,
   };
+
+  List<Map<String, dynamic>> _absensiRecords = [];
 
   @override
   void initState() {
@@ -96,6 +99,24 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _loadAbsensi() async {
+    final result = await _apiClient.fetchStudentAbsensi(
+      token: widget.authToken,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (result.ok && result.data != null) {
+      final data = result.data ?? <String, dynamic>{};
+      final records = data['data'] as List<dynamic>? ?? [];
+      setState(() {
+        _absensiRecords = records.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      });
+    }
+  }
+
   Future<void> _copyToken() async {
     await Clipboard.setData(ClipboardData(text: _token));
     if (!mounted) {
@@ -117,12 +138,43 @@ class _HomeScreenState extends State<HomeScreen> {
     ).showSnackBar(const SnackBar(content: Text('Token baru sudah dibuat.')));
   }
 
+  Future<void> _syncAbsensi() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost/absensi_api/absen.php'),
+        body: {
+          'action': 'sync'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sinkronisasi absensi berhasil.')),
+        );
+        await _loadAbsensi();
+        await _loadSummary();
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Gagal sinkronisasi absensi.')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
         await _loadToken();
         await _loadSummary();
+        await _loadAbsensi();
       },
       child: ListView(
         padding: const EdgeInsets.all(20),
@@ -262,6 +314,32 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sinkronisasi Absensi',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Sinkronkan data absensi dengan API eksternal.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: _syncAbsensi,
+                    icon: const Icon(Icons.sync),
+                    label: const Text('Sinkronisasi Sekarang'),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -269,7 +347,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _SummaryChip extends StatelessWidget {
-  const _SummaryChip({
+  }
+const _SummaryChip({
     required this.label,
     required this.value,
     required this.color,

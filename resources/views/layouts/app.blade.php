@@ -72,12 +72,12 @@
                     <span class="nav-text">Jadwal</span>
                 </a>
                 <a
-                    href="{{ route('requests.izin-sakit') }}"
-                    title="Izin & Sakit"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('requests.izin-sakit') ? 'nav-texmaco-active' : '' }}"
+                    href="{{ route('absensi.index') }}"
+                    title="Absensi"
+                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('absensi.*') ? 'nav-texmaco-active' : '' }}"
                 >
-                    <span class="nav-icon" aria-hidden="true">IS</span>
-                    <span class="nav-text">Izin &amp; Sakit</span>
+                    <span class="nav-icon" aria-hidden="true">AB</span>
+                    <span class="nav-text">Absensi</span>
                 </a>
                 <a
                     href="{{ route('monitoring.nfc') }}"
@@ -86,14 +86,6 @@
                 >
                     <span class="nav-icon" aria-hidden="true">MN</span>
                     <span class="nav-text">Monitoring NFC</span>
-                </a>
-                <a
-                    href="{{ route('devices.nfc-tools') }}"
-                    title="Alat NFC"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('devices.nfc-tools') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">AN</span>
-                    <span class="nav-text">Alat NFC</span>
                 </a>
                 <a
                     href="{{ route('reports.absensi') }}"

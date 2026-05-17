@@ -50,6 +50,43 @@ class MobileStudentController extends Controller
         ]);
     }
 
+    public function absensi(Request $request)
+    {
+        $student = $this->resolveStudent($request);
+        if (!$student) {
+            return response()->json(['message' => 'Token tidak valid.'], 401);
+        }
+
+        $from = $request->query('from');
+        $until = $request->query('until');
+
+        $fromDate = $from ? Carbon::parse($from)->startOfDay() : Carbon::now()->startOfMonth();
+        $untilDate = $until ? Carbon::parse($until)->endOfDay() : Carbon::now()->endOfMonth();
+
+        $records = Attendance::query()
+            ->where('student_id', $student->id)
+            ->whereBetween('attendance_date', [$fromDate->toDateString(), $untilDate->toDateString()])
+            ->orderByDesc('attendance_date')
+            ->orderByDesc('attendance_time')
+            ->get();
+
+        return response()->json([
+            'message' => 'Data absensi siswa.',
+            'data' => $records->map(function ($record) {
+                return [
+                    'tanggal' => $record->attendance_date?->format('Y-m-d'),
+                    'waktu' => $record->attendance_time,
+                    'status' => $record->status,
+                    'keterangan' => $record->note,
+                ];
+            }),
+            'period' => [
+                'from' => $fromDate->toDateString(),
+                'until' => $untilDate->toDateString(),
+            ],
+        ]);
+    }
+
     private function resolveStudent(Request $request): ?Student
     {
         $token = $request->bearerToken();

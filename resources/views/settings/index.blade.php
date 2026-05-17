@@ -2,6 +2,7 @@
 
 @section('title', 'Pengaturan — SITEXA Absensi')
 @section('page_title', 'Pengaturan')
+@section('page_subtitle', 'Kelola konfigurasi dan preferensi sistem')
 
 @section('content')
 @php
@@ -123,6 +124,7 @@
             </div>
         </div>
 
+
         <!-- Notification Settings -->
         <div class="glass-card p-6 rounded-2xl">
             <h3 class="text-lg font-bold text-white mb-6">Notifikasi & Alert</h3>
@@ -171,8 +173,8 @@
                         $themeValue = old('theme', $settings['theme'] ?? 'dark');
                     @endphp
                     <select name="theme" class="input-field w-full md:w-1/3">
-                        <option value="dark" @selected($themeValue === 'dark')>Dark</option>
-                        <option value="light" @selected($themeValue === 'light')>Light</option>
+                        <option value="dark" @selected($themeValue === 'dark')">Dark</option>
+                        <option value="light" @selected($themeValue === 'light')">Light</option>
                     </select>
                 </div>
 
@@ -182,9 +184,9 @@
                         $fontValue = old('font_size', $settings['font_size'] ?? 'normal');
                     @endphp
                     <select name="font_size" class="input-field w-full md:w-1/3">
-                        <option value="kecil" @selected($fontValue === 'kecil')>Kecil</option>
-                        <option value="normal" @selected($fontValue === 'normal')>Normal</option>
-                        <option value="besar" @selected($fontValue === 'besar')>Besar</option>
+                        <option value="kecil" @selected($fontValue === 'kecil')">Kecil</option>
+                        <option value="normal" @selected($fontValue === 'normal')">Normal</option>
+                        <option value="besar" @selected($fontValue === 'besar')">Besar</option>
                     </select>
                 </div>
 
