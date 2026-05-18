@@ -111,13 +111,14 @@
             <table class="w-full">
                 <thead class="border-b border-slate-200 bg-slate-50">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nama Siswa</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">NIS</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Kelas</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Tanggal</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Waktu</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Keterangan</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Nama Siswa</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">NIS</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Kelas</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">UID</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Tanggal</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Waktu</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -132,7 +133,7 @@
 
                     @forelse($records as $record)
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
                                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 font-semibold text-sky-600">
                                         {{ strtoupper(substr($record->student?->name ?? '-', 0, 1)) }}
@@ -142,20 +143,21 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 font-mono text-sm text-slate-600">{{ $record->student?->nis ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ $record->student?->class_name ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ $record->attendance_date?->format('d M Y') }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ $record->attendance_time }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $record->student?->nis ?? '-' }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->student?->class_name ?? '-' }}</td>
+                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $record->student?->uid_kartu ?? '-' }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_date?->format('d M Y') }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_time }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="{{ $statusClasses[$record->status] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
                                     {{ ucfirst($record->status) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ $record->note ?? '-' }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->note ?? '-' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada data absensi.</td>
+                            <td colspan="8" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada data absensi.</td>
                         </tr>
                     @endforelse
                 </tbody>

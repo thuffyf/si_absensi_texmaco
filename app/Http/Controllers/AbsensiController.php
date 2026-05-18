@@ -27,7 +27,7 @@ class AbsensiController extends Controller
             });
         }
 
-        $records = $query->orderByDesc('attendance_date')->orderByDesc('attendance_time')->get();
+        $records = $query->orderByDesc('attendance_date')->orderByDesc('attendance_time')->paginate(20)->withQueryString();
         $students = Student::orderBy('name')->get();
 
         return view('absensi.index', compact('records', 'students'));

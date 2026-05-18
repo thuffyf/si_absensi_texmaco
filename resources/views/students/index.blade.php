@@ -104,13 +104,14 @@
             <table class="w-full">
                 <thead class="border-b border-slate-200 bg-slate-50">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Foto & Nama</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">NIS</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Kelas</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Jurusan</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">NFC</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Aksi</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Foto & Nama</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">NIS</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Kelas</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Jurusan</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">NFC</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">UID</th>
+                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -129,7 +130,7 @@
 
                     @forelse($students as $student)
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
                                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 font-semibold text-sky-600">
                                         {{ strtoupper(substr($student->name, 0, 1)) }}
@@ -140,20 +141,21 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 font-mono text-sm text-slate-600">{{ $student->nis }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ $student->class_name }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ $student->major ?? '-' }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $student->nis }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $student->class_name }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $student->major ?? '-' }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="{{ $statusClasses[$student->status] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
                                     {{ ucfirst(str_replace('_', ' ', $student->status)) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="{{ $nfcClasses[$student->nfc_type] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
                                     {{ ucfirst(str_replace('_', ' ', $student->nfc_type)) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $student->uid_kartu ?? '-' }}</td>
+                            <td class="px-4 py-3 text-right whitespace-nowrap">
                                 <div class="flex justify-end gap-2">
                                     <a class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2" href="{{ route('students.edit', $student) }}">Edit</a>
                                     <form method="POST" action="{{ route('students.destroy', $student) }}" onsubmit="return confirm('Hapus siswa ini?')">
@@ -166,7 +168,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada data siswa.</td>
+                            <td colspan="8" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada data siswa.</td>
                         </tr>
                     @endforelse
                 </tbody>
