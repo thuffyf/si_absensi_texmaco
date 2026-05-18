@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _loading = true;
   bool _summaryLoading = true;
+  bool _uidRefreshing = false;
   String _uid = '';
   String _summaryPeriod = '';
   String _summaryMessage = '';
@@ -50,6 +51,44 @@ class _HomeScreenState extends State<HomeScreen> {
       _uid = uid ?? '';
       _loading = false;
     });
+  }
+
+  Future<void> _refreshUid({bool showMessage = true}) async {
+    setState(() => _uidRefreshing = true);
+
+    final result = await _apiClient.fetchStudentProfile(
+      token: widget.authToken,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (result.ok && result.data != null) {
+      final uid =
+          (result.data?['uid_kartu'] ?? result.data?['user']?['uid_kartu'])
+              ?.toString();
+      if (uid != null && uid.isNotEmpty) {
+        await _uidService.saveUid(uid);
+      }
+      setState(() {
+        _uid = uid ?? '';
+        _uidRefreshing = false;
+      });
+      if (showMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('UID diperbarui.')),
+        );
+      }
+      return;
+    }
+
+    setState(() => _uidRefreshing = false);
+    if (showMessage) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result.message)),
+      );
+    }
   }
 
   Future<void> _loadSummary() async {
@@ -161,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        await _loadUid();
+        await _refreshUid(showMessage: false);
         await _loadSummary();
         await _loadAbsensi();
       },
@@ -197,12 +236,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               ?.copyWith(fontFamily: 'monospace'),
                         ),
                         const SizedBox(height: 12),
-                        Row(
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
                           children: [
                             ElevatedButton.icon(
                               onPressed: _uid.isEmpty ? null : _copyUid,
                               icon: const Icon(Icons.copy),
                               label: const Text('Salin'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: _uidRefreshing ? null : _refreshUid,
+                              icon: _uidRefreshing
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Icon(Icons.refresh),
+                              label: const Text('Refresh UID'),
                             ),
                           ],
                         ),

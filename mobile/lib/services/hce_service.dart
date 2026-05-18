@@ -10,4 +10,13 @@ class HceService {
   Future<void> setEnabled(bool enabled) async {
     await _channel.invokeMethod('setEnabled', {'enabled': enabled});
   }
+
+  Future<bool> isNfcEnabled() async {
+    final enabled = await _channel.invokeMethod<bool>('isNfcEnabled');
+    return enabled ?? false;
+  }
+
+  Future<void> openNfcSettings() async {
+    await _channel.invokeMethod('openNfcSettings');
+  }
 }

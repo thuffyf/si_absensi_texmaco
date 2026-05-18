@@ -10,6 +10,29 @@ use Illuminate\Support\Carbon;
 
 class MobileStudentController extends Controller
 {
+    public function profile(Request $request)
+    {
+        $student = $this->resolveStudent($request);
+        if (!$student) {
+            return response()->json(['message' => 'Token tidak valid.'], 401);
+        }
+
+        if (!$student->uid_kartu) {
+            return response()->json(['message' => 'UID siswa belum diatur oleh admin.'], 422);
+        }
+
+        return response()->json([
+            'message' => 'Profil siswa.',
+            'user' => [
+                'name' => $student->name,
+                'nis' => $student->nis,
+                'class_name' => $student->class_name,
+                'uid_kartu' => $student->uid_kartu,
+            ],
+            'uid_kartu' => $student->uid_kartu,
+        ]);
+    }
+
     public function summary(Request $request)
     {
         $student = $this->resolveStudent($request);

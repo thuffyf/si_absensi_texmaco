@@ -28,6 +28,7 @@ Route::prefix('mobile')->group(function () {
     Route::post('/register', [MobileAuthController::class, 'registerDevice']);
     Route::post('/attendance', [MobileAttendanceController::class, 'tap']);
 
+    Route::get('/student/profile', [MobileStudentController::class, 'profile']);
     Route::get('/student/summary', [MobileStudentController::class, 'summary']);
     Route::get('/student/absensi', [MobileStudentController::class, 'absensi']);
     Route::get('/teacher/absences', [MobileTeacherController::class, 'absences']);

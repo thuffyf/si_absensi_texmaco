@@ -126,6 +126,31 @@ class ApiClient {
     }
   }
 
+  Future<ApiResult> fetchStudentProfile({
+    required String token,
+  }) async {
+    final uri = Uri.parse('$baseUrl/mobile/student/profile');
+
+    try {
+      final response = await _client
+          .get(uri, headers: _jsonHeaders(token: token))
+          .timeout(timeout);
+
+      final payload = response.body.isNotEmpty
+          ? jsonDecode(response.body) as Map<String, dynamic>
+          : <String, dynamic>{};
+
+      return ApiResult(
+        ok: response.statusCode >= 200 && response.statusCode < 300,
+        message: payload['message']?.toString() ?? 'Request selesai.',
+        statusCode: response.statusCode,
+        data: payload,
+      );
+    } catch (error) {
+      return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
+    }
+  }
+
   Future<ApiResult> fetchStudentSummary({
     required String token,
     String? from,

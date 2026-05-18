@@ -16,6 +16,8 @@ class _HceScreenState extends State<HceScreen> with WidgetsBindingObserver {
 
   bool _enabled = false;
   bool _working = false;
+  bool _nfcEnabled = true;
+  bool _nfcChecking = false;
   String _uid = '';
 
   @override
@@ -23,6 +25,7 @@ class _HceScreenState extends State<HceScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadUid();
+    _checkNfc();
   }
 
   Future<void> _loadUid() async {
@@ -47,7 +50,52 @@ class _HceScreenState extends State<HceScreen> with WidgetsBindingObserver {
       if (mounted) {
         setState(() => _enabled = false);
       }
+    } else if (state == AppLifecycleState.resumed) {
+      _checkNfc();
     }
+  }
+
+  Future<void> _checkNfc() async {
+    setState(() => _nfcChecking = true);
+    final enabled = await _hceService.isNfcEnabled();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _nfcEnabled = enabled;
+      _nfcChecking = false;
+      if (!enabled) {
+        _enabled = false;
+      }
+    });
+  }
+
+  Future<void> _promptEnableNfc() async {
+    if (!mounted) {
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('NFC belum aktif'),
+        content: const Text(
+          'Aktifkan NFC di pengaturan agar HCE bisa dipakai.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _hceService.openNfcSettings();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Buka Pengaturan'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _toggle(bool value) async {
@@ -66,6 +114,20 @@ class _HceScreenState extends State<HceScreen> with WidgetsBindingObserver {
           _enabled = false;
         });
         return;
+      }
+      if (value) {
+        final enabled = await _hceService.isNfcEnabled();
+        if (!enabled) {
+          if (mounted) {
+            await _promptEnableNfc();
+          }
+          setState(() {
+            _nfcEnabled = false;
+            _working = false;
+            _enabled = false;
+          });
+          return;
+        }
       }
       await _hceService.setToken(_uid);
       await _hceService.setEnabled(value);
@@ -97,6 +159,36 @@ class _HceScreenState extends State<HceScreen> with WidgetsBindingObserver {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
+        if (_nfcChecking)
+          Text(
+            'Memeriksa status NFC...',
+            style: Theme.of(context).textTheme.bodySmall,
+          )
+        else
+          Row(
+            children: [
+              Icon(
+                Icons.nfc,
+                size: 18,
+                color: _nfcEnabled ? Colors.green : Colors.red,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _nfcEnabled
+                      ? 'NFC aktif di perangkat.'
+                      : 'NFC nonaktif. Aktifkan di pengaturan.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+              if (!_nfcEnabled)
+                TextButton(
+                  onPressed: _promptEnableNfc,
+                  child: const Text('Aktifkan'),
+                ),
+            ],
+          ),
+        const SizedBox(height: 12),
         SwitchListTile(
           value: _enabled,
           onChanged: _working ? null : _toggle,
