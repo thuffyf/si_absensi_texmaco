@@ -50,7 +50,7 @@ class StudentController extends Controller
             'major' => 'nullable|string|max:100',
             'status' => 'required|in:aktif,tidak_aktif,lulus',
             'nfc_type' => 'required|in:kartu,handphone,belum_terdaftar',
-            'uid_kartu' => 'nullable|string|max:100',
+            'uid_kartu' => 'nullable|string|max:100|unique:students,uid_kartu',
             'phone' => 'nullable|string|max:50',
             'date_of_birth' => 'nullable|date',
         ]);
@@ -81,7 +81,7 @@ class StudentController extends Controller
             'major' => 'nullable|string|max:100',
             'status' => 'required|in:aktif,tidak_aktif,lulus',
             'nfc_type' => 'required|in:kartu,handphone,belum_terdaftar',
-            'uid_kartu' => 'nullable|string|max:100',
+            'uid_kartu' => 'nullable|string|max:100|unique:students,uid_kartu,' . $student->id,
             'phone' => 'nullable|string|max:50',
             'date_of_birth' => 'nullable|date',
         ]);

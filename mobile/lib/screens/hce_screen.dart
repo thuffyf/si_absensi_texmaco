@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/hce_service.dart';
-import '../services/token_service.dart';
+import '../services/nfc_uid_service.dart';
 
 class HceScreen extends StatefulWidget {
   const HceScreen({super.key});
@@ -10,18 +10,64 @@ class HceScreen extends StatefulWidget {
   State<HceScreen> createState() => _HceScreenState();
 }
 
-class _HceScreenState extends State<HceScreen> {
-  final _tokenService = TokenService();
+class _HceScreenState extends State<HceScreen> with WidgetsBindingObserver {
+  final _uidService = NfcUidService();
   final _hceService = HceService();
 
   bool _enabled = false;
   bool _working = false;
+  String _uid = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _loadUid();
+  }
+
+  Future<void> _loadUid() async {
+    final uid = await _uidService.getUid();
+    if (!mounted) {
+      return;
+    }
+    setState(() => _uid = uid ?? '');
+  }
+
+  @override
+  void dispose() {
+    _hceService.setEnabled(false);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed && _enabled) {
+      _hceService.setEnabled(false);
+      if (mounted) {
+        setState(() => _enabled = false);
+      }
+    }
+  }
 
   Future<void> _toggle(bool value) async {
     setState(() => _working = true);
     try {
-      final token = await _tokenService.getOrCreateToken();
-      await _hceService.setToken(token);
+      if (_uid.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('UID belum tersedia. Hubungi admin TU.'),
+            ),
+          );
+        }
+        setState(() {
+          _working = false;
+          _enabled = false;
+        });
+        return;
+      }
+      await _hceService.setToken(_uid);
       await _hceService.setEnabled(value);
     } catch (error) {
       if (mounted) {
@@ -62,7 +108,9 @@ class _HceScreenState extends State<HceScreen> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Langkah: 1) Aktifkan toggle. 2) Buka layar ini. 3) Tempelkan HP ke reader NFC admin sampai berhasil terdeteksi.',
+              _uid.isEmpty
+                  ? 'UID belum diatur. Hubungi admin TU agar UID NFC kamu diset.'
+                  : 'Langkah: 1) Aktifkan toggle. 2) Buka layar ini. 3) Tempelkan HP ke reader NFC admin sampai berhasil terdeteksi.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),

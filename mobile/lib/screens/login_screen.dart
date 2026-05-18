@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
+import '../services/nfc_uid_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.onLoggedIn});
@@ -16,21 +17,23 @@ class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   final _studentFormKey = GlobalKey<FormState>();
   final _teacherFormKey = GlobalKey<FormState>();
-  final _nisController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _nipController = TextEditingController();
 
   final _apiClient = ApiClient();
   final _authService = AuthService();
 
-  DateTime? _birthDate;
   DateTime? _teacherBirthDate;
   bool _loading = false;
   String _message = '';
   bool _messageOk = false;
+  final _uidService = NfcUidService();
 
   @override
   void dispose() {
-    _nisController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     _nipController.dispose();
     super.dispose();
   }
@@ -40,22 +43,14 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    if (_birthDate == null) {
-      setState(() {
-        _messageOk = false;
-        _message = 'Tanggal lahir wajib dipilih.';
-      });
-      return;
-    }
-
     setState(() {
       _loading = true;
       _message = '';
     });
 
     final result = await _apiClient.loginStudent(
-      nis: _nisController.text.trim(),
-      birthDate: _formatDate(_birthDate!),
+      username: _usernameController.text.trim(),
+      password: _passwordController.text,
     );
 
     if (!mounted) {
@@ -69,6 +64,12 @@ class _LoginScreenState extends State<LoginScreen>
     });
 
     if (result.ok && result.data != null) {
+      final uid =
+          (result.data?['uid_kartu'] ?? result.data?['user']?['uid_kartu'])
+              ?.toString();
+      if (uid != null && uid.isNotEmpty) {
+        await _uidService.saveUid(uid);
+      }
       await _authService.saveSession(
         token: result.data?['token']?.toString() ?? '',
         role: result.data?['role']?.toString() ?? 'siswa',
@@ -121,21 +122,6 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  Future<void> _pickBirthDate() async {
-    final now = DateTime.now();
-    final initial = DateTime(now.year - 15, 1, 1);
-    final selected = await showDatePicker(
-      context: context,
-      initialDate: _birthDate ?? initial,
-      firstDate: DateTime(now.year - 40),
-      lastDate: DateTime(now.year - 5),
-    );
-
-    if (selected != null) {
-      setState(() => _birthDate = selected);
-    }
-  }
-
   Future<void> _pickTeacherBirthDate() async {
     final now = DateTime.now();
     final initial = DateTime(now.year - 30, 1, 1);
@@ -185,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
         Text('Login Siswa', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
         Text(
-          'Masukkan NIS dan tanggal lahir untuk masuk.',
+          'Masukkan username dan password dari admin TU.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -194,32 +180,29 @@ class _LoginScreenState extends State<LoginScreen>
           child: Column(
             children: [
               TextFormField(
-                controller: _nisController,
+                controller: _usernameController,
                 decoration: const InputDecoration(
-                  labelText: 'NIS',
-                  hintText: 'Contoh: 12001',
+                  labelText: 'Username',
+                  hintText: 'Contoh: rafa',
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'NIS wajib diisi.';
+                    return 'Username wajib diisi.';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 12),
-              InkWell(
-                onTap: _pickBirthDate,
-                child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Tanggal Lahir'),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      _birthDate == null
-                          ? 'Pilih tanggal'
-                          : _formatDate(_birthDate!),
-                    ),
-                  ),
-                ),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'Password'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password wajib diisi.';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               SizedBox(

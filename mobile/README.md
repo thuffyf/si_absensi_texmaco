@@ -1,29 +1,27 @@
 # Aplikasi Siswa (Flutter)
 
-Aplikasi ini dipakai siswa untuk absensi NFC/HCE. Token NFC dibuat dari HP siswa dan dipakai sebagai pengganti kartu.
+Aplikasi ini dipakai siswa untuk absensi NFC/HCE. UID NFC ditetapkan oleh admin TU di backend dan disimpan di HP setelah login.
 
 ## Konsep Utama
 
-- HP siswa membuat token NFC unik (disimpan di secure storage).
-- HP mengemulasikan kartu NFC lewat HCE.
-- Admin TU menempelkan HP siswa ke NFC reader admin untuk membaca token.
-- Token disimpan di backend Laravel sebagai identitas NFC siswa.
-- Token bisa di-remap jika siswa ganti HP.
+- UID NFC berasal dari backend (field `uid_kartu` pada data siswa).
+- HP mengemulasikan kartu NFC lewat HCE hanya saat halaman Mode NFC dibuka.
+- Tidak ada pendaftaran token dari HP atau generate UID acak.
 
 ## Struktur Flow
 
-1. Siswa membuka tab **Mode NFC** dan mengaktifkan HCE.
-2. Admin TU membuka fitur mapping di web (profil siswa / mapping NFC).
-3. Admin menempelkan HP siswa ke NFC reader admin.
-4. Reader menerima token, lalu backend menyimpan token ke siswa terkait.
-5. Setelah terdaftar, HP siswa bisa dipakai tap absensi normal.
+1. Admin TU mengisi UID di data siswa (web).
+2. Siswa login dengan username + password.
+3. Aplikasi menyimpan UID dari respons login.
+4. Siswa membuka tab **Mode NFC** untuk mengaktifkan HCE.
+5. Tap ke reader untuk absensi normal.
 
 ## Login Mobile
 
-- **Siswa** login dengan **NIS + Tanggal Lahir**.
-- **Guru** login dengan **email + password** (dibuat Admin TU di web).
+- **Siswa** login dengan **username + password**.
+- **Guru** login dengan **NIP + tanggal lahir**.
 - Setelah login, aplikasi menampilkan menu sesuai role:
-  - Siswa: Beranda, Daftar HP, Mode NFC.
+  - Siswa: Beranda, Mode NFC.
   - Guru: daftar siswa yang tidak hadir.
 
 ## Ringkasan Kehadiran Siswa
@@ -48,31 +46,10 @@ API_TIMEOUT_SECONDS=10
 
 Gunakan IP LAN server Laravel jika memakai HP fisik.
 
-## Token & Remap
+## Pengelolaan UID
 
-- Token disimpan di secure storage, jadi tidak hilang saat app ditutup.
-- Jika token sudah dipakai siswa lain, backend harus mengembalikan 409.
-- Siswa bisa menekan **Ganti Token** untuk membuat token baru.
-- Admin TU melakukan mapping ulang token baru.
-
-## Endpoint Laravel yang Diperlukan (opsional)
-
-Jika ingin siswa mendaftarkan token langsung dari aplikasi:
-
-```
-POST /api/mobile/register
-{
-  "student_code": "0012345678",
-  "token": "<token-hp>",
-  "device_label": "Samsung A52",
-  "platform": "android"
-}
-```
-
-Backend harus:
-- Validasi siswa
-- Pastikan token unik
-- Kembalikan 409 jika token dipakai siswa lain
+- UID harus unik dan diisi oleh admin TU.
+- Jika UID kosong, Mode NFC menampilkan peringatan.
 
 ## Menjalankan
 

@@ -8,26 +8,29 @@ use App\Models\StudentDevice;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class MobileAuthController extends Controller
 {
     public function loginStudent(Request $request)
     {
         $data = $request->validate([
-            'nis' => 'required_without:nim|string',
-            'nim' => 'required_without:nis|string',
-            'birth_date' => 'required|date',
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $nis = $data['nis'] ?? $data['nim'];
-        $student = Student::where('nis', $nis)->first();
+        $student = Student::where('username', $data['username'])->first();
 
-        if (!$student || !$student->date_of_birth) {
-            return response()->json(['message' => 'Data siswa tidak valid.'], 401);
+        if (!$student || !$student->password) {
+            return response()->json(['message' => 'Akun siswa tidak valid.'], 401);
         }
 
-        if ($student->date_of_birth->toDateString() !== $data['birth_date']) {
-            return response()->json(['message' => 'Tanggal lahir tidak cocok.'], 401);
+        if (!Hash::check($data['password'], $student->password)) {
+            return response()->json(['message' => 'Username atau password salah.'], 401);
+        }
+
+        if (!$student->uid_kartu) {
+            return response()->json(['message' => 'UID siswa belum diatur oleh admin.'], 422);
         }
 
         $token = Str::random(40);
@@ -42,7 +45,9 @@ class MobileAuthController extends Controller
                 'name' => $student->name,
                 'nis' => $student->nis,
                 'class_name' => $student->class_name,
+                'uid_kartu' => $student->uid_kartu,
             ],
+            'uid_kartu' => $student->uid_kartu,
         ]);
     }
 

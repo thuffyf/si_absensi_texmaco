@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/nfc_uid_service.dart';
 import 'hce_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
-import 'register_screen.dart';
 import 'teacher_absence_screen.dart';
 
 class HomeShell extends StatefulWidget {
@@ -16,6 +16,7 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   final _authService = AuthService();
+  final _uidService = NfcUidService();
   AuthSession? _session;
   bool _loading = true;
   int _index = 0;
@@ -39,6 +40,7 @@ class _HomeShellState extends State<HomeShell> {
 
   Future<void> _logout() async {
     await _authService.clearSession();
+    await _uidService.clearUid();
     if (!mounted) {
       return;
     }
@@ -86,7 +88,6 @@ class _StudentShell extends StatelessWidget {
 
   List<Widget> _pages(AuthSession session) => [
     HomeScreen(authToken: session.token),
-    const RegisterScreen(),
     const HceScreen(),
   ];
 
@@ -108,11 +109,6 @@ class _StudentShell extends StatelessWidget {
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
             label: 'Beranda',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.how_to_reg_outlined),
-            selectedIcon: Icon(Icons.how_to_reg),
-            label: 'Daftar HP',
           ),
           NavigationDestination(
             icon: Icon(Icons.nfc_outlined),

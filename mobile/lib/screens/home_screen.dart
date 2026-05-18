@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../services/api_client.dart';
-import '../services/token_service.dart';
+import '../services/nfc_uid_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.authToken});
@@ -15,13 +15,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _tokenService = TokenService();
+  final _uidService = NfcUidService();
   final _apiClient = ApiClient();
 
   bool _loading = true;
   bool _summaryLoading = true;
-  String _token = '';
-  String _deviceLabel = '';
+  String _uid = '';
   String _summaryPeriod = '';
   String _summaryMessage = '';
   Map<String, int> _summary = const {
@@ -37,20 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadToken();
+    _loadUid();
     _loadSummary();
   }
 
-  Future<void> _loadToken() async {
+  Future<void> _loadUid() async {
     setState(() => _loading = true);
-    final token = await _tokenService.getOrCreateToken();
-    final label = await _tokenService.getDeviceLabel();
+    final uid = await _uidService.getUid();
     if (!mounted) {
       return;
     }
     setState(() {
-      _token = token;
-      _deviceLabel = label;
+      _uid = uid ?? '';
       _loading = false;
     });
   }
@@ -112,39 +109,31 @@ class _HomeScreenState extends State<HomeScreen> {
       final data = result.data ?? <String, dynamic>{};
       final records = data['data'] as List<dynamic>? ?? [];
       setState(() {
-        _absensiRecords = records.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _absensiRecords = records
+            .map((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
       });
     }
   }
 
-  Future<void> _copyToken() async {
-    await Clipboard.setData(ClipboardData(text: _token));
+  Future<void> _copyUid() async {
+    if (_uid.isEmpty) {
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: _uid));
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Token disalin ke clipboard.')),
-    );
-  }
-
-  Future<void> _rotateToken() async {
-    final token = await _tokenService.rotateToken();
-    if (!mounted) {
-      return;
-    }
-    setState(() => _token = token);
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Token baru sudah dibuat.')));
+    ).showSnackBar(const SnackBar(content: Text('UID disalin ke clipboard.')));
   }
 
   Future<void> _syncAbsensi() async {
     try {
       final response = await http.post(
         Uri.parse('http://localhost/absensi_api/absen.php'),
-        body: {
-          'action': 'sync'
-        },
+        body: {'action': 'sync'},
       );
 
       if (response.statusCode == 200) {
@@ -162,9 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -172,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        await _loadToken();
+        await _loadUid();
         await _loadSummary();
         await _loadAbsensi();
       },
@@ -185,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Token perangkat ini akan dipakai untuk absensi NFC/HCE.',
+            'UID perangkat ini akan dipakai untuk absensi NFC/HCE.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 20),
@@ -198,12 +187,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Token NFC',
+                          'UID NFC',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 8),
                         SelectableText(
-                          _token,
+                          _uid.isEmpty ? 'UID belum tersedia' : _uid,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(fontFamily: 'monospace'),
                         ),
@@ -211,18 +200,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           children: [
                             ElevatedButton.icon(
-                              onPressed: _copyToken,
+                              onPressed: _uid.isEmpty ? null : _copyUid,
                               icon: const Icon(Icons.copy),
                               label: const Text('Salin'),
                             ),
-                            const SizedBox(width: 12),
-                            OutlinedButton.icon(
-                              onPressed: _rotateToken,
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('Ganti Token'),
-                            ),
                           ],
                         ),
+                        if (_uid.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Text(
+                              'UID belum diatur. Hubungi admin TU untuk mengisi UID siswa.',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
                       ],
                     ),
             ),
@@ -300,28 +291,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Perangkat',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(_deviceLabel.isEmpty ? '-' : _deviceLabel),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Jika ganti HP, tekan Ganti Token lalu daftar ulang.',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
                     'Sinkronisasi Absensi',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
@@ -347,8 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _SummaryChip extends StatelessWidget {
-  }
-const _SummaryChip({
+  const _SummaryChip({
     required this.label,
     required this.value,
     required this.color,

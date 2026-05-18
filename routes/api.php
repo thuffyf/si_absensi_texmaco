@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\MobileAuthController;
+use App\Http\Controllers\Api\MobileAttendanceController;
 use App\Http\Controllers\Api\MobileStudentController;
 use App\Http\Controllers\Api\MobileTeacherController;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ Route::prefix('mobile')->group(function () {
     Route::post('/login/student', [MobileAuthController::class, 'loginStudent']);
     Route::post('/login/teacher', [MobileAuthController::class, 'loginTeacher']);
     Route::post('/register', [MobileAuthController::class, 'registerDevice']);
+    Route::post('/attendance', [MobileAttendanceController::class, 'tap']);
 
     Route::get('/student/summary', [MobileStudentController::class, 'summary']);
     Route::get('/student/absensi', [MobileStudentController::class, 'absensi']);

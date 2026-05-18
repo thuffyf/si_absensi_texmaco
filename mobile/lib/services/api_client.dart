@@ -41,8 +41,8 @@ class ApiClient {
   }
 
   Future<ApiResult> loginStudent({
-    required String nis,
-    required String birthDate,
+    required String username,
+    required String password,
   }) async {
     final uri = Uri.parse('$baseUrl/mobile/login/student');
 
@@ -51,7 +51,7 @@ class ApiClient {
           .post(
             uri,
             headers: _jsonHeaders(),
-            body: jsonEncode({'nis': nis, 'birth_date': birthDate}),
+            body: jsonEncode({'username': username, 'password': password}),
           )
           .timeout(timeout);
 
@@ -92,51 +92,6 @@ class ApiClient {
       return ApiResult(
         ok: response.statusCode >= 200 && response.statusCode < 300,
         message: payload['message']?.toString() ?? 'Login selesai.',
-        statusCode: response.statusCode,
-        data: payload,
-      );
-    } catch (error) {
-      return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
-    }
-  }
-
-  Future<ApiResult> registerDevice({
-    required String token,
-    required String studentCode,
-    required String deviceLabel,
-  }) async {
-    final uri = Uri.parse('$baseUrl/mobile/register');
-
-    try {
-      final response = await _client
-          .post(
-            uri,
-            headers: _jsonHeaders(),
-            body: jsonEncode({
-              'student_code': studentCode,
-              'token': token,
-              'device_label': deviceLabel,
-              'platform': 'android',
-            }),
-          )
-          .timeout(timeout);
-
-      final payload = response.body.isNotEmpty
-          ? jsonDecode(response.body) as Map<String, dynamic>
-          : <String, dynamic>{};
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return ApiResult(
-          ok: true,
-          message: payload['message']?.toString() ?? 'Registrasi berhasil.',
-          statusCode: response.statusCode,
-          data: payload,
-        );
-      }
-
-      return ApiResult(
-        ok: false,
-        message: payload['message']?.toString() ?? 'Registrasi gagal.',
         statusCode: response.statusCode,
         data: payload,
       );
