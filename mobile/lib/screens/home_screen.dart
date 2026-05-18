@@ -76,18 +76,18 @@ class _HomeScreenState extends State<HomeScreen> {
         _uidRefreshing = false;
       });
       if (showMessage) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('UID diperbarui.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('UID diperbarui.')));
       }
       return;
     }
 
     setState(() => _uidRefreshing = false);
     if (showMessage) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(result.message)));
     }
   }
 

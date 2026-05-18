@@ -126,9 +126,7 @@ class ApiClient {
     }
   }
 
-  Future<ApiResult> fetchStudentProfile({
-    required String token,
-  }) async {
+  Future<ApiResult> fetchStudentProfile({required String token}) async {
     final uri = Uri.parse('$baseUrl/mobile/student/profile');
 
     try {
