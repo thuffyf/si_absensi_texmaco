@@ -11,12 +11,15 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NotificationController;
+use App\Models\Attendance;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,13 +62,13 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    if ($user && $passwordOk && $request->status === 'tata_usaha') {
+    if ($user && $passwordOk && $request->status === $user->role) {
         Auth::login($user);
         return redirect()->route('dashboard');
     }
 
     return back()->withErrors([
-        'login' => 'Email, password, atau status tidak valid untuk akses Tata Usaha.',
+        'login' => 'Email, password, atau status tidak valid.',
     ])->withInput($request->only('username','status'));
 })->name('login.submit');
 
@@ -121,6 +124,48 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
     Route::post('/absensi/sync', [AbsensiController::class, 'syncFromExternal'])->name('absensi.sync');
+
+    Route::get('/absensi/siswa', function (Request $request) {
+        $student = Student::where('email', auth()->user()->email)->first();
+
+        if (! $student) {
+            return redirect()->route('dashboard')->with('error', 'Akun siswa belum terhubung dengan data siswa. Silakan hubungi admin.');
+        }
+
+        $today = Carbon::today();
+        $attendance = Attendance::where('student_id', $student->id)
+            ->whereDate('attendance_date', $today)
+            ->first();
+
+        return view('absensi.student', compact('student', 'attendance'));
+    })->name('absensi.student');
+
+    Route::post('/absensi/siswa', function (Request $request) {
+        $student = Student::where('email', auth()->user()->email)->first();
+
+        if (! $student) {
+            return redirect()->route('dashboard')->with('error', 'Akun siswa belum terhubung dengan data siswa. Silakan hubungi admin.');
+        }
+
+        $data = $request->validate([
+            'status' => 'required|in:hadir,izin,sakit,alpha',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        $attendance = Attendance::updateOrCreate(
+            [
+                'student_id' => $student->id,
+                'attendance_date' => Carbon::today()->toDateString(),
+            ],
+            [
+                'status' => $data['status'],
+                'attendance_time' => Carbon::now()->format('H:i:s'),
+                'note' => $data['note'] ?? null,
+            ]
+        );
+
+        return back()->with('success', 'Absensi berhasil disimpan untuk hari ini.');
+    })->name('absensi.student.store');
 
     // Notifikasi Guru
     Route::get('/notifications/guru-approvals', [NotificationController::class, 'teacherApprovals'])->name('notifications.guru-approvals');

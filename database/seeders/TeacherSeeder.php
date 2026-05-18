@@ -66,6 +66,17 @@ class TeacherSeeder extends Seeder
                 'date_of_birth' => '1982-03-24',
                 'status' => 'aktif',
             ],
+            [
+                'nip' => '999999999999999999',
+                'name' => 'Guru SITEXA',
+                'email' => 'guru@gmail.com',
+                'password' => Hash::make('guru123'),
+                'role' => 'guru',
+                'subject' => 'Bimbingan',
+                'phone' => '0812-9000-0000',
+                'date_of_birth' => '1980-01-01',
+                'status' => 'aktif',
+            ],
         ];
 
         foreach ($teachers as $teacher) {

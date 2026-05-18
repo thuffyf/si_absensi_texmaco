@@ -120,6 +120,20 @@ class StudentSeeder extends Seeder
                 'uid_kartu' => 'UID-12008',
                 'phone' => '0812-0008-0008',
             ],
+            [
+                'nis' => '99999',
+                'name' => 'Siswa SITEXA',
+                'username' => 'siswa',
+                'email' => 'siswa@gmail.com',
+                'password' => Hash::make('siswa123'),
+                'date_of_birth' => '2008-01-01',
+                'class_name' => 'XII TEI',
+                'major' => 'Teknik Elektronika Industri',
+                'status' => 'aktif',
+                'nfc_type' => 'kartu',
+                'uid_kartu' => 'UID-99999',
+                'phone' => '0812-9000-0001',
+            ],
         ];
 
         foreach ($students as $student) {

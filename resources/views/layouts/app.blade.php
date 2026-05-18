@@ -38,6 +38,7 @@
                 </button>
             </div>
 
+            @php $userRole = auth()->user()->role ?? 'tata_usaha'; @endphp
             <nav class="flex flex-1 flex-col gap-1 overflow-y-auto p-3 pt-4" aria-label="Menu utama">
                 <a
                     href="{{ route('dashboard') }}"
@@ -47,62 +48,84 @@
                     <span class="nav-icon" aria-hidden="true">DB</span>
                     <span class="nav-text">Dashboard</span>
                 </a>
-                <a
-                    href="{{ route('students.index') }}"
-                    title="Data Siswa"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">DS</span>
-                    <span class="nav-text">Data Siswa</span>
-                </a>
-                <a
-                    href="{{ route('teachers.index') }}"
-                    title="Data Guru"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('teachers.index') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">DG</span>
-                    <span class="nav-text">Data Guru</span>
-                </a>
-                <a
-                    href="{{ route('schedules.index') }}"
-                    title="Jadwal"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.*') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">JD</span>
-                    <span class="nav-text">Jadwal</span>
-                </a>
-                <a
-                    href="{{ route('absensi.index') }}"
-                    title="Absensi"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('absensi.*') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">AB</span>
-                    <span class="nav-text">Absensi</span>
-                </a>
-                <a
-                    href="{{ route('monitoring.nfc') }}"
-                    title="Monitoring NFC"
-                    class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">MN</span>
-                    <span class="nav-text">Monitoring NFC</span>
-                </a>
-                <a
-                    href="{{ route('reports.absensi') }}"
-                    title="Laporan"
-                    class="nav-texmaco {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">LP</span>
-                    <span class="nav-text">Laporan</span>
-                </a>
-                <a
-                    href="{{ route('settings.index') }}"
-                    title="Pengaturan"
-                    class="nav-texmaco {{ request()->routeIs('settings.index') ? 'nav-texmaco-active' : '' }}"
-                >
-                    <span class="nav-icon" aria-hidden="true">PG</span>
-                    <span class="nav-text">Pengaturan</span>
-                </a>
+
+                @if($userRole === 'tata_usaha')
+                    <a
+                        href="{{ route('students.index') }}"
+                        title="Data Siswa"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">DS</span>
+                        <span class="nav-text">Data Siswa</span>
+                    </a>
+                    <a
+                        href="{{ route('teachers.index') }}"
+                        title="Data Guru"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('teachers.index') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">DG</span>
+                        <span class="nav-text">Data Guru</span>
+                    </a>
+                    <a
+                        href="{{ route('schedules.index') }}"
+                        title="Jadwal"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.*') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">JD</span>
+                        <span class="nav-text">Jadwal</span>
+                    </a>
+                    <a
+                        href="{{ route('absensi.index') }}"
+                        title="Absensi"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('absensi.*') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">AB</span>
+                        <span class="nav-text">Absensi</span>
+                    </a>
+                    <a
+                        href="{{ route('monitoring.nfc') }}"
+                        title="Monitoring NFC"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">MN</span>
+                        <span class="nav-text">Monitoring NFC</span>
+                    </a>
+                    <a
+                        href="{{ route('reports.absensi') }}"
+                        title="Laporan"
+                        class="nav-texmaco {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">LP</span>
+                        <span class="nav-text">Laporan</span>
+                    </a>
+                @elseif($userRole === 'guru')
+                    <a
+                        href="{{ route('monitoring.nfc') }}"
+                        title="Monitoring Absensi"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">MN</span>
+                        <span class="nav-text">Monitoring Absensi</span>
+                    </a>
+                    <a
+                        href="{{ route('reports.absensi') }}"
+                        title="Laporan Absensi"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">LP</span>
+                        <span class="nav-text">Laporan Absensi</span>
+                    </a>
+                @elseif($userRole === 'siswa')
+                    <a
+                        href="{{ route('absensi.student') }}"
+                        title="Absen"
+                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('absensi.student') ? 'nav-texmaco-active' : '' }}"
+                    >
+                        <span class="nav-icon" aria-hidden="true">AB</span>
+                        <span class="nav-text">Absen</span>
+                    </a>
+                @endif
+
                 <a
                     href="{{ route('profile.index') }}"
                     title="Profil"
@@ -114,8 +137,10 @@
             </nav>
 
             <div class="sidebar-brand-hide mt-auto border-t border-sky-100/80 bg-white/50 p-4 text-[11px] leading-relaxed text-slate-500 backdrop-blur-sm">
-                <p class="font-medium text-slate-600">Panel Tata Usaha</p>
-                <p class="mt-1 text-slate-400">Kelola absensi &amp; laporan harian.</p>
+                <p class="font-medium text-slate-600">
+                    {{ $userRole === 'tata_usaha' ? 'Panel Tata Usaha' : ($userRole === 'guru' ? 'Panel Guru' : 'Panel Siswa') }}
+                </p>
+                <p class="mt-1 text-slate-400">{{ $userRole === 'tata_usaha' ? 'Kelola absensi & laporan harian.' : ($userRole === 'guru' ? 'Monitoring dan laporan kehadiran siswa.' : 'Isi absen dan lihat profil Anda.') }}</p>
             </div>
         </aside>
 
