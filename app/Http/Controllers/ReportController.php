@@ -121,27 +121,47 @@ class ReportController extends Controller
             });
         }
 
-        $attendances = $attendanceQuery->orderByDesc('attendance_date')->orderByDesc('attendance_time')->get();
+        $attendances = $attendanceQuery->get();
+
+        $students = Student::query()
+            ->when($className, function ($builder) use ($className) {
+                $builder->where('class_name', $className);
+            })
+            ->orderBy('name')
+            ->get();
+
+        $rows = $students->map(function ($student) use ($attendances) {
+            $studentRecords = $attendances->where('student_id', $student->id);
+            return [
+                'student' => $student,
+                'hadir' => $studentRecords->where('status', 'hadir')->count(),
+                'izin' => $studentRecords->where('status', 'izin')->count(),
+                'sakit' => $studentRecords->where('status', 'sakit')->count(),
+                'alpha' => $studentRecords->where('status', 'alpha')->count(),
+                'total' => $studentRecords->count(),
+            ];
+        })->filter(function($row) { return $row['total'] > 0; });
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="laporan-absensi-' . date('Y-m-d') . '.csv"',
         ];
 
-        $callback = function () use ($attendances) {
+        $callback = function () use ($rows) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Nama Siswa', 'NIS', 'Kelas', 'Jurusan', 'Tanggal', 'Waktu', 'Status', 'Keterangan']);
+            fputcsv($file, ['Nama Siswa', 'NIS', 'Kelas', 'Jurusan', 'Hadir', 'Izin', 'Sakit', 'Alpha', 'Total']);
 
-            foreach ($attendances as $attendance) {
+            foreach ($rows as $row) {
                 fputcsv($file, [
-                    $attendance->student?->name ?? '-',
-                    $attendance->student?->nis ?? '-',
-                    $attendance->student?->class_name ?? '-',
-                    $attendance->student?->major ?? '-',
-                    $attendance->attendance_date?->format('Y-m-d') ?? '-',
-                    $attendance->attendance_time ?? '-',
-                    ucfirst($attendance->status),
-                    $attendance->note ?? '-',
+                    $row['student']->name ?? '-',
+                    $row['student']->nis ?? '-',
+                    $row['student']->class_name ?? '-',
+                    $row['student']->major ?? '-',
+                    $row['hadir'],
+                    $row['izin'],
+                    $row['sakit'],
+                    $row['alpha'],
+                    $row['total'],
                 ]);
             }
 
@@ -178,9 +198,29 @@ class ReportController extends Controller
             });
         }
 
-        $attendances = $attendanceQuery->orderByDesc('attendance_date')->orderByDesc('attendance_time')->get();
+        $attendances = $attendanceQuery->get();
+
+        $students = Student::query()
+            ->when($className, function ($builder) use ($className) {
+                $builder->where('class_name', $className);
+            })
+            ->orderBy('name')
+            ->get();
+
+        $rows = $students->map(function ($student) use ($attendances) {
+            $studentRecords = $attendances->where('student_id', $student->id);
+            return [
+                'student' => $student,
+                'hadir' => $studentRecords->where('status', 'hadir')->count(),
+                'izin' => $studentRecords->where('status', 'izin')->count(),
+                'sakit' => $studentRecords->where('status', 'sakit')->count(),
+                'alpha' => $studentRecords->where('status', 'alpha')->count(),
+                'total' => $studentRecords->count(),
+            ];
+        })->filter(function($row) { return $row['total'] > 0; });
 
         $html = view('reports.pdf-absensi', [
+            'rows' => $rows,
             'attendances' => $attendances,
             'startDate' => $startDate,
             'endDate' => $endDate,

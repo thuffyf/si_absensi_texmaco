@@ -138,27 +138,7 @@
     </div>
     @endif
 
-    <div class="summary">
-        <h3>Ringkasan Absensi</h3>
-        <div class="summary-grid">
-            <div class="summary-item">
-                <div class="count">{{ $attendances->where('status', 'hadir')->count() }}</div>
-                <div class="label">Hadir</div>
-            </div>
-            <div class="summary-item">
-                <div class="count">{{ $attendances->where('status', 'izin')->count() }}</div>
-                <div class="label">Izin</div>
-            </div>
-            <div class="summary-item">
-                <div class="count">{{ $attendances->where('status', 'sakit')->count() }}</div>
-                <div class="label">Sakit</div>
-            </div>
-            <div class="summary-item">
-                <div class="count">{{ $attendances->where('status', 'alpha')->count() }}</div>
-                <div class="label">Alpha</div>
-            </div>
-        </div>
-    </div>
+
 
     <table>
         <thead>
@@ -167,25 +147,25 @@
                 <th>Nama Siswa</th>
                 <th>NIS</th>
                 <th>Kelas</th>
-                <th>Jurusan</th>
-                <th>Tanggal</th>
-                <th>Waktu</th>
-                <th>Status</th>
-                <th>Keterangan</th>
+                <th>Hadir</th>
+                <th>Izin</th>
+                <th>Sakit</th>
+                <th>Alpha</th>
+                <th>Total</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($attendances as $index => $attendance)
+            @foreach($rows as $index => $row)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $attendance->student?->name ?? '-' }}</td>
-                <td>{{ $attendance->student?->nis ?? '-' }}</td>
-                <td>{{ $attendance->student?->class_name ?? '-' }}</td>
-                <td>{{ $attendance->student?->major ?? '-' }}</td>
-                <td>{{ $attendance->attendance_date?->format('d F Y') ?? '-' }}</td>
-                <td>{{ $attendance->attendance_time ?? '-' }}</td>
-                <td><span class="status-{{ $attendance->status }}">{{ ucfirst($attendance->status) }}</span></td>
-                <td>{{ $attendance->note ?? '-' }}</td>
+                <td>{{ $row['student']->name ?? '-' }}</td>
+                <td>{{ $row['student']->nis ?? '-' }}</td>
+                <td>{{ $row['student']->class_name ?? '-' }}</td>
+                <td style="text-align: center;"><span class="status-hadir">{{ $row['hadir'] }}</span></td>
+                <td style="text-align: center;"><span class="status-izin">{{ $row['izin'] }}</span></td>
+                <td style="text-align: center;"><span class="status-sakit">{{ $row['sakit'] }}</span></td>
+                <td style="text-align: center;"><span class="status-alpha">{{ $row['alpha'] }}</span></td>
+                <td style="text-align: center; font-weight: bold;">{{ $row['total'] }}</td>
             </tr>
             @endforeach
         </tbody>
