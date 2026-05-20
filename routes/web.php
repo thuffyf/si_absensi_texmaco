@@ -122,7 +122,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Absensi (formerly Izin & Sakit)
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
-    Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    // POST /absensi dihapus - Absensi otomatis terisi dari tap in alat NFC, notifikasi siswa sakit/izin, atau penolakan dari TU
     Route::post('/absensi/sync', [AbsensiController::class, 'syncFromExternal'])->name('absensi.sync');
 
     Route::get('/absensi/siswa', function (Request $request) {
@@ -239,5 +239,33 @@ Route::middleware(['auth'])->group(function () {
 
         return response()->json(['success' => true]);
     })->name('profile.delete-photo');
+
+    Route::post('/profile/change-password', function (Request $request) {
+        $request->validate([
+            'password_current' => 'required|string',
+            'password_new' => 'required|string|min:8|confirmed|different:password_current',
+            'password_confirmation' => 'required|string',
+        ], [
+            'password_current.required' => 'Password saat ini harus diisi.',
+            'password_new.required' => 'Password baru harus diisi.',
+            'password_new.min' => 'Password baru minimal 8 karakter.',
+            'password_new.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password_new.different' => 'Password baru harus berbeda dari password saat ini.',
+            'password_confirmation.required' => 'Konfirmasi password harus diisi.',
+        ]);
+
+        $user = auth()->user();
+
+        // Verify current password
+        if (!Hash::check($request->password_current, $user->password)) {
+            return back()->withErrors(['password_current' => 'Password saat ini tidak sesuai.']);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password_new);
+        $user->save();
+
+        return back()->with('success', 'Password berhasil diubah.');
+    })->name('profile.change-password');
 });
 

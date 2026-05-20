@@ -85,6 +85,56 @@
         </form>
     </div>
 
+    <!-- Change Password Section -->
+    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h2 class="text-xl font-semibold text-slate-900 mb-6">Ganti Password</h2>
+
+        <form action="{{ route('profile.change-password') }}" method="POST" class="space-y-6">
+            @csrf
+
+            <!-- Current Password -->
+            <div>
+                <label for="password_current" class="block text-sm font-medium text-slate-700 mb-2">Password Saat Ini</label>
+                <input type="password" id="password_current" name="password_current" required
+                    class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full">
+                @error('password_current')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- New Password -->
+            <div>
+                <label for="password_new" class="block text-sm font-medium text-slate-700 mb-2">Password Baru</label>
+                <input type="password" id="password_new" name="password_new" required
+                    class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full">
+                <p class="text-xs text-slate-500 mt-1">Minimal 8 karakter</p>
+                @error('password_new')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password Baru</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required
+                    class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full">
+                @error('password_confirmation')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <button type="submit" class="flex items-center justify-center rounded-xl bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Ganti Password
+                </button>
+            </div>
+        </form>
+    </div>
+
     <!-- Logout Section -->
     <div class="rounded-3xl border border-red-200 bg-white p-8 shadow-sm">
         <h2 class="text-xl font-semibold text-slate-900 mb-4">Keluar</h2>

@@ -40,10 +40,10 @@
                         <p class="mt-1 text-2xl font-bold tabular-nums text-sky-900 lg:text-3xl">{{ $maxAttendance }}</p>
                         <p class="mt-0.5 text-xs text-sky-800/90 lg:text-sm">{{ $maxDay }}</p>
                     </div>
-                    <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-white p-4 lg:p-5">
+                    <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-white p-4 lg:p-5 overflow-hidden">
                         <p class="text-xs font-semibold uppercase tracking-wide text-emerald-900/90 lg:text-sm">vs minggu lalu</p>
-                        <p class="mt-2 text-3xl font-bold tabular-nums text-emerald-800 lg:text-4xl xl:text-5xl">{{ $trendLabel }}</p>
-                        <p class="mt-1 text-sm text-emerald-800/90">{{ $trendText }}</p>
+                        <p class="mt-2 text-2xl lg:text-3xl font-bold tabular-nums text-emerald-800 truncate">{{ $trendLabel }}</p>
+                        <p class="mt-1 text-xs lg:text-sm text-emerald-800/90 line-clamp-1">{{ $trendText }}</p>
                     </div>
                     <div class="rounded-2xl border border-slate-100 bg-white p-4 lg:p-5">
                         <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 lg:text-sm">Rentang</p>

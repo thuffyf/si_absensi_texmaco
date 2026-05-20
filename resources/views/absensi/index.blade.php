@@ -55,12 +55,6 @@
             </form>
         </div>
         <div class="flex gap-2">
-            <button onclick="document.getElementById('add-absensi-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Tambah Absensi
-            </button>
             <form method="POST" action="{{ route('absensi.sync') }}" class="inline">
                 @csrf
                 <button type="submit" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
@@ -73,38 +67,7 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Absensi -->
-    <div id="add-absensi-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
-            <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-slate-900">Tambah Data Absensi Baru</h3>
-                <button onclick="document.getElementById('add-absensi-modal').classList.add('hidden')" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <form method="POST" action="{{ route('absensi.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                @csrf
-                <select name="student_id" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih siswa</option>
-                    @foreach($students as $student)
-                        <option value="{{ $student->id }}" @selected(old('student_id') == $student->id)>{{ $student->name }} ({{ $student->nis }})</option>
-                    @endforeach
-                </select>
-                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="hadir" @selected(old('status') === 'hadir')">Hadir</option>
-                    <option value="izin" @selected(old('status') === 'izin')">Izin</option>
-                    <option value="sakit" @selected(old('status') === 'sakit')">Sakit</option>
-                    <option value="alpha" @selected(old('status') === 'alpha')">Alpha</option>
-                </select>
-                <input name="attendance_date" type="date" value="{{ old('attendance_date', now()->format('Y-m-d')) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
-                <input name="attendance_time" type="time" value="{{ old('attendance_time', now()->format('H:i')) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
-                <textarea name="note" class="md:col-span-2 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" rows="3" placeholder="Keterangan">{{ old('note') }}</textarea>
-                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Absensi</button>
-            </form>
-        </div>
-    </div>
+    <!-- Modal Tambah Absensi dihapus - Absensi otomatis dari tap in, notifikasi, dan penolakan siswa sakit/izin -->
 
     <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
