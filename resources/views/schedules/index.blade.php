@@ -32,8 +32,9 @@
                         <dd class="mt-0.5 font-medium text-slate-800">{{ $card['homeroom_teacher_name'] }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Jumlah siswa</dt>
-                        <dd class="mt-0.5 text-lg font-bold tabular-nums text-slate-900">{{ $card['student_count'] }}</dd>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Sudah absen hari ini</dt>
+                        <dd class="mt-0.5 text-lg font-bold tabular-nums text-slate-900">{{ $card['attendance_count'] }}</dd>
+                        <p class="mt-1 text-xs font-medium text-slate-500">Total siswa: {{ $card['student_count'] }}</p>
                     </div>
                     <div>
                         <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Hari ini</dt>
@@ -51,5 +52,55 @@
             </article>
         @endforeach
     </div>
+
+    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Jadwal per Hari</h2>
+                <p class="text-sm text-slate-500">Daftar mapel per hari dengan waktu dan jumlah siswa yang sudah absen hari ini.</p>
+            </div>
+        </div>
+
+        <div class="mt-6 space-y-6">
+            @forelse($schedulesByDay as $day => $items)
+                <div class="overflow-hidden rounded-2xl border border-slate-200">
+                    <div class="flex items-center justify-between bg-slate-50 px-4 py-3">
+                        <h3 class="text-sm font-semibold text-slate-700">{{ $day }}</h3>
+                        <span class="text-xs font-medium text-slate-500">{{ $items->count() }} mapel</span>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        @foreach($items as $schedule)
+                            <div class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-900">{{ $schedule->subject }}</p>
+                                    <p class="text-xs text-slate-500">
+                                        {{ $schedule->class_name }} · {{ $schedule->teacher?->name ?? '—' }}
+                                    </p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2 text-xs">
+                                    <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
+                                        {{ $schedule->start_time?->format('H:i') ?? '-' }} - {{ $schedule->end_time?->format('H:i') ?? '-' }}
+                                    </span>
+                                    <span class="rounded-full bg-sky-50 px-2.5 py-1 font-semibold text-sky-700">
+                                        Absen: {{ $attendanceCounts[$schedule->id] ?? 0 }}
+                                    </span>
+                                    <a
+                                        href="{{ route('schedules.edit', $schedule) }}"
+                                        class="rounded-full border border-slate-200 px-3 py-1 font-semibold text-slate-600 hover:bg-slate-100"
+                                    >
+                                        Edit
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @empty
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                    Belum ada jadwal yang terdaftar.
+                </div>
+            @endforelse
+        </div>
+    </section>
 </div>
 @endsection

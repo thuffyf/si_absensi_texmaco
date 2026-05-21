@@ -45,7 +45,11 @@
                     title="Dashboard"
                     class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('dashboard') ? 'nav-texmaco-active' : '' }}"
                 >
-                    <span class="nav-icon" aria-hidden="true">DB</span>
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
+                        </svg>
+                    </span>
                     <span class="nav-text">Dashboard</span>
                 </a>
 
@@ -55,7 +59,11 @@
                         title="Data Siswa"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('students.index') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">DS</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m9-6v6a9 9 0 11-18 0v-6" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Data Siswa</span>
                     </a>
                     <a
@@ -63,7 +71,11 @@
                         title="Data Guru"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('teachers.index') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">DG</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Data Guru</span>
                     </a>
                     <a
@@ -71,7 +83,11 @@
                         title="Jadwal"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('schedules.*') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">JD</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Jadwal</span>
                     </a>
                     <a
@@ -79,7 +95,11 @@
                         title="Absensi"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('absensi.*') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">AB</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m-7-3h7.5a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9A2.25 2.25 0 014 18.25v-9A2.25 2.25 0 016.25 7h.5m7-3H9a2.25 2.25 0 00-2.25 2.25v.75h10.5V6.25A2.25 2.25 0 0015 4z" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Absensi</span>
                     </a>
                     <a
@@ -87,7 +107,11 @@
                         title="Monitoring NFC"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">MN</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.288 14.734a.75.75 0 01-1.076-1.044 7.5 7.5 0 0110.576 0 .75.75 0 11-1.076 1.044 6 6 0 00-8.424 0zM12 18.375a.75.75 0 01-.53-.22 3.75 3.75 0 015.06-5.06.75.75 0 11-1.06 1.06 2.25 2.25 0 00-3 0 .75.75 0 01-.53.22zM12 21a.75.75 0 01-.53-.22.75.75 0 111.06 0A.75.75 0 0112 21z" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Monitoring NFC</span>
                     </a>
                     <a
@@ -95,7 +119,11 @@
                         title="Laporan"
                         class="nav-texmaco {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">LP</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 15V9m4 6V5m4 10v-4" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Laporan</span>
                     </a>
                 @elseif($userRole === 'guru')
@@ -104,7 +132,11 @@
                         title="Monitoring Absensi"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">MN</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.288 14.734a.75.75 0 01-1.076-1.044 7.5 7.5 0 0110.576 0 .75.75 0 11-1.076 1.044 6 6 0 00-8.424 0zM12 18.375a.75.75 0 01-.53-.22 3.75 3.75 0 015.06-5.06.75.75 0 11-1.06 1.06 2.25 2.25 0 00-3 0 .75.75 0 01-.53.22zM12 21a.75.75 0 01-.53-.22.75.75 0 111.06 0A.75.75 0 0112 21z" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Monitoring Absensi</span>
                     </a>
                     <a
@@ -112,7 +144,11 @@
                         title="Laporan Absensi"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">LP</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 15V9m4 6V5m4 10v-4" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Laporan Absensi</span>
                     </a>
                 @elseif($userRole === 'siswa')
@@ -121,7 +157,11 @@
                         title="Absen"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('absensi.student') ? 'nav-texmaco-active' : '' }}"
                     >
-                        <span class="nav-icon" aria-hidden="true">AB</span>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m-7-3h7.5a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9A2.25 2.25 0 014 18.25v-9A2.25 2.25 0 016.25 7h.5m7-3H9a2.25 2.25 0 00-2.25 2.25v.75h10.5V6.25A2.25 2.25 0 0015 4z" />
+                            </svg>
+                        </span>
                         <span class="nav-text">Absen</span>
                     </a>
                 @endif
@@ -131,7 +171,11 @@
                     title="Profil"
                     class="nav-texmaco {{ request()->routeIs('profile.index') ? 'nav-texmaco-active' : '' }}"
                 >
-                    <span class="nav-icon" aria-hidden="true">PR</span>
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3a9 9 0 100 18 9 9 0 000-18zm3.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM6.75 18a6.75 6.75 0 0110.5 0" />
+                        </svg>
+                    </span>
                     <span class="nav-text">Profil</span>
                 </a>
             </nav>

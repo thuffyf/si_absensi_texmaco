@@ -29,6 +29,14 @@ class ScheduleController extends Controller
             ->keyBy('class_name');
 
         $todayLabel = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
+        $today = Carbon::now()->toDateString();
+        $attendanceByClass = Attendance::query()
+            ->selectRaw('students.class_name as class_name, COUNT(DISTINCT attendances.student_id) as total')
+            ->join('students', 'attendances.student_id', '=', 'students.id')
+            ->whereDate('attendance_date', $today)
+            ->whereNotNull('attendance_time')
+            ->groupBy('students.class_name')
+            ->pluck('total', 'class_name');
 
         $classCards = [];
         foreach (self::TEI_CLASS_NAMES as $className) {
@@ -37,6 +45,7 @@ class ScheduleController extends Controller
                 'slug' => self::TEI_SLUGS[$className],
                 'homeroom_teacher_name' => $homerooms->get($className)?->homeroom_teacher_name ?? '—',
                 'student_count' => Student::query()->where('class_name', $className)->count(),
+                'attendance_count' => (int) ($attendanceByClass[$className] ?? 0),
             ];
         }
 
@@ -56,9 +65,23 @@ class ScheduleController extends Controller
 
         $schedules = $query->orderBy('day_of_week')->orderBy('start_time')->get();
         $schedulesByDay = $schedules->groupBy('day_of_week');
+        $dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        $schedulesByDay = $schedulesByDay->sortKeysUsing(function ($a, $b) use ($dayOrder) {
+            $posA = array_search($a, $dayOrder, true);
+            $posB = array_search($b, $dayOrder, true);
+            $posA = $posA === false ? 999 : $posA;
+            $posB = $posB === false ? 999 : $posB;
+            return $posA <=> $posB;
+        });
+        $attendanceCounts = Attendance::query()
+            ->whereDate('attendance_date', $today)
+            ->whereNotNull('schedule_id')
+            ->selectRaw('schedule_id, COUNT(*) as total')
+            ->groupBy('schedule_id')
+            ->pluck('total', 'schedule_id');
         $teachers = Teacher::orderBy('name')->get();
 
-        return view('schedules.index', compact('classCards', 'todayLabel', 'schedulesByDay', 'teachers'));
+        return view('schedules.index', compact('classCards', 'todayLabel', 'today', 'schedulesByDay', 'attendanceCounts', 'teachers'));
     }
 
     /**

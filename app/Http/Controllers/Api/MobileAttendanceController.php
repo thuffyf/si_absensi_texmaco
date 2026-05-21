@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\NfcDevice;
+use App\Models\Schedule;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -26,11 +27,39 @@ class MobileAttendanceController extends Controller
         }
 
         $now = Carbon::now();
+        $dayNames = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+        $todayDayName = $dayNames[$now->format('l')] ?? $now->format('l');
+        $schedule = Schedule::query()
+            ->where('class_name', $student->class_name)
+            ->where('day_of_week', $todayDayName)
+            ->where('status', 'aktif')
+            ->orderBy('start_time')
+            ->get()
+            ->first(function (Schedule $item) use ($now) {
+                $startTime = $item->start_time instanceof Carbon
+                    ? $item->start_time->copy()
+                    : Carbon::parse((string) $item->start_time);
+                $endTime = $item->end_time instanceof Carbon
+                    ? $item->end_time->copy()
+                    : Carbon::parse((string) $item->end_time);
+                $startTime->setDate($now->year, $now->month, $now->day);
+                $endTime->setDate($now->year, $now->month, $now->day);
+                return $now->between($startTime, $endTime, true);
+            });
         $status = $data['status'] ?? 'hadir';
 
         $attendance = Attendance::create([
             'student_id' => $student->id,
             'device_id' => $data['device_id'] ?? null,
+            'schedule_id' => $schedule?->id,
             'attendance_date' => $now->toDateString(),
             'attendance_time' => $now->format('H:i:s'),
             'status' => $status,
