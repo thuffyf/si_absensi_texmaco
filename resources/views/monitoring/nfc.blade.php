@@ -10,10 +10,10 @@
     $errorRate = $totalScans > 0 ? round(($failedCount / $totalScans) * 100, 1) : 0;
 @endphp
 
-<div class="mx-auto flex w-full max-w-none flex-col gap-3 max-lg:space-y-1 lg:h-full lg:min-h-0 lg:gap-3 lg:overflow-hidden">
+<div class="mx-auto flex w-full max-w-none flex-col gap-3 lg:h-full lg:min-h-0 lg:gap-3 lg:overflow-hidden">
     <div class="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-12 lg:gap-4 lg:overflow-hidden">
         <!-- Main Content -->
-        <section class="flex min-h-0 flex-col lg:col-span-9 lg:overflow-hidden">
+        <section class="flex min-h-0 flex-col lg:col-span-9 lg:overflow-hidden order-2 lg:order-1">
             <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex shrink-0 flex-wrap items-center gap-2">
@@ -46,7 +46,7 @@
                     </div>
                 </div>
 
-                <div class="mt-3 min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40 p-2.5 lg:mt-4 lg:flex lg:items-stretch lg:justify-center lg:p-3">
+                <div class="mt-3 min-h-[400px] lg:min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40 p-2.5 lg:mt-4 lg:flex lg:items-stretch lg:justify-center lg:p-3">
                     <div class="h-full w-full overflow-y-auto space-y-2" id="events-container">
                         @forelse($events as $event)
                             @php
@@ -81,13 +81,13 @@
                                 $scanStatus = $event['is_unregistered'] ?? false ? 'Scan Gagal' : 'Scan OK';
                                 $scanStatusClass = $event['is_unregistered'] ?? false ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700';
                             @endphp
-                            <div class="flex items-center gap-3 rounded-xl border {{ $borderClass }} bg-white p-3 hover:bg-slate-50 transition-colors">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full {{ $iconClass }} font-bold text-lg">
+                            <div class="flex items-start gap-3 rounded-xl border {{ $borderClass }} bg-white p-3 hover:bg-slate-50 transition-colors">
+                                <div class="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full {{ $iconClass }} font-bold text-sm sm:text-lg">
                                     {{ $iconText }}
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between gap-2">
-                                        <div class="min-w-0">
+                                        <div class="min-w-0 flex-1">
                                             <p class="truncate text-sm font-semibold text-slate-900 lg:text-base">{{ $event['student_name'] }}</p>
                                             @if(!$event['is_unregistered'] ?? false)
                                                 <p class="text-xs text-slate-500 lg:text-sm">NIS: {{ $event['nis'] }} | {{ $event['class_name'] }}</p>
@@ -99,7 +99,7 @@
                                             <p class="mt-1 text-xs font-mono text-slate-500 lg:text-sm">{{ $event['time'] }}</p>
                                         </div>
                                     </div>
-                                    <div class="mt-2 flex items-center gap-2 text-xs">
+                                    <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                         <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">{{ $event['device_name'] }}</span>
                                         <span class="rounded-full {{ $scanStatusClass }} px-2 py-0.5">{{ $scanStatus }}</span>
                                     </div>
@@ -116,7 +116,7 @@
         </section>
 
         <!-- Sidebar -->
-        <div class="flex min-h-0 flex-col gap-4 lg:col-span-3 lg:gap-4 lg:overflow-hidden">
+        <div class="flex min-h-0 flex-col gap-4 lg:col-span-3 lg:gap-4 lg:overflow-hidden order-1 lg:order-2">
             <section class="shrink-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <h2 class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 lg:text-xs">Status Perangkat</h2>
                 <div class="mt-3 space-y-3" id="devices-container">
@@ -221,13 +221,13 @@
                     const scanStatusClass = event.is_unregistered ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700';
                     
                     const eventHtml = `
-                        <div class="flex items-center gap-3 rounded-xl border ${borderClass} bg-white p-3 hover:bg-slate-50 transition-colors">
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${iconClass} font-bold text-lg">
+                        <div class="flex items-start gap-3 rounded-xl border ${borderClass} bg-white p-3 hover:bg-slate-50 transition-colors">
+                            <div class="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full ${iconClass} font-bold text-sm sm:text-lg">
                                 ${iconText}
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between gap-2">
-                                    <div class="min-w-0">
+                                    <div class="min-w-0 flex-1">
                                         <p class="truncate text-sm font-semibold text-slate-900 lg:text-base">${event.student_name}</p>
                                         ${!event.is_unregistered ? `<p class="text-xs text-slate-500 lg:text-sm">NIS: ${event.nis} | ${event.class_name}</p>` : ''}
                                         <p class="text-xs text-slate-400 mt-1">UID: ${event.uid_kartu}</p>
@@ -237,7 +237,7 @@
                                         <p class="mt-1 text-xs font-mono text-slate-500 lg:text-sm">${event.time}</p>
                                     </div>
                                 </div>
-                                <div class="mt-2 flex items-center gap-2 text-xs">
+                                <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                     <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">${event.device_name}</span>
                                     <span class="rounded-full ${scanStatusClass} px-2 py-0.5">${scanStatus}</span>
                                 </div>
