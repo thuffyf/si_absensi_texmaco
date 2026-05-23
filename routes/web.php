@@ -87,6 +87,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
+    // Student Dashboard (separate from admin)
+    Route::get('/student-dashboard', [App\Http\Controllers\StudentDashboardController::class, 'index'])
+        ->name('student.dashboard')
+        ->middleware('auth');
+
     // Monitoring NFC Real-Time
     Route::get('/monitoring/nfc', [MonitoringController::class, 'nfc'])->name('monitoring.nfc');
 
@@ -133,11 +138,42 @@ Route::middleware(['auth'])->group(function () {
         }
 
         $today = Carbon::today();
+        $now = Carbon::now('Asia/Jakarta');
         $attendance = Attendance::where('student_id', $student->id)
             ->whereDate('attendance_date', $today)
             ->first();
 
-        return view('absensi.student', compact('student', 'attendance'));
+        // Generate day cards for the week
+        $weekStart = Carbon::now()->locale('id')->startOfWeek(Carbon::MONDAY);
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $dayCards = [];
+
+        // Determine if this is Normatif or Produktif week
+        // Starting from May 25, 2026 is Normatif week
+        $normativeStart = Carbon::create(2026, 5, 25)->startOfWeek(Carbon::MONDAY);
+        $weekNumber = $weekStart->diffInWeeks($normativeStart);
+        $isNormative = $weekNumber % 2 === 0; // Even weeks are Normatif, odd weeks are Produktif
+
+        for ($i = 0; $i < 5; $i++) {
+            $date = $weekStart->copy()->addDays($i);
+            $att = Attendance::where('student_id', $student->id)
+                ->whereDate('attendance_date', $date)
+                ->first();
+
+            // Set room based on week type
+            $room = $isNormative ? 'X TEI' : 'Lab TEI';
+
+            $dayCards[] = [
+                'name' => $days[$i],
+                'date' => $date->format('d M Y'),
+                'attendance' => $att,
+                'is_today' => $date->isSameDay($today),
+                'is_past' => $date->lt($today),
+                'room' => $room,
+            ];
+        }
+
+        return view('absensi.student', compact('student', 'attendance', 'dayCards', 'now'));
     })->name('absensi.student');
 
     Route::post('/absensi/siswa', function (Request $request) {
@@ -149,9 +185,24 @@ Route::middleware(['auth'])->group(function () {
 
         $data = $request->validate([
             'status' => 'required|in:hadir,izin,sakit,alpha',
+            'leave_reason' => 'nullable|string|required_if:status,izin,sakit|max:500',
             'note' => 'nullable|string|max:255',
         ]);
 
+        // If status is izin or sakit, create leave request instead of direct attendance
+        if ($data['status'] === 'izin' || $data['status'] === 'sakit') {
+            $leaveRequest = LeaveRequest::create([
+                'student_id' => $student->id,
+                'type' => $data['status'],
+                'reason' => $data['leave_reason'],
+                'status' => 'pending_teacher',
+                'request_date' => Carbon::today()->toDateString(),
+            ]);
+
+            return back()->with('success', 'Permintaan ' . ucfirst($data['status']) . ' berhasil dikirim ke Guru untuk persetujuan.');
+        }
+
+        // For hadir or alpha, create attendance directly
         $attendance = Attendance::updateOrCreate(
             [
                 'student_id' => $student->id,
@@ -169,8 +220,13 @@ Route::middleware(['auth'])->group(function () {
 
     // Notifikasi Guru
     Route::get('/notifications/guru-approvals', [NotificationController::class, 'teacherApprovals'])->name('notifications.guru-approvals');
-    Route::patch('/notifications/guru-approvals/{leaveRequest}/approve', [NotificationController::class, 'approve'])->name('notifications.approve');
-    Route::patch('/notifications/guru-approvals/{leaveRequest}/reject', [NotificationController::class, 'reject'])->name('notifications.reject');
+    Route::patch('/notifications/guru-approvals/{leaveRequest}/approve', [NotificationController::class, 'teacherApprove'])->name('notifications.teacher-approve');
+    Route::patch('/notifications/guru-approvals/{leaveRequest}/reject', [NotificationController::class, 'teacherReject'])->name('notifications.teacher-reject');
+
+    // Notifikasi TU
+    Route::get('/notifications/tu-approvals', [NotificationController::class, 'tuApprovals'])->name('notifications.tu-approvals');
+    Route::patch('/notifications/tu-approvals/{leaveRequest}/approve', [NotificationController::class, 'tuApprove'])->name('notifications.tu-approve');
+    Route::patch('/notifications/tu-approvals/{leaveRequest}/reject', [NotificationController::class, 'tuReject'])->name('notifications.tu-reject');
 
     // Laporan Absensi
     Route::get('/laporan/absensi', [ReportController::class, 'absensi'])->name('reports.absensi');

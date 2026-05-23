@@ -38,14 +38,22 @@ class LeaveRequestController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'reason' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data['status'] = 'pending';
+        $data['status'] = 'pending_teacher';
         $data['requested_at'] = Carbon::now();
+        $data['request_date'] = Carbon::today()->toDateString();
+
+        // Handle photo upload
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            $photoPath = $request->file('photo')->store('leave-requests', 'public');
+            $data['photo'] = $photoPath;
+        }
 
         LeaveRequest::create($data);
 
-        return back()->with('success', 'Request izin/sakit berhasil dibuat.');
+        return back()->with('success', 'Request izin/sakit berhasil dibuat dan dikirim ke Guru untuk persetujuan.');
     }
 
     public function approve(Request $request, LeaveRequest $leaveRequest)

@@ -19,6 +19,9 @@ class LeaveRequest extends Model
         'requested_at',
         'responded_at',
         'response_note',
+        'request_date',
+        'rejection_reason',
+        'photo',
     ];
 
     protected $casts = [
@@ -26,6 +29,7 @@ class LeaveRequest extends Model
         'end_date' => 'date',
         'requested_at' => 'datetime',
         'responded_at' => 'datetime',
+        'request_date' => 'date',
     ];
 
     public function student()

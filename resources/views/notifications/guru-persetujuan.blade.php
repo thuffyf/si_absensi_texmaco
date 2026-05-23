@@ -2,7 +2,7 @@
 
 @section('title', 'Persetujuan Guru — SITEXA Absensi')
 @section('page_title', 'Persetujuan dari Guru')
-@section('page_subtitle', 'Izin & alpha — menunggu Terima atau Tolak')
+@section('page_subtitle', 'Persetujuan awal permintaan Izin/Sakit siswa')
 
 @section('content')
 @php
@@ -10,7 +10,7 @@
 
 <div class="mx-auto max-w-4xl space-y-5 pb-8">
     <p class="text-sm text-slate-600">
-        Berikut permintaan izin/sakit yang menunggu persetujuan Anda. Pilih <strong class="text-slate-900">Terima</strong> atau <strong class="text-slate-900">Tolak</strong> untuk setiap pengajuan.
+        Berikut permintaan izin/sakit yang menunggu persetujuan Guru. <strong class="text-slate-900">Terima</strong> untuk meneruskan ke TU, atau <strong class="text-slate-900">Tolak</strong> untuk menolak langsung.
     </p>
 
     <div class="space-y-5" id="approval-list">
