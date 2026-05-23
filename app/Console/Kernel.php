@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Mark students as alpha if they haven't scanned by 8:00 AM
+        $schedule->command('app:mark-absent-students')
+            ->dailyAt('08:00')
+            ->timezone('Asia/Jakarta')
+            ->description('Mark absent students as alpha at 8:00 AM');
     }
 
     /**

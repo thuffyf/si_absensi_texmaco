@@ -33,3 +33,6 @@ Route::prefix('mobile')->group(function () {
     Route::get('/student/absensi', [MobileStudentController::class, 'absensi']);
     Route::get('/teacher/absences', [MobileTeacherController::class, 'absences']);
 });
+
+// NFC Monitoring API
+Route::get('/monitoring/nfc-data', [App\Http\Controllers\MonitoringController::class, 'nfcData']);
