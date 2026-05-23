@@ -9,6 +9,7 @@ use App\Models\Schedule;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MobileAttendanceController extends Controller
 {
@@ -26,7 +27,7 @@ class MobileAttendanceController extends Controller
             return response()->json(['message' => 'UID tidak terdaftar.'], 404);
         }
 
-        $now = Carbon::now();
+        $now = Carbon::now('Asia/Jakarta');
         $dayNames = [
             'Monday' => 'Senin',
             'Tuesday' => 'Selasa',
@@ -55,6 +56,9 @@ class MobileAttendanceController extends Controller
                 return $now->between($startTime, $endTime, true);
             });
         $status = $data['status'] ?? 'hadir';
+
+        // Set MySQL session timezone to Asia/Jakarta
+        DB::statement("SET time_zone = '+07:00'");
 
         $attendance = Attendance::create([
             'student_id' => $student->id,

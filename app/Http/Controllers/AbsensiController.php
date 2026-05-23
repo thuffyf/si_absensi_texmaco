@@ -17,6 +17,15 @@ class AbsensiController extends Controller
     {
         $query = Attendance::query()->with('student');
 
+        // Default filter for today's attendance only
+        if (!$request->filled('date')) {
+            $query->whereDate('attendance_date', Carbon::today());
+        } elseif ($request->date === 'all') {
+            // Show all records if explicitly requested
+        } else {
+            $query->whereDate('attendance_date', $request->date);
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
         }
@@ -53,11 +62,11 @@ class AbsensiController extends Controller
             'jurusan' => $student->major,
             'status' => $data['status'],
             'tanggal' => $data['attendance_date'],
-            'waktu' => $data['attendance_time'] ?? Carbon::now()->format('H:i:s'),
+            'waktu' => $data['attendance_time'] ?? Carbon::now('Asia/Jakarta')->format('H:i:s'),
             'keterangan' => $data['note'] ?? '',
         ]);
 
-        $data['attendance_time'] = $data['attendance_time'] ?? Carbon::now()->format('H:i:s');
+        $data['attendance_time'] = $data['attendance_time'] ?? Carbon::now('Asia/Jakarta')->format('H:i:s');
 
         Attendance::create($data);
 

@@ -159,7 +159,7 @@ Route::middleware(['auth'])->group(function () {
             ],
             [
                 'status' => $data['status'],
-                'attendance_time' => Carbon::now()->format('H:i:s'),
+                'attendance_time' => Carbon::now('Asia/Jakarta')->format('H:i:s'),
                 'note' => $data['note'] ?? null,
             ]
         );
