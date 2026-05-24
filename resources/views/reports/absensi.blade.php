@@ -35,7 +35,7 @@
             <p class="text-3xl font-bold text-slate-900 mt-2">{{ $sakit }}</p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-sm font-medium text-slate-500">Alpha</p>
+            <p class="text-sm font-medium text-slate-500">Alpa</p>
             <p class="text-3xl font-bold text-slate-900 mt-2">{{ $alpha }}</p>
         </div>
     </div>
@@ -63,7 +63,7 @@
                     <option value="hadir" @selected(($filters['status'] ?? '') === 'hadir')>Hadir</option>
                     <option value="izin" @selected(($filters['status'] ?? '') === 'izin')>Izin</option>
                     <option value="sakit" @selected(($filters['status'] ?? '') === 'sakit')>Sakit</option>
-                    <option value="alpha" @selected(($filters['status'] ?? '') === 'alpha')>Alpha</option>
+                    <option value="alpha" @selected(($filters['status'] ?? '') === 'alpha')>Alpa</option>
                 </select>
             </div>
             <div class="flex flex-wrap gap-2 md:col-span-2 lg:col-span-4">
@@ -102,7 +102,7 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Jam Hadir</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Izin</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Sakit</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Alpha</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Alpa</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Total</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">%</th>
                     </tr>

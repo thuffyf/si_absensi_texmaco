@@ -43,7 +43,7 @@
                     <option value="hadir" @selected(request('status') === 'hadir')">Hadir</option>
                     <option value="izin" @selected(request('status') === 'izin')">Izin</option>
                     <option value="sakit" @selected(request('status') === 'sakit')">Sakit</option>
-                    <option value="alpha" @selected(request('status') === 'alpha')">Alpha</option>
+                    <option value="alpha" @selected(request('status') === 'alpha')">Alpa</option>
                 </select>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                     <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_time }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="{{ $statusClasses[$record->status] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
-                                    {{ ucfirst($record->status) }}
+                                    {{ $record->status === 'alpha' ? 'Alpa' : ucfirst($record->status) }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->note ?? '-' }}</td>

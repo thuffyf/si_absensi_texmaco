@@ -34,7 +34,7 @@
                                 $day['attendance']->status === 'hadir' ? 'text-emerald-900' : 
                                 ($day['attendance']->status === 'izin' ? 'text-amber-900' : 
                                 ($day['attendance']->status === 'sakit' ? 'text-red-900' : 'text-red-900')) 
-                            }} uppercase">{{ $day['attendance']->status }}</dd>
+                            }} uppercase">{{ $day['attendance']->status === 'alpha' ? 'ALPA' : strtoupper($day['attendance']->status) }}</dd>
                             <p class="mt-1 text-xs font-medium text-slate-500">{{ $day['attendance']->attendance_time }}</p>
                         @else
                             <dd class="mt-0.5 text-lg font-bold tabular-nums text-slate-900">Belum</dd>
@@ -66,7 +66,7 @@
                         @else
                             <span class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-medium text-slate-500">
                                 @if($day['attendance'])
-                                    Sudah absen: {{ strtoupper($day['attendance']->status) }}
+                                    Sudah absen: {{ $day['attendance']->status === 'alpha' ? 'ALPA' : strtoupper($day['attendance']->status) }}
                                 @elseif($day['leave_request'])
                                     Sudah request: {{ strtoupper($day['leave_request']->type) }} ({{ $day['leave_request']->status === 'approved' ? 'Disetujui' : 'Menunggu' }})
                                 @endif

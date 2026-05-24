@@ -36,7 +36,7 @@
                     <div class="rounded-xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-3 lg:p-4">
                         <p class="text-[10px] font-semibold uppercase tracking-wide text-emerald-800 lg:text-xs">Absen</p>
                         <p class="mt-1 text-2xl font-bold tabular-nums text-emerald-900 lg:text-3xl">{{ $totalAbsent }}</p>
-                        <p class="mt-0.5 text-xs text-emerald-800/90 lg:text-sm">Izin/Sakit/Alpha</p>
+                        <p class="mt-0.5 text-xs font-medium text-slate-500">Izin/Sakit/Alpa</p>
                     </div>
                     <div class="rounded-xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-3 lg:p-4">
                         <p class="text-[10px] font-semibold uppercase tracking-wide text-amber-800 lg:text-xs">Status Hari Ini</p>
@@ -75,7 +75,7 @@
                                             ($day['status'] === 'izin' ? 'bg-amber-100 text-amber-800' : 
                                             ($day['status'] === 'sakit' ? 'bg-red-100 text-red-800' : 'bg-red-100 text-red-800')) 
                                         }}">
-                                            {{ ucfirst($day['status']) }}
+                                            {{ $day['status'] === 'alpha' ? 'Alpa' : ucfirst($day['status']) }}
                                         </span>
                                         <p class="mt-1 text-xs text-slate-500">{{ $day['time'] }}</p>
                                     @else
@@ -106,7 +106,7 @@
                     </div>
                 @elseif($attendance && $attendance->attendance_time !== '00:00:00')
                     <div class="mt-3 rounded-xl border {{ $attendance->status === 'hadir' ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-white' : 'border-amber-200 bg-gradient-to-br from-amber-50 to-white' }} p-4">
-                        <p class="text-3xl font-bold {{ $attendance->status === 'hadir' ? 'text-emerald-900' : 'text-amber-900' }} uppercase">{{ $attendance->status }}</p>
+                        <p class="text-3xl font-bold {{ $attendance->status === 'hadir' ? 'text-emerald-900' : 'text-amber-900' }} uppercase">{{ $attendance->status === 'alpha' ? 'ALPA' : strtoupper($attendance->status) }}</p>
                         <p class="mt-1 text-sm {{ $attendance->status === 'hadir' ? 'text-emerald-700' : 'text-amber-700' }}">{{ $attendance->attendance_time }}</p>
                     </div>
                 @else

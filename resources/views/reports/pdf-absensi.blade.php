@@ -150,7 +150,7 @@
                 <th>Hadir</th>
                 <th>Izin</th>
                 <th>Sakit</th>
-                <th>Alpha</th>
+                <th>Alpa</th>
                 <th>Total</th>
             </tr>
         </thead>
