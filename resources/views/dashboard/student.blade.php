@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard — SITEXA Absensi')
 @section('page_title', 'Dashboard')
-@section('page_subtitle', 'SITEXA Absensi Texmaco Purwasari - {{ $student->class_name }}')
+@section('page_subtitle', 'Semangat belajar hari ini, ' . $student->name . '!')
 
 @section('content')
 <div class="mx-auto flex w-full max-w-none flex-col gap-3 max-lg:space-y-1 lg:h-full lg:min-h-0 lg:gap-3 lg:overflow-hidden">
