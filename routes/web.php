@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Models\Student;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\NfcDeviceController;
 use App\Http\Controllers\ReportController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NotificationController;
 use App\Models\Attendance;
-use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -235,6 +235,34 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications/tu-approvals', [NotificationController::class, 'tuApprovals'])->name('notifications.tu-approvals');
     Route::patch('/notifications/tu-approvals/{leaveRequest}/approve', [NotificationController::class, 'tuApprove'])->name('notifications.tu-approve');
     Route::patch('/notifications/tu-approvals/{leaveRequest}/reject', [NotificationController::class, 'tuReject'])->name('notifications.tu-reject');
+
+    // Jadwal Siswa
+    Route::get('/jadwal-siswa', function () {
+        $student = Student::where('email', auth()->user()->email)->first();
+
+        if (! $student) {
+            return redirect()->route('dashboard')->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        $schedules = \App\Models\Schedule::query()
+            ->where('class_name', $student->class_name)
+            ->with('teacher')
+            ->orderBy('day_of_week')
+            ->orderBy('start_time')
+            ->get();
+
+        $schedulesByDay = $schedules->groupBy('day_of_week');
+        $dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        $schedulesByDay = $schedulesByDay->sortKeysUsing(function ($a, $b) use ($dayOrder) {
+            $posA = array_search($a, $dayOrder, true);
+            $posB = array_search($b, $dayOrder, true);
+            $posA = $posA === false ? 999 : $posA;
+            $posB = $posB === false ? 999 : $posB;
+            return $posA <=> $posB;
+        });
+
+        return view('schedules.student', compact('student', 'schedulesByDay'));
+    })->name('schedules.student')->middleware('auth');
 
     // Laporan Absensi
     Route::get('/laporan/absensi', [ReportController::class, 'absensi'])->name('reports.absensi');
