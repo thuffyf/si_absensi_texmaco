@@ -35,7 +35,10 @@
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">{{ auth()->user()->name }}</h1>
                 <p class="text-slate-600">{{ auth()->user()->email }}</p>
-                <p class="text-sm text-slate-500 mt-1">Tata Usaha</p>
+                @php
+                    $roleLabel = auth()->user()->role === 'guru' ? 'Guru' : (auth()->user()->role === 'siswa' ? 'Siswa' : 'Tata Usaha');
+                @endphp
+                <p class="text-sm text-slate-500 mt-1">{{ $roleLabel }}</p>
             </div>
         </div>
     </div>

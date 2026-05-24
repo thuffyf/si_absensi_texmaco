@@ -73,9 +73,15 @@
                             </span>
                         @endif
                     @else
-                        <span class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-medium text-slate-500">
-                            {{ $day['is_past'] ? 'Selesai' : 'Akan datang' }}
-                        </span>
+                        @if($day['is_past'])
+                            <button onclick="showTapInMessage()" class="w-full rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700">
+                                Hadir
+                            </button>
+                        @else
+                            <span class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-medium text-slate-500">
+                                Akan datang
+                            </span>
+                        @endif
                     @endif
                 </div>
             </article>
