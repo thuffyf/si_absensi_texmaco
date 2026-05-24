@@ -41,6 +41,25 @@ class LeaveRequestController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
+        // Check if attendance already exists for this date
+        $existingAttendance = Attendance::where('student_id', $data['student_id'])
+            ->whereDate('attendance_date', $data['start_date'])
+            ->first();
+
+        if ($existingAttendance) {
+            return back()->with('error', 'Anda sudah melakukan absensi untuk tanggal ini. Tidak bisa request izin/sakit.');
+        }
+
+        // Check if leave request already exists for this date
+        $existingRequest = LeaveRequest::where('student_id', $data['student_id'])
+            ->whereDate('request_date', $data['start_date'])
+            ->whereIn('status', ['pending_teacher', 'pending_admin', 'approved'])
+            ->first();
+
+        if ($existingRequest) {
+            return back()->with('error', 'Anda sudah memiliki request ' . $existingRequest->type . ' untuk tanggal ini.');
+        }
+
         $data['status'] = 'pending_teacher';
         $data['requested_at'] = Carbon::now();
         $data['request_date'] = Carbon::today()->toDateString();

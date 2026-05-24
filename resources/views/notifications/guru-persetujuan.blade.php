@@ -43,14 +43,14 @@
                 </div>
 
                 <div class="mt-6 flex flex-wrap gap-3">
-                    <form method="POST" action="{{ route('notifications.approve', $request) }}" class="flex-1 min-w-[8rem] sm:flex-none">
+                    <form method="POST" action="{{ route('notifications.teacher-approve', $request) }}" class="flex-1 min-w-[8rem] sm:flex-none">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn-approve w-full inline-flex items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-700">
                             Terima
                         </button>
                     </form>
-                    <form method="POST" action="{{ route('notifications.reject', $request) }}" class="flex-1 min-w-[8rem] sm:flex-none">
+                    <form method="POST" action="{{ route('notifications.teacher-reject', $request) }}" class="flex-1 min-w-[8rem] sm:flex-none">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn-reject w-full inline-flex items-center justify-center rounded-2xl border-2 border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 hover:border-rose-300 hover:bg-rose-50">

@@ -47,21 +47,31 @@
                 </dl>
                 <div class="mt-6">
                     @if($day['is_today'])
-                        <div class="flex gap-2">
-                            <button onclick="showTapInMessage()" class="flex-1 rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700">
-                                Masuk
-                            </button>
-                            <button onclick="openModal('sakit')" class="rounded-2xl bg-red-100 px-3 py-3 text-red-700 shadow-sm transition-colors hover:bg-red-200" title="Sakit">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                </svg>
-                            </button>
-                            <button onclick="openModal('izin')" class="rounded-2xl bg-amber-100 px-3 py-3 text-amber-700 shadow-sm transition-colors hover:bg-amber-200" title="Izin">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                            </button>
-                        </div>
+                        @if($day['can_request'])
+                            <div class="flex gap-2">
+                                <button onclick="showTapInMessage()" class="flex-1 rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700">
+                                    Masuk
+                                </button>
+                                <button onclick="openModal('sakit')" class="rounded-2xl bg-red-100 px-3 py-3 text-red-700 shadow-sm transition-colors hover:bg-red-200" title="Sakit">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </button>
+                                <button onclick="openModal('izin')" class="rounded-2xl bg-amber-100 px-3 py-3 text-amber-700 shadow-sm transition-colors hover:bg-amber-200" title="Izin">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        @else
+                            <span class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-medium text-slate-500">
+                                @if($day['attendance'])
+                                    Sudah absen: {{ strtoupper($day['attendance']->status) }}
+                                @elseif($day['leave_request'])
+                                    Sudah request: {{ strtoupper($day['leave_request']->type) }} ({{ $day['leave_request']->status === 'approved' ? 'Disetujui' : 'Menunggu' }})
+                                @endif
+                            </span>
+                        @endif
                     @else
                         <span class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-medium text-slate-500">
                             {{ $day['is_past'] ? 'Selesai' : 'Akan datang' }}

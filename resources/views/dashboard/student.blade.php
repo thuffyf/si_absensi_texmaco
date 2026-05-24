@@ -96,7 +96,15 @@
             <!-- Today's Status -->
             <section class="shrink-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <h2 class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 lg:text-xs">Status Hari Ini</h2>
-                @if($attendance && $attendance->attendance_time !== '00:00:00')
+                @php
+                    $isWeekend = $now->isWeekend();
+                @endphp
+                @if($isWeekend)
+                    <div class="mt-3 rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-4">
+                        <p class="text-3xl font-bold text-red-900">Libur</p>
+                        <p class="mt-1 text-sm text-red-700">Tidak ada absen hari ini</p>
+                    </div>
+                @elseif($attendance && $attendance->attendance_time !== '00:00:00')
                     <div class="mt-3 rounded-xl border {{ $attendance->status === 'hadir' ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-white' : 'border-amber-200 bg-gradient-to-br from-amber-50 to-white' }} p-4">
                         <p class="text-3xl font-bold {{ $attendance->status === 'hadir' ? 'text-emerald-900' : 'text-amber-900' }} uppercase">{{ $attendance->status }}</p>
                         <p class="mt-1 text-sm {{ $attendance->status === 'hadir' ? 'text-emerald-700' : 'text-amber-700' }}">{{ $attendance->attendance_time }}</p>

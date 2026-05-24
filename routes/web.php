@@ -160,6 +160,12 @@ Route::middleware(['auth'])->group(function () {
                 ->whereDate('attendance_date', $date)
                 ->first();
 
+            // Check for existing leave request for this date
+            $leaveRequest = \App\Models\LeaveRequest::where('student_id', $student->id)
+                ->whereDate('request_date', $date)
+                ->whereIn('status', ['pending_teacher', 'pending_admin', 'approved'])
+                ->first();
+
             // Set room based on week type
             $room = $isNormative ? 'X TEI' : 'Lab TEI';
 
@@ -167,9 +173,11 @@ Route::middleware(['auth'])->group(function () {
                 'name' => $days[$i],
                 'date' => $date->format('d M Y'),
                 'attendance' => $att,
+                'leave_request' => $leaveRequest,
                 'is_today' => $date->isSameDay($today),
                 'is_past' => $date->lt($today),
                 'room' => $room,
+                'can_request' => !$att && !$leaveRequest,
             ];
         }
 
