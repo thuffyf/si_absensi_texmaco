@@ -20,8 +20,57 @@ class DashboardController extends Controller
             return $this->studentDashboard();
         }
 
+        // If user is a teacher, show teacher dashboard
+        if ($user->role === 'guru') {
+            return $this->teacherDashboard();
+        }
+
         // Otherwise show admin dashboard
         return $this->adminDashboard();
+    }
+
+    private function teacherDashboard()
+    {
+        $pendingCount = LeaveRequest::query()
+            ->where('status', 'pending_teacher')
+            ->count();
+
+        $approvedCount = LeaveRequest::query()
+            ->where('status', 'approved')
+            ->count();
+
+        $rejectedCount = LeaveRequest::query()
+            ->where('status', 'rejected')
+            ->count();
+
+        $totalCount = LeaveRequest::query()->count();
+        $approvedRate = $totalCount > 0 ? round(($approvedCount / $totalCount) * 100, 1) : 0;
+
+        // All leave requests with photos (the monitoring recap)
+        $allRequests = LeaveRequest::query()
+            ->with('student')
+            ->orderByDesc('requested_at')
+            ->take(10)
+            ->get();
+
+        // Teacher's own activities (approved or rejected by teacher)
+        $teacherActivities = LeaveRequest::query()
+            ->with('student')
+            ->whereIn('status', ['approved', 'rejected'])
+            ->whereNotNull('responded_at')
+            ->orderByDesc('responded_at')
+            ->take(10)
+            ->get();
+
+        return view('dashboard.teacher', compact(
+            'pendingCount',
+            'approvedCount',
+            'rejectedCount',
+            'totalCount',
+            'approvedRate',
+            'allRequests',
+            'teacherActivities'
+        ));
     }
 
     private function studentDashboard()

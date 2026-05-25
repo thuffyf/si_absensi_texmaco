@@ -228,6 +228,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Notifikasi Guru
     Route::get('/notifications/guru-approvals', [NotificationController::class, 'teacherApprovals'])->name('notifications.guru-approvals');
+    Route::get('/monitoring/guru', [NotificationController::class, 'teacherMonitoring'])->name('monitoring.guru');
     Route::patch('/notifications/guru-approvals/{leaveRequest}/approve', [NotificationController::class, 'teacherApprove'])->name('notifications.teacher-approve');
     Route::patch('/notifications/guru-approvals/{leaveRequest}/reject', [NotificationController::class, 'teacherReject'])->name('notifications.teacher-reject');
 

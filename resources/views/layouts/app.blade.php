@@ -128,18 +128,6 @@
                     </a>
                 @elseif($userRole === 'guru')
                     <a
-                        href="{{ route('monitoring.nfc') }}"
-                        title="Monitoring Absensi"
-                        class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('monitoring.nfc') ? 'nav-texmaco-active' : '' }}"
-                    >
-                        <span class="nav-icon" aria-hidden="true">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.288 14.734a.75.75 0 01-1.076-1.044 7.5 7.5 0 0110.576 0 .75.75 0 11-1.076 1.044 6 6 0 00-8.424 0zM12 18.375a.75.75 0 01-.53-.22 3.75 3.75 0 015.06-5.06.75.75 0 11-1.06 1.06 2.25 2.25 0 00-3 0 .75.75 0 01-.53.22zM12 21a.75.75 0 01-.53-.22.75.75 0 111.06 0A.75.75 0 0112 21z" />
-                            </svg>
-                        </span>
-                        <span class="nav-text">Monitoring Absensi</span>
-                    </a>
-                    <a
                         href="{{ route('reports.absensi') }}"
                         title="Laporan Absensi"
                         class="nav-texmaco border-b border-slate-200 {{ request()->routeIs('reports.absensi') ? 'nav-texmaco-active' : '' }}"
@@ -244,7 +232,7 @@
 
                     @if($pendingCount > 0)
                         <a
-                            href="{{ auth()->user()->role === 'guru' ? route('notifications.guru-approvals') : (auth()->user()->role === 'siswa' ? route('dashboard') : route('notifications.tu-approvals')) }}"
+                            href="{{ auth()->user()->role === 'guru' ? route('dashboard') : (auth()->user()->role === 'siswa' ? route('dashboard') : route('notifications.tu-approvals')) }}"
                             class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
                             id="notification-btn"
                             aria-label="Ada {{ $pendingCount }} permintaan izin/sakit"
@@ -259,7 +247,7 @@
                         </a>
                     @else
                         <a
-                            href="{{ auth()->user()->role === 'guru' ? route('notifications.guru-approvals') : (auth()->user()->role === 'siswa' ? route('dashboard') : route('notifications.tu-approvals')) }}"
+                            href="{{ auth()->user()->role === 'guru' ? route('dashboard') : (auth()->user()->role === 'siswa' ? route('dashboard') : route('notifications.tu-approvals')) }}"
                             class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100"
                             id="notification-btn"
                             aria-label="Persetujuan izin dan sakit"

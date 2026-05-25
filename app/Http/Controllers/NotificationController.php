@@ -23,6 +23,18 @@ class NotificationController extends Controller
         ]);
     }
 
+    public function teacherMonitoring()
+    {
+        $requests = LeaveRequest::query()
+            ->with('student')
+            ->orderByDesc('requested_at')
+            ->get();
+
+        return view('teachers.monitoring', [
+            'requests' => $requests,
+        ]);
+    }
+
     public function teacherApprove(Request $request, LeaveRequest $leaveRequest): RedirectResponse
     {
         $leaveRequest->update([
