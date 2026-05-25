@@ -188,8 +188,8 @@ class SettingsController extends Controller
             $payload = [
                 'nis' => $nis,
                 'name' => $name,
-                'class_name' => $this->csvValue($row, $map, 'class_name') ?: 'X TEI',
-                'major' => $this->csvValue($row, $map, 'major') ?: 'TEI',
+                'class_name' => $this->csvValue($row, $map, 'class_name') ?: 'X',
+                'major' => $this->csvValue($row, $map, 'major') ?: 'Teknik Elektronika Industri',
                 'email' => $this->csvValue($row, $map, 'email') ?: null,
                 'username' => $this->csvValue($row, $map, 'username') ?: null,
                 'phone' => $this->csvValue($row, $map, 'phone') ?: null,
