@@ -25,7 +25,7 @@ class StudentSeeder extends Seeder
                 'major' => 'Teknik Elektronika Industri',
                 'status' => 'aktif',
                 'nfc_type' => 'handphone',
-                'uid_kartu' => '539EA8F8930001',
+                    'uid_kartu' => '539EA8F8930001',
                 'phone' => '085126368188',
             ],
             [
