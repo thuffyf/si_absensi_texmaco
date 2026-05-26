@@ -31,6 +31,8 @@ Route::prefix('mobile')->group(function () {
     Route::get('/student/profile', [MobileStudentController::class, 'profile']);
     Route::get('/student/summary', [MobileStudentController::class, 'summary']);
     Route::get('/student/absensi', [MobileStudentController::class, 'absensi']);
+    Route::get('/student/leave-requests', [MobileStudentController::class, 'leaveRequests']);
+    Route::post('/student/leave-requests', [MobileStudentController::class, 'storeLeaveRequest']);
     Route::get('/teacher/absences', [MobileTeacherController::class, 'absences']);
 });
 

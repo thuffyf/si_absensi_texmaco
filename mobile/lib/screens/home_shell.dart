@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
 import '../services/nfc_uid_service.dart';
-import 'hce_screen.dart';
+import 'attendance_history_screen.dart';
 import 'home_screen.dart';
+import 'leave_request_screen.dart';
 import 'login_screen.dart';
+import 'profile_screen.dart';
 import 'teacher_absence_screen.dart';
 
 class HomeShell extends StatefulWidget {
@@ -87,8 +89,10 @@ class _StudentShell extends StatelessWidget {
   final VoidCallback onLogout;
 
   List<Widget> _pages(AuthSession session) => [
-    HomeScreen(authToken: session.token),
-    const HceScreen(),
+    HomeScreen(authToken: session.token, name: session.name),
+    LeaveRequestScreen(authToken: session.token),
+    AttendanceHistoryScreen(authToken: session.token),
+    ProfileScreen(authToken: session.token, onLogout: onLogout),
   ];
 
   @override
@@ -108,12 +112,22 @@ class _StudentShell extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
-            label: 'Beranda',
+            label: 'Dashboard',
           ),
           NavigationDestination(
-            icon: Icon(Icons.nfc_outlined),
-            selectedIcon: Icon(Icons.nfc),
-            label: 'Mode NFC',
+            icon: Icon(Icons.event_busy_outlined),
+            selectedIcon: Icon(Icons.event_busy),
+            label: 'Izin',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.history_outlined),
+            selectedIcon: Icon(Icons.history),
+            label: 'Riwayat',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profil',
           ),
         ],
       ),

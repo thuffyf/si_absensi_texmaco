@@ -39,7 +39,6 @@ Route::post('/login', function (Request $request) {
     $request->validate([
         'username' => 'required|email',
         'password' => 'required|string',
-        'status' => 'required|in:siswa,tata_usaha,guru',
     ]);
 
     $user = User::where('email', $request->username)->first();
@@ -62,14 +61,14 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    if ($user && $passwordOk && $request->status === $user->role) {
+    if ($user && $passwordOk && $user->role === 'tata_usaha') {
         Auth::login($user);
         return redirect()->route('dashboard');
     }
 
     return back()->withErrors([
-        'login' => 'Email, password, atau status tidak valid.',
-    ])->withInput($request->only('username','status'));
+        'login' => 'Email atau password tidak valid.',
+    ])->withInput($request->only('username'));
 })->name('login.submit');
 
 // Dashboard Routes (Protected by auth middleware)
@@ -361,4 +360,3 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('success', 'Password berhasil diubah.');
     })->name('profile.change-password');
 });
-

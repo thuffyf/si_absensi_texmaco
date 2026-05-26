@@ -222,4 +222,65 @@ class ApiClient {
       return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
     }
   }
+
+  Future<ApiResult> fetchStudentLeaveRequests({required String token}) async {
+    final uri = Uri.parse('$baseUrl/mobile/student/leave-requests');
+
+    try {
+      final response = await _client
+          .get(uri, headers: _jsonHeaders(token: token))
+          .timeout(timeout);
+
+      final payload = response.body.isNotEmpty
+          ? jsonDecode(response.body) as Map<String, dynamic>
+          : <String, dynamic>{};
+
+      return ApiResult(
+        ok: response.statusCode >= 200 && response.statusCode < 300,
+        message: payload['message']?.toString() ?? 'Request selesai.',
+        statusCode: response.statusCode,
+        data: payload,
+      );
+    } catch (error) {
+      return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
+    }
+  }
+
+  Future<ApiResult> submitStudentLeaveRequest({
+    required String token,
+    required String type,
+    required String startDate,
+    required String endDate,
+    required String reason,
+  }) async {
+    final uri = Uri.parse('$baseUrl/mobile/student/leave-requests');
+
+    try {
+      final response = await _client
+          .post(
+            uri,
+            headers: _jsonHeaders(token: token),
+            body: jsonEncode({
+              'type': type,
+              'start_date': startDate,
+              'end_date': endDate,
+              'reason': reason,
+            }),
+          )
+          .timeout(timeout);
+
+      final payload = response.body.isNotEmpty
+          ? jsonDecode(response.body) as Map<String, dynamic>
+          : <String, dynamic>{};
+
+      return ApiResult(
+        ok: response.statusCode >= 200 && response.statusCode < 300,
+        message: payload['message']?.toString() ?? 'Pengajuan selesai.',
+        statusCode: response.statusCode,
+        data: payload,
+      );
+    } catch (error) {
+      return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
+    }
+  }
 }

@@ -308,7 +308,9 @@ class _ResultBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: ok ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color: ok
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(message),
