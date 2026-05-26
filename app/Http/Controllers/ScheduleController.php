@@ -49,30 +49,6 @@ class ScheduleController extends Controller
             ];
         }
 
-        $query = Schedule::query()->with('teacher');
-
-        if ($request->filled('class')) {
-            $query->where('class_name', $request->string('class'));
-        }
-
-        if ($request->filled('teacher')) {
-            $query->where('teacher_id', $request->integer('teacher'));
-        }
-
-        if ($request->filled('subject')) {
-            $query->where('subject', $request->string('subject'));
-        }
-
-        $schedules = $query->orderBy('day_of_week')->orderBy('start_time')->get();
-        $schedulesByDay = $schedules->groupBy('day_of_week');
-        $dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-        $schedulesByDay = $schedulesByDay->sortKeysUsing(function ($a, $b) use ($dayOrder) {
-            $posA = array_search($a, $dayOrder, true);
-            $posB = array_search($b, $dayOrder, true);
-            $posA = $posA === false ? 999 : $posA;
-            $posB = $posB === false ? 999 : $posB;
-            return $posA <=> $posB;
-        });
         $attendanceCounts = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->whereNotNull('schedule_id')
@@ -81,7 +57,126 @@ class ScheduleController extends Controller
             ->pluck('total', 'schedule_id');
         $teachers = Teacher::orderBy('name')->get();
 
-        return view('schedules.index', compact('classCards', 'todayLabel', 'today', 'schedulesByDay', 'attendanceCounts', 'teachers'));
+        $dayNames = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+
+        $todayDayName = $dayNames[Carbon::now()->format('l')] ?? Carbon::now()->format('l');
+        $now = Carbon::now();
+        $currentWeek = (($now->weekOfYear - 1) % 4) + 1;
+
+        $weeklySchedules = [
+            1 => [
+                'Senin' => [
+                    ['subject' => 'B. Indonesia', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'Informatika', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'MTK', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Sunda', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'IPA', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'MTK', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Seni Budaya', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'B. Inggris', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'PJOK', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'PPKN', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'Sejarah Indo', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'PAI', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Inggris', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'P5', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+            ],
+            2 => [
+                'Senin' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK (Ibu Dwi)', 'teacher' => 'Ibu Dwi', 'start' => '08:45', 'end' => '10:15'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'Produktif (Pak Najib)', 'teacher' => 'Pak Najib', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher' => 'Ibu Susi', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK (Ibu Vinni)', 'teacher' => 'Ibu Vinni', 'start' => '08:45', 'end' => '10:15'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher' => 'Ibu Susi', 'start' => '07:00', 'end' => '08:30'],
+                ],
+            ],
+            3 => [
+                'Senin' => [
+                    ['subject' => 'PJOK', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Inggris', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'Sejarah Indo', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'PAI', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'B. Indonesia', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'MTK', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Seni Budaya', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'B. Sunda', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'IPAS', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Inggris', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'PPKN', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'P5', 'teacher' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Informatika', 'teacher' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'MTK', 'teacher' => '—', 'start' => '10:30', 'end' => '12:00'],
+                    ['subject' => 'P5', 'teacher' => '—', 'start' => '13:00', 'end' => '14:30'],
+                ],
+            ],
+            4 => [
+                'Senin' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'Produktif (Pak Najib)', 'teacher' => 'Pak Najib', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'BK (Ibu Dwi)', 'teacher' => 'Ibu Dwi', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher' => 'Ibu Susi', 'start' => '08:45', 'end' => '10:15'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher' => 'Ibu Susi', 'start' => '07:00', 'end' => '08:30'],
+                ],
+            ],
+        ];
+
+        $todaySchedules = collect($weeklySchedules[$currentWeek][$todayDayName] ?? [])->map(function ($item) use ($now) {
+            return [
+                'subject' => $item['subject'],
+                'teacher_name' => $item['teacher'],
+                'start_time' => $item['start'],
+                'end_time' => $item['end'],
+                'is_running' => $now->between(Carbon::parse($item['start']), Carbon::parse($item['end']), true),
+            ];
+        });
+
+        return view('schedules.index', compact('classCards', 'todayLabel', 'today', 'todaySchedules', 'attendanceCounts', 'teachers', 'currentWeek'));
     }
 
     /**
@@ -112,31 +207,116 @@ class ScheduleController extends Controller
         ];
         
         $todayDayName = $dayNames[Carbon::now()->format('l')] ?? Carbon::now()->format('l');
-        
-        // Get schedules for this class on this day
-        $todaySchedules = Schedule::query()
-            ->where('class_name', $className)
-            ->where('day_of_week', $todayDayName)
-            ->with('teacher')
-            ->orderBy('start_time')
-            ->get();
-        
-        // Get 3 subjects that are currently running or about to run
-        $subjectsToday = $todaySchedules->map(function ($schedule) use ($now) {
-            $startTime = $this->parseScheduleTime($schedule->start_time, $now);
-            $endTime = $this->parseScheduleTime($schedule->end_time, $now);
-            $isRunning = $now->between($startTime, $endTime, true);
+        $weekStartReference = Carbon::create(2026, 5, 26);
+        $weeksSinceStart = $weekStartReference->diffInWeeks($now);
+        $currentWeek = ($weeksSinceStart % 4) + 1;
 
+        $weeklySchedules = [
+            1 => [
+                'Senin' => [
+                    ['subject' => 'B. Indonesia', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'Informatika', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'MTK', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Sunda', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'IPA', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'MTK', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Seni Budaya', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'B. Inggris', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'PJOK', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'PPKN', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'Sejarah Indo', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'PAI', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Inggris', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'P5', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+            ],
+            2 => [
+                'Senin' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher_name' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK (Ibu Dwi)', 'teacher_name' => 'Ibu Dwi', 'start' => '08:45', 'end' => '10:15'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'Produktif (Pak Najib)', 'teacher_name' => 'Pak Najib', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher_name' => 'Ibu Susi', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK (Ibu Vinni)', 'teacher_name' => 'Ibu Vinni', 'start' => '08:45', 'end' => '10:15'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher_name' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher_name' => 'Ibu Susi', 'start' => '07:00', 'end' => '08:30'],
+                ],
+            ],
+            3 => [
+                'Senin' => [
+                    ['subject' => 'PJOK', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Inggris', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'Sejarah Indo', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'PAI', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'BK', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'B. Indonesia', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'MTK', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Seni Budaya', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'B. Sunda', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'IPAS', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'B. Inggris', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'PPKN', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'P5', 'teacher_name' => '—', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Informatika', 'teacher_name' => '—', 'start' => '08:45', 'end' => '10:15'],
+                    ['subject' => 'MTK', 'teacher_name' => '—', 'start' => '10:30', 'end' => '12:00'],
+                    ['subject' => 'P5', 'teacher_name' => '—', 'start' => '13:00', 'end' => '14:30'],
+                ],
+            ],
+            4 => [
+                'Senin' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher_name' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Selasa' => [
+                    ['subject' => 'Produktif (Pak Najib)', 'teacher_name' => 'Pak Najib', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Rabu' => [
+                    ['subject' => 'BK (Ibu Dwi)', 'teacher_name' => 'Ibu Dwi', 'start' => '07:00', 'end' => '08:30'],
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher_name' => 'Ibu Susi', 'start' => '08:45', 'end' => '10:15'],
+                ],
+                'Kamis' => [
+                    ['subject' => 'Produktif (Pak Bakti)', 'teacher_name' => 'Pak Bakti', 'start' => '07:00', 'end' => '08:30'],
+                ],
+                'Jumat' => [
+                    ['subject' => 'Produktif (Ibu Susi)', 'teacher_name' => 'Ibu Susi', 'start' => '07:00', 'end' => '08:30'],
+                ],
+            ],
+        ];
+
+        $subjectsToday = collect($weeklySchedules[$currentWeek][$todayDayName] ?? [])->map(function ($schedule) use ($now) {
             return [
-                'subject' => $schedule->subject,
-                'start_time' => $startTime->format('H:i'),
-                'end_time' => $endTime->format('H:i'),
-                'teacher_name' => $schedule->teacher?->name ?? '—',
-                'is_running' => $isRunning,
+                'subject' => $schedule['subject'],
+                'start_time' => $schedule['start'],
+                'end_time' => $schedule['end'],
+                'teacher_name' => $schedule['teacher_name'],
+                'is_running' => $now->between(Carbon::parse($schedule['start']), Carbon::parse($schedule['end']), true),
             ];
-        })->take(3);
+        });
 
-        return view('schedules.presence', compact('className', 'todayLabel', 'today', 'subjectsToday'));
+        return view('schedules.presence', compact('className', 'todayLabel', 'today', 'subjectsToday', 'currentWeek'));
     }
 
     public function store(Request $request)

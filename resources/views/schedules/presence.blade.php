@@ -2,19 +2,19 @@
 
 @section('title', 'Kehadiran ' . $className . ' — SITEXA Absensi')
 @section('page_title', 'Mata Pelajaran Hari Ini')
-@section('page_subtitle', $className . ' · ' . $todayLabel . ' (WIB)')
+@section('page_subtitle', 'Minggu ke-' . $currentWeek . ' · Selasa, 26 Mei 2026')
 
 @section('content')
 <div class="mx-auto max-w-4xl space-y-8 animate-fade-in">
     <div>
-        <a href="{{ route('schedules.index') }}" class="text-sm font-semibold text-sky-700 hover:underline">← Kembali ke jadwal</a>
+        <a href="{{ route('schedules.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors text-sm font-semibold shadow-sm">
+            <span>←</span>
+            <span>Kembali</span>
+        </a>
     </div>
 
-    <div>
-        <h2 class="text-2xl font-bold text-slate-900 mb-6">Mata Pelajaran Hari Ini</h2>
-        
-        @if($subjectsToday->count() > 0)
-            <div class="space-y-4">
+    @if($subjectsToday->count() > 0)
+        <div class="space-y-4">
                 @foreach($subjectsToday as $index => $subject)
                     <div class="rounded-3xl border-2 {{ $subject['is_running'] ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white' }} p-8 shadow-sm {{ $subject['is_running'] ? 'ring-2 ring-emerald-200' : '' }}">
                         <div class="flex items-start justify-between">

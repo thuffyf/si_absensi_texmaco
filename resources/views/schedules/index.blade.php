@@ -46,7 +46,7 @@
                         href="{{ route('schedules.presence', ['slug' => $card['slug']]) }}"
                         class="flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                     >
-                        Masuk
+                        Lihat Jadwal
                     </a>
                 </div>
             </article>
@@ -56,48 +56,35 @@
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-                <h2 class="text-xl font-bold text-slate-900">Jadwal per Hari</h2>
-                <p class="text-sm text-slate-500">Daftar mapel per hari dengan waktu dan jumlah siswa yang sudah absen hari ini.</p>
+                <h2 class="text-xl font-bold text-slate-900">Masuk Hari Ini</h2>
+                <p class="text-sm text-slate-500">Jadwal Minggu ke-{{ $currentWeek }} sesuai rotasi 4 minggu.</p>
             </div>
+            <div class="text-sm text-slate-500">Minggu ke-{{ $currentWeek }}</div>
         </div>
 
         <div class="mt-6 space-y-6">
-            @forelse($schedulesByDay as $day => $items)
-                <div class="overflow-hidden rounded-2xl border border-slate-200">
-                    <div class="flex items-center justify-between bg-slate-50 px-4 py-3">
-                        <h3 class="text-sm font-semibold text-slate-700">{{ $day }}</h3>
-                        <span class="text-xs font-medium text-slate-500">{{ $items->count() }} mapel</span>
-                    </div>
-                    <div class="divide-y divide-slate-100">
-                        @foreach($items as $schedule)
-                            <div class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-900">{{ $schedule->subject }}</p>
-                                    <p class="text-xs text-slate-500">
-                                        {{ $schedule->class_name }} · {{ $schedule->teacher?->name ?? '—' }}
-                                    </p>
-                                </div>
-                                <div class="flex flex-wrap items-center gap-2 text-xs">
-                                    <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
-                                        {{ $schedule->start_time?->format('H:i') ?? '-' }} - {{ $schedule->end_time?->format('H:i') ?? '-' }}
-                                    </span>
-                                    <span class="rounded-full bg-sky-50 px-2.5 py-1 font-semibold text-sky-700">
-                                        Absen: {{ $attendanceCounts[$schedule->id] ?? 0 }}
-                                    </span>
-                                    <a
-                                        href="{{ route('schedules.edit', $schedule) }}"
-                                        class="rounded-full border border-slate-200 px-3 py-1 font-semibold text-slate-600 hover:bg-slate-100"
-                                    >
-                                        Edit
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
+            @forelse($todaySchedules as $schedule)
+                <div class="rounded-3xl border-2 {{ $schedule['is_running'] ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white' }} p-5 shadow-sm {{ $schedule['is_running'] ? 'ring-2 ring-emerald-200' : '' }}">
+                    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-slate-900">{{ $schedule['subject'] }}</p>
+                            <p class="mt-1 text-xs text-slate-500">{{ $schedule['teacher_name'] }}</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <span class="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
+                                {{ $schedule['start_time'] }} - {{ $schedule['end_time'] }}
+                            </span>
+                            @if($schedule['is_running'])
+                                <span class="rounded-full bg-emerald-200 px-3 py-1 font-semibold text-emerald-900">
+                                    Sedang Berlangsung
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @empty
-                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                    Belum ada jadwal yang terdaftar.
+                <div class="rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-600">
+                    Tidak ada jadwal untuk hari ini.
                 </div>
             @endforelse
         </div>
