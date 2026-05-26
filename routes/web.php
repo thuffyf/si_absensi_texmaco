@@ -39,6 +39,7 @@ Route::post('/login', function (Request $request) {
     $request->validate([
         'username' => 'required|email',
         'password' => 'required|string',
+        'user_type' => 'required|in:siswa,guru,tata_usaha',
     ]);
 
     $user = User::where('email', $request->username)->first();
@@ -61,14 +62,17 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    if ($user && $passwordOk && $user->role === 'tata_usaha') {
+    // Validate role matches user_type selection
+    $roleMatch = $user && $user->role === $request->user_type;
+
+    if ($user && $passwordOk && $roleMatch) {
         Auth::login($user);
         return redirect()->route('dashboard');
     }
 
     return back()->withErrors([
-        'login' => 'Email atau password tidak valid.',
-    ])->withInput($request->only('username'));
+        'login' => 'Email, password, atau tipe pengguna tidak valid.',
+    ])->withInput($request->only('username', 'user_type'));
 })->name('login.submit');
 
 // Dashboard Routes (Protected by auth middleware)

@@ -50,6 +50,15 @@
                             </div>
                         </div>
 
+                        <div>
+                            <select name="user_type" required class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                                <option value="">Silahkan pilih status SITEXA</option>
+                                <option value="siswa" @selected(old('user_type') === 'siswa')>SITEXA Siswa</option>
+                                <option value="guru" @selected(old('user_type') === 'guru')>SITEXA Guru</option>
+                                <option value="tata_usaha" @selected(old('user_type') === 'tata_usaha')>SITEXA Tata Usaha</option>
+                            </select>
+                        </div>
+
                         <div class="flex justify-center my-4">
                             <div class="g-recaptcha" data-sitekey="6LdtS-IsAAAAAGF0Z0mn2oP-1wy6dWEmKzaT2spq"></div>
                         </div>
