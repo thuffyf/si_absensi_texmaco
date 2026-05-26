@@ -2,7 +2,7 @@
 
 @section('title', 'Kehadiran ' . $className . ' — SITEXA Absensi')
 @section('page_title', 'Mata Pelajaran Hari Ini')
-@section('page_subtitle', 'Minggu ke-' . $currentWeek . ' · Selasa, 26 Mei 2026')
+@section('page_subtitle', 'Minggu ke-' . $currentWeek . ' · ' . $todayLabel)
 
 @section('content')
 <div class="mx-auto max-w-4xl space-y-8 animate-fade-in">

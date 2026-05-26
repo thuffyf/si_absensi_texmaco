@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 class ScheduleController extends Controller
 {
     private const TEI_CLASS_NAMES = ['X TEI', 'XI TEI', 'XII TEI'];
+    private const DAY_NAMES = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 
     /** @var array<string, string> */
     private const TEI_SLUGS = [
@@ -166,7 +167,7 @@ class ScheduleController extends Controller
             ],
         ];
 
-        $todaySchedules = collect($weeklySchedules[$currentWeek][$todayDayName] ?? [])->map(function ($item) use ($now) {
+        $fallbackTodaySchedules = collect($weeklySchedules[$currentWeek][$todayDayName] ?? [])->map(function ($item) use ($now) {
             return [
                 'subject' => $item['subject'],
                 'teacher_name' => $item['teacher'],
@@ -176,7 +177,55 @@ class ScheduleController extends Controller
             ];
         });
 
-        return view('schedules.index', compact('classCards', 'todayLabel', 'today', 'todaySchedules', 'attendanceCounts', 'teachers', 'currentWeek'));
+        $dbTodaySchedules = Schedule::query()
+            ->with('teacher')
+            ->whereIn('class_name', self::TEI_CLASS_NAMES)
+            ->where('day_of_week', $todayDayName)
+            ->where('status', 'aktif')
+            ->orderBy('start_time')
+            ->get()
+            ->map(fn (Schedule $schedule) => [
+                'subject' => $schedule->subject,
+                'teacher_name' => $schedule->teacher?->name ?? 'â€”',
+                'class_name' => $schedule->class_name,
+                'start_time' => $schedule->start_time?->format('H:i'),
+                'end_time' => $schedule->end_time?->format('H:i'),
+                'is_running' => $this->isScheduleRunning($schedule, $now),
+            ]);
+
+        $todaySchedules = $dbTodaySchedules->isNotEmpty() ? $dbTodaySchedules : $fallbackTodaySchedules;
+
+        $managedSchedules = Schedule::query()
+            ->with('teacher')
+            ->whereIn('class_name', self::TEI_CLASS_NAMES)
+            ->get()
+            ->sortBy(function (Schedule $schedule) {
+                $dayIndex = array_search($schedule->day_of_week, self::DAY_NAMES, true);
+
+                return sprintf(
+                    '%02d-%s-%s',
+                    $dayIndex === false ? 99 : $dayIndex,
+                    $schedule->start_time?->format('H:i') ?? '',
+                    $schedule->class_name
+                );
+            })
+            ->values();
+
+        $classOptions = self::TEI_CLASS_NAMES;
+        $dayOptions = self::DAY_NAMES;
+
+        return view('schedules.index', compact(
+            'classCards',
+            'todayLabel',
+            'today',
+            'todaySchedules',
+            'attendanceCounts',
+            'teachers',
+            'currentWeek',
+            'managedSchedules',
+            'classOptions',
+            'dayOptions'
+        ));
     }
 
     /**
@@ -306,7 +355,7 @@ class ScheduleController extends Controller
             ],
         ];
 
-        $subjectsToday = collect($weeklySchedules[$currentWeek][$todayDayName] ?? [])->map(function ($schedule) use ($now) {
+        $fallbackSubjectsToday = collect($weeklySchedules[$currentWeek][$todayDayName] ?? [])->map(function ($schedule) use ($now) {
             return [
                 'subject' => $schedule['subject'],
                 'start_time' => $schedule['start'],
@@ -315,6 +364,23 @@ class ScheduleController extends Controller
                 'is_running' => $now->between(Carbon::parse($schedule['start']), Carbon::parse($schedule['end']), true),
             ];
         });
+
+        $dbSubjectsToday = Schedule::query()
+            ->with('teacher')
+            ->where('class_name', $className)
+            ->where('day_of_week', $todayDayName)
+            ->where('status', 'aktif')
+            ->orderBy('start_time')
+            ->get()
+            ->map(fn (Schedule $schedule) => [
+                'subject' => $schedule->subject,
+                'start_time' => $schedule->start_time?->format('H:i'),
+                'end_time' => $schedule->end_time?->format('H:i'),
+                'teacher_name' => $schedule->teacher?->name ?? 'â€”',
+                'is_running' => $this->isScheduleRunning($schedule, $now),
+            ]);
+
+        $subjectsToday = $dbSubjectsToday->isNotEmpty() ? $dbSubjectsToday : $fallbackSubjectsToday;
 
         return view('schedules.presence', compact('className', 'todayLabel', 'today', 'subjectsToday', 'currentWeek'));
     }
@@ -328,9 +394,15 @@ class ScheduleController extends Controller
             'day_of_week' => 'required|string|max:20',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
-            'total_students' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,idle',
         ]);
+
+        $conflict = $this->scheduleConflictMessage($data);
+        if ($conflict) {
+            return back()->withErrors(['schedule' => $conflict])->withInput();
+        }
+
+        $data = $this->normalizeScheduleData($data);
 
         Schedule::create($data);
 
@@ -340,8 +412,10 @@ class ScheduleController extends Controller
     public function edit(Schedule $schedule)
     {
         $teachers = Teacher::orderBy('name')->get();
+        $classOptions = self::TEI_CLASS_NAMES;
+        $dayOptions = self::DAY_NAMES;
 
-        return view('schedules.edit', compact('schedule', 'teachers'));
+        return view('schedules.edit', compact('schedule', 'teachers', 'classOptions', 'dayOptions'));
     }
 
     public function update(Request $request, Schedule $schedule)
@@ -353,9 +427,15 @@ class ScheduleController extends Controller
             'day_of_week' => 'required|string|max:20',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
-            'total_students' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,idle',
         ]);
+
+        $conflict = $this->scheduleConflictMessage($data, $schedule);
+        if ($conflict) {
+            return back()->withErrors(['schedule' => $conflict])->withInput();
+        }
+
+        $data = $this->normalizeScheduleData($data);
 
         $schedule->update($data);
 
@@ -374,5 +454,56 @@ class ScheduleController extends Controller
         $time = $value instanceof Carbon ? $value->copy() : Carbon::parse((string) $value);
 
         return $time->setDate($reference->year, $reference->month, $reference->day);
+    }
+
+    private function isScheduleRunning(Schedule $schedule, Carbon $reference): bool
+    {
+        if (!$schedule->start_time || !$schedule->end_time) {
+            return false;
+        }
+
+        return $reference->between(
+            $this->parseScheduleTime($schedule->start_time, $reference),
+            $this->parseScheduleTime($schedule->end_time, $reference),
+            true
+        );
+    }
+
+    private function normalizeScheduleData(array $data): array
+    {
+        $data['total_students'] = Student::query()
+            ->where('class_name', $data['class_name'])
+            ->count();
+
+        return $data;
+    }
+
+    private function scheduleConflictMessage(array $data, ?Schedule $ignore = null): ?string
+    {
+        $baseConflictQuery = fn ($query) => $query
+            ->where('day_of_week', $data['day_of_week'])
+            ->where('start_time', '<', $data['end_time'])
+            ->where('end_time', '>', $data['start_time'])
+            ->when($ignore, fn ($query) => $query->where('id', '!=', $ignore->id));
+
+        $classConflict = Schedule::query()
+            ->where('class_name', $data['class_name'])
+            ->where($baseConflictQuery)
+            ->first();
+
+        if ($classConflict) {
+            return 'Jadwal kelas bentrok dengan ' . $classConflict->subject . ' pukul ' . $classConflict->start_time?->format('H:i') . '-' . $classConflict->end_time?->format('H:i') . '.';
+        }
+
+        $teacherConflict = Schedule::query()
+            ->where('teacher_id', $data['teacher_id'])
+            ->where($baseConflictQuery)
+            ->first();
+
+        if ($teacherConflict) {
+            return 'Guru sudah punya jadwal lain di waktu tersebut.';
+        }
+
+        return null;
     }
 }

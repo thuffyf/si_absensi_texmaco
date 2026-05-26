@@ -89,5 +89,102 @@
             @endforelse
         </div>
     </section>
+
+    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Kelola Jadwal</h2>
+                <p class="text-sm text-slate-500">Tambah, edit, dan nonaktifkan jadwal kelas TEI.</p>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ route('schedules.store') }}" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            @csrf
+            <select name="teacher_id" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
+                <option value="">Pilih guru</option>
+                @foreach($teachers as $teacher)
+                    <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
+                @endforeach
+            </select>
+            <select name="class_name" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
+                <option value="">Pilih kelas</option>
+                @foreach($classOptions as $className)
+                    <option value="{{ $className }}" @selected(old('class_name') === $className)>{{ $className }}</option>
+                @endforeach
+            </select>
+            <input name="subject" value="{{ old('subject') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" required />
+            <select name="day_of_week" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
+                <option value="">Pilih hari</option>
+                @foreach($dayOptions as $dayName)
+                    <option value="{{ $dayName }}" @selected(old('day_of_week') === $dayName)>{{ $dayName }}</option>
+                @endforeach
+            </select>
+            <input name="start_time" type="time" value="{{ old('start_time') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required />
+            <input name="end_time" type="time" value="{{ old('end_time') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required />
+            <select name="status" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
+                <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
+                <option value="idle" @selected(old('status') === 'idle')>Idle</option>
+            </select>
+            <button type="submit" class="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 md:col-span-2 lg:col-span-4">
+                Tambah Jadwal
+            </button>
+        </form>
+
+        <div class="mt-8 overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                <thead>
+                    <tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th class="px-3 py-3">Hari</th>
+                        <th class="px-3 py-3">Jam</th>
+                        <th class="px-3 py-3">Kelas</th>
+                        <th class="px-3 py-3">Mapel</th>
+                        <th class="px-3 py-3">Guru</th>
+                        <th class="px-3 py-3">Status</th>
+                        <th class="px-3 py-3 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($managedSchedules as $schedule)
+                        <tr class="text-slate-700">
+                            <td class="px-3 py-3 font-medium text-slate-900">{{ $schedule->day_of_week }}</td>
+                            <td class="px-3 py-3 tabular-nums">{{ $schedule->start_time?->format('H:i') }} - {{ $schedule->end_time?->format('H:i') }}</td>
+                            <td class="px-3 py-3">{{ $schedule->class_name }}</td>
+                            <td class="px-3 py-3">{{ $schedule->subject }}</td>
+                            <td class="px-3 py-3">{{ $schedule->teacher?->name ?? 'â€”' }}</td>
+                            <td class="px-3 py-3">
+                                <span @class([
+                                    'rounded-full px-2.5 py-1 text-xs font-semibold',
+                                    'bg-emerald-100 text-emerald-800' => $schedule->status === 'aktif',
+                                    'bg-slate-100 text-slate-700' => $schedule->status !== 'aktif',
+                                ])>
+                                    {{ ucfirst($schedule->status) }}
+                                </span>
+                            </td>
+                            <td class="px-3 py-3">
+                                <div class="flex justify-end gap-2">
+                                    <a href="{{ route('schedules.edit', $schedule) }}" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+                                        Edit
+                                    </a>
+                                    <form method="POST" action="{{ route('schedules.destroy', $schedule) }}" onsubmit="return confirm('Hapus jadwal ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-50">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-3 py-8 text-center text-sm text-slate-500">
+                                Belum ada jadwal tersimpan.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 @endsection

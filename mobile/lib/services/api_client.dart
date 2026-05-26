@@ -103,8 +103,16 @@ class ApiClient {
   Future<ApiResult> fetchTeacherAbsences({
     required String token,
     required String date,
+    String? className,
   }) async {
-    final uri = Uri.parse('$baseUrl/mobile/teacher/absences?date=$date');
+    final query = <String, String>{'date': date};
+    if (className != null && className.isNotEmpty) {
+      query['class_name'] = className;
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/mobile/teacher/absences',
+    ).replace(queryParameters: query);
 
     try {
       final response = await _client

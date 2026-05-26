@@ -31,15 +31,18 @@
             @endforeach
         </select>
         <select name="class_name" class="input-field text-sm" required>
-            <option value="X" @selected(old('class_name', $schedule->class_name) === 'X')">X</option>
-            <option value="XI" @selected(old('class_name', $schedule->class_name) === 'XI')">XI</option>
-            <option value="XII" @selected(old('class_name', $schedule->class_name) === 'XII')">XII</option>
+            @foreach($classOptions as $className)
+                <option value="{{ $className }}" @selected(old('class_name', $schedule->class_name) === $className)>{{ $className }}</option>
+            @endforeach
         </select>
         <input name="subject" value="{{ old('subject', $schedule->subject) }}" class="input-field" placeholder="Mata pelajaran" required />
-        <input name="day_of_week" value="{{ old('day_of_week', $schedule->day_of_week) }}" class="input-field" placeholder="Hari" required />
+        <select name="day_of_week" class="input-field text-sm" required>
+            @foreach($dayOptions as $dayName)
+                <option value="{{ $dayName }}" @selected(old('day_of_week', $schedule->day_of_week) === $dayName)>{{ $dayName }}</option>
+            @endforeach
+        </select>
         <input name="start_time" type="time" value="{{ old('start_time', $schedule->start_time?->format('H:i')) }}" class="input-field" required />
         <input name="end_time" type="time" value="{{ old('end_time', $schedule->end_time?->format('H:i')) }}" class="input-field" required />
-        <input name="total_students" type="number" min="0" value="{{ old('total_students', $schedule->total_students) }}" class="input-field" placeholder="Jumlah siswa" />
         <select name="status" class="input-field text-sm" required>
             <option value="aktif" @selected(old('status', $schedule->status) === 'aktif')>Aktif</option>
             <option value="idle" @selected(old('status', $schedule->status) === 'idle')>Idle</option>
