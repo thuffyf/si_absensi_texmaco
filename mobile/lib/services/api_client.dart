@@ -42,7 +42,7 @@ class ApiClient {
 
   Future<ApiResult> loginStudent({
     required String email,
-    required String password,
+    required String birthDate,
   }) async {
     final uri = Uri.parse('$baseUrl/mobile/login/student');
 
@@ -51,7 +51,7 @@ class ApiClient {
           .post(
             uri,
             headers: _jsonHeaders(),
-            body: jsonEncode({'email': email, 'password': password}),
+            body: jsonEncode({'email': email, 'birth_date': birthDate}),
           )
           .timeout(timeout);
 
@@ -71,7 +71,7 @@ class ApiClient {
   }
 
   Future<ApiResult> loginTeacher({
-    required String nip,
+    required String email,
     required String birthDate,
   }) async {
     final uri = Uri.parse('$baseUrl/mobile/login/teacher');
@@ -81,7 +81,7 @@ class ApiClient {
           .post(
             uri,
             headers: _jsonHeaders(),
-            body: jsonEncode({'nip': nip, 'birth_date': birthDate}),
+            body: jsonEncode({'email': email, 'birth_date': birthDate}),
           )
           .timeout(timeout);
 

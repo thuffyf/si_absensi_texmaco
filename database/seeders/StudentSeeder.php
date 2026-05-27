@@ -419,6 +419,10 @@ class StudentSeeder extends Seeder
                 $student['email'] = strtolower($student['email']);
             }
 
+            if (!empty($student['date_of_birth'])) {
+                $student['password'] = Hash::make($student['date_of_birth']);
+            }
+
             Student::updateOrCreate(
                 ['nis' => $student['nis']],
                 $student

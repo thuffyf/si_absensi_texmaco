@@ -62,6 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
+    final errors = <String>[];
+    if (!absensiResult.ok) {
+      errors.add('Absensi: ${absensiResult.message}');
+    }
+    if (!leaveResult.ok) {
+      errors.add('Izin/Sakit: ${leaveResult.message}');
+    }
+
     final summaryData = summaryResult.data ?? <String, dynamic>{};
     final summary = Map<String, dynamic>.from(summaryData['summary'] ?? {});
     final period = Map<String, dynamic>.from(summaryData['period'] ?? {});
@@ -72,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       _loading = false;
+      _message = errors.join(' ');
       _summary = {
         'hadir': int.tryParse('${summary['hadir'] ?? 0}') ?? 0,
         'izin': int.tryParse('${summary['izin'] ?? 0}') ?? 0,

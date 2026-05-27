@@ -73,7 +73,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
 
     setState(() {
       _loading = false;
-      _message = result.message;
+      _message = result.ok ? '' : result.message;
       _dayName = data['day_name']?.toString() ?? '';
       _classes = classes;
       if (_selectedClass.isNotEmpty && !_classes.contains(_selectedClass)) {

@@ -13,55 +13,34 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
-  final _studentFormKey = GlobalKey<FormState>();
-  final _teacherFormKey = GlobalKey<FormState>();
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _nipController = TextEditingController();
+  final _birthDateController = TextEditingController();
 
   final _apiClient = ApiClient();
   final _authService = AuthService();
+  final _uidService = NfcUidService();
 
-  DateTime? _teacherBirthDate;
   bool _loading = false;
   String _message = '';
   bool _messageOk = false;
-  final _uidService = NfcUidService();
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
-    _nipController.dispose();
+    _birthDateController.dispose();
     super.dispose();
   }
 
-  Future<void> _loginStudent() async {
-    if (!(_studentFormKey.currentState?.validate() ?? false)) {
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _message = '';
-    });
-
+  Future<ApiResult> _attemptStudentLogin(
+    String email,
+    String birthDate,
+  ) async {
     final result = await _apiClient.loginStudent(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+      email: email,
+      birthDate: birthDate,
     );
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _loading = false;
-      _messageOk = result.ok;
-      _message = result.message;
-    });
 
     if (result.ok && result.data != null) {
       final uid =
@@ -75,20 +54,33 @@ class _LoginScreenState extends State<LoginScreen>
         role: result.data?['role']?.toString() ?? 'siswa',
         name: (result.data?['user']?['name'] ?? '-').toString(),
       );
-      widget.onLoggedIn();
     }
+
+    return result;
   }
 
-  Future<void> _loginTeacher() async {
-    if (!(_teacherFormKey.currentState?.validate() ?? false)) {
-      return;
+  Future<ApiResult> _attemptTeacherLogin(
+    String email,
+    String birthDate,
+  ) async {
+    final result = await _apiClient.loginTeacher(
+      email: email,
+      birthDate: birthDate,
+    );
+
+    if (result.ok && result.data != null) {
+      await _authService.saveSession(
+        token: result.data?['token']?.toString() ?? '',
+        role: result.data?['role']?.toString() ?? 'guru',
+        name: (result.data?['user']?['name'] ?? '-').toString(),
+      );
     }
 
-    if (_teacherBirthDate == null) {
-      setState(() {
-        _messageOk = false;
-        _message = 'Tanggal lahir wajib dipilih.';
-      });
+    return result;
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
@@ -97,10 +89,13 @@ class _LoginScreenState extends State<LoginScreen>
       _message = '';
     });
 
-    final result = await _apiClient.loginTeacher(
-      nip: _nipController.text.trim(),
-      birthDate: _formatDate(_teacherBirthDate!),
-    );
+    final email = _emailController.text.trim();
+    final birthDate = _birthDateController.text.trim();
+
+    var result = await _attemptStudentLogin(email, birthDate);
+    if (!result.ok && result.statusCode == 401) {
+      result = await _attemptTeacherLogin(email, birthDate);
+    }
 
     if (!mounted) {
       return;
@@ -112,191 +107,93 @@ class _LoginScreenState extends State<LoginScreen>
       _message = result.message;
     });
 
-    if (result.ok && result.data != null) {
-      await _authService.saveSession(
-        token: result.data?['token']?.toString() ?? '',
-        role: result.data?['role']?.toString() ?? 'guru',
-        name: (result.data?['user']?['name'] ?? '-').toString(),
-      );
+    if (result.ok) {
       widget.onLoggedIn();
     }
   }
 
-  Future<void> _pickTeacherBirthDate() async {
-    final now = DateTime.now();
-    final initial = DateTime(now.year - 30, 1, 1);
-    final selected = await showDatePicker(
-      context: context,
-      initialDate: _teacherBirthDate ?? initial,
-      firstDate: DateTime(now.year - 70),
-      lastDate: DateTime(now.year - 15),
-    );
-
-    if (selected != null) {
-      setState(() => _teacherBirthDate = selected);
-    }
-  }
-
-  String _formatDate(DateTime date) {
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    return '${date.year}-$month-$day';
-  }
-
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Login Absensi NFC'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Siswa'),
-              Tab(text: 'Guru'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [_buildStudentLogin(), _buildTeacherLogin()],
-        ),
+    const helperText =
+      'Gunakan email dan tanggal lahir (YYYY-MM-DD), contoh 2010-12-23.';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login Absensi NFC'),
       ),
-    );
-  }
-
-  Widget _buildStudentLogin() {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        Text('Login Siswa', style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        Text(
-          'Masukkan email dan password dari admin TU.',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 20),
-        Form(
-          key: _studentFormKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Contoh: nama@sekolah.id',
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Text('Login', style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          Text(helperText, style: Theme.of(context).textTheme.bodyMedium),
+          const SizedBox(height: 20),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Contoh: nama@sekolah.id',
+                  ),
+                  validator: (value) {
+                    final input = value?.trim() ?? '';
+                    if (input.isEmpty) {
+                      return 'Email wajib diisi.';
+                    }
+                    if (!input.contains('@')) {
+                      return 'Email harus memakai @.';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Email wajib diisi.';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Email harus memakai @.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Password wajib diisi.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _loginStudent,
-                  child: _loading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Masuk'),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _birthDateController,
+                  keyboardType: TextInputType.datetime,
+                  decoration: const InputDecoration(
+                    labelText: 'Tanggal Lahir',
+                    hintText: 'Contoh: 2010-12-23',
+                  ),
+                  validator: (value) {
+                    final input = value?.trim() ?? '';
+                    if (input.isEmpty) {
+                      return 'Tanggal lahir wajib diisi.';
+                    }
+                    final datePattern = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+                    if (!datePattern.hasMatch(input)) {
+                      return 'Tanggal lahir gunakan format YYYY-MM-DD.';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-            ],
-          ),
-        ),
-        if (_message.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: _ResultBanner(ok: _messageOk, message: _message),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTeacherLogin() {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        Text('Login Guru', style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        Text(
-          'Masukkan NIP dan tanggal lahir untuk masuk.',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 20),
-        Form(
-          key: _teacherFormKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _nipController,
-                decoration: const InputDecoration(labelText: 'NIP'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'NIP wajib diisi.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              InkWell(
-                onTap: _pickTeacherBirthDate,
-                child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Tanggal Lahir'),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      _teacherBirthDate == null
-                          ? 'Pilih tanggal'
-                          : _formatDate(_teacherBirthDate!),
-                    ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _loading ? null : _submit,
+                    child: _loading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Masuk'),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _loginTeacher,
-                  child: _loading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Masuk'),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        if (_message.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: _ResultBanner(ok: _messageOk, message: _message),
-          ),
-      ],
+          if (_message.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: _ResultBanner(ok: _messageOk, message: _message),
+            ),
+        ],
+      ),
     );
   }
 }

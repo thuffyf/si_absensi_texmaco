@@ -8,7 +8,6 @@ use App\Models\StudentDevice;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 
 class MobileAuthController extends Controller
 {
@@ -16,18 +15,18 @@ class MobileAuthController extends Controller
     {
         $data = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string',
+            'birth_date' => 'required|date',
         ]);
 
         $email = trim($data['email']);
         $student = Student::where('email', $email)->first();
 
-        if (!$student || !$student->password) {
+        if (!$student || !$student->date_of_birth) {
             return response()->json(['message' => 'Akun siswa tidak valid.'], 401);
         }
 
-        if (!Hash::check($data['password'], $student->password)) {
-            return response()->json(['message' => 'Email atau password salah.'], 401);
+        if ($student->date_of_birth->toDateString() !== $data['birth_date']) {
+            return response()->json(['message' => 'Email atau tanggal lahir salah.'], 401);
         }
 
         if (!$student->uid_kartu) {
@@ -55,18 +54,18 @@ class MobileAuthController extends Controller
     public function loginTeacher(Request $request)
     {
         $data = $request->validate([
-            'nip' => 'required|string',
+            'email' => 'required|email',
             'birth_date' => 'required|date',
         ]);
 
-        $teacher = Teacher::where('nip', $data['nip'])->first();
+        $teacher = Teacher::where('email', $data['email'])->first();
 
         if (!$teacher || !$teacher->date_of_birth) {
             return response()->json(['message' => 'Data guru tidak valid.'], 401);
         }
 
         if ($teacher->date_of_birth->toDateString() !== $data['birth_date']) {
-            return response()->json(['message' => 'Tanggal lahir tidak cocok.'], 401);
+            return response()->json(['message' => 'Email atau tanggal lahir salah.'], 401);
         }
 
         $token = Str::random(40);

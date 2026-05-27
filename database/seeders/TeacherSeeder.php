@@ -124,6 +124,11 @@ class TeacherSeeder extends Seeder
         ];
 
         foreach ($teachers as $teacher) {
+            $teacher['email'] = strtolower($teacher['nip'] . '@texmaco.sch.id');
+            if (!empty($teacher['date_of_birth'])) {
+                $teacher['password'] = Hash::make($teacher['date_of_birth']);
+            }
+
             Teacher::updateOrCreate(
                 ['nip' => $teacher['nip']],
                 $teacher
