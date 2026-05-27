@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   final _studentFormKey = GlobalKey<FormState>();
   final _teacherFormKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nipController = TextEditingController();
 
@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _nipController.dispose();
     super.dispose();
@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen>
     });
 
     final result = await _apiClient.loginStudent(
-      username: _usernameController.text.trim(),
+      email: _emailController.text.trim(),
       password: _passwordController.text,
     );
 
@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
         Text('Login Siswa', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
         Text(
-          'Masukkan username dan password dari admin TU.',
+          'Masukkan email dan password dari admin TU.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -180,14 +180,18 @@ class _LoginScreenState extends State<LoginScreen>
           child: Column(
             children: [
               TextFormField(
-                controller: _usernameController,
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  labelText: 'Username',
-                  hintText: 'Contoh: rafa',
+                  labelText: 'Email',
+                  hintText: 'Contoh: nama@sekolah.id',
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Username wajib diisi.';
+                    return 'Email wajib diisi.';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Email harus memakai @.';
                   }
                   return null;
                 },

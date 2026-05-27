@@ -23,6 +23,7 @@ class MobileTeacherController extends Controller
         $dateString = $date->toDateString();
         $dayName = $this->dayName($date);
         $selectedClass = $request->query('class_name');
+        $selectedScheduleId = $request->query('schedule_id');
 
         $dailySchedules = Schedule::query()
             ->where('teacher_id', $teacher->id)
@@ -30,41 +31,45 @@ class MobileTeacherController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        $teacherClasses = Schedule::query()
-            ->where('teacher_id', $teacher->id)
-            ->orderBy('class_name')
-            ->pluck('class_name')
-            ->unique()
-            ->values();
+        $teacherClasses = $dailySchedules->pluck('class_name')->unique()->values();
 
-        $scopedClasses = $selectedClass
-            ? collect([$selectedClass])
-            : ($dailySchedules->isNotEmpty()
-                ? $dailySchedules->pluck('class_name')->unique()->values()
-                : $teacherClasses);
+        $scopedSchedules = $dailySchedules;
+        if ($selectedScheduleId) {
+            $scopedSchedules = $scopedSchedules
+                ->where('id', (int) $selectedScheduleId)
+                ->values();
+        }
 
-        $records = Attendance::query()
-            ->with('student')
-            ->whereDate('attendance_date', $dateString)
-            ->when($scopedClasses->isNotEmpty(), function ($query) use ($scopedClasses) {
-                $query->whereHas('student', function ($studentQuery) use ($scopedClasses) {
-                    $studentQuery->whereIn('class_name', $scopedClasses);
-                });
-            })
-            ->orderBy('attendance_time')
-            ->get()
-            ->map(function ($attendance) {
-                return [
-                    'id' => $attendance->id,
-                    'student_name' => $attendance->student?->name ?? '-',
-                    'nis' => $attendance->student?->nis ?? '-',
-                    'classroom' => $attendance->student?->class_name ?? '-',
-                    'status' => $attendance->status === 'alpha' ? 'alfa' : $attendance->status,
-                    'time' => $attendance->attendance_time,
-                    'note' => $attendance->note,
-                ];
-            })
-            ->values();
+        if ($selectedClass) {
+            $scopedSchedules = $scopedSchedules
+                ->where('class_name', $selectedClass)
+                ->values();
+        }
+
+        $scheduleIds = $scopedSchedules->pluck('id')->filter()->values();
+        $scopedClasses = $scopedSchedules->pluck('class_name')->unique()->values();
+
+        $records = collect();
+        if ($scheduleIds->isNotEmpty()) {
+            $records = Attendance::query()
+                ->with('student')
+                ->whereDate('attendance_date', $dateString)
+                ->whereIn('schedule_id', $scheduleIds)
+                ->orderBy('attendance_time')
+                ->get()
+                ->map(function ($attendance) {
+                    return [
+                        'id' => $attendance->id,
+                        'student_name' => $attendance->student?->name ?? '-',
+                        'nis' => $attendance->student?->nis ?? '-',
+                        'classroom' => $attendance->student?->class_name ?? '-',
+                        'status' => $attendance->status === 'alpha' ? 'alfa' : $attendance->status,
+                        'time' => $attendance->attendance_time,
+                        'note' => $attendance->note,
+                    ];
+                })
+                ->values();
+        }
 
         $recordedNis = $records->pluck('nis')->filter()->values();
         $notRecorded = collect();
@@ -97,8 +102,10 @@ class MobileTeacherController extends Controller
             'date' => $dateString,
             'day_name' => $dayName,
             'selected_class' => $selectedClass,
+            'selected_schedule' => $selectedScheduleId,
             'classes' => $teacherClasses,
             'schedules' => $dailySchedules->map(fn ($schedule) => [
+                'id' => $schedule->id,
                 'class_name' => $schedule->class_name,
                 'subject' => $schedule->subject,
                 'start_time' => $schedule->start_time?->format('H:i'),

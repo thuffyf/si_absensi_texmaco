@@ -171,6 +171,12 @@ class SettingsController extends Controller
         }
 
         $map = $this->mapHeaders($header);
+        $settings = $this->getSettings();
+        $schoolEmail = (string) ($settings->data['school_email'] ?? '');
+        $domain = 'texmaco.sch.id';
+        if ($schoolEmail !== '' && str_contains($schoolEmail, '@')) {
+            $domain = substr($schoolEmail, strpos($schoolEmail, '@') + 1);
+        }
 
         $created = 0;
         $updated = 0;
@@ -185,12 +191,30 @@ class SettingsController extends Controller
                 continue;
             }
 
+            $email = strtolower($this->csvValue($row, $map, 'email'));
+            if ($email === '') {
+                $email = strtolower($nis . '@' . $domain);
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $skipped++;
+                continue;
+            }
+
+            $duplicateEmail = Student::where('email', $email)
+                ->where('nis', '!=', $nis)
+                ->exists();
+            if ($duplicateEmail) {
+                $skipped++;
+                continue;
+            }
+
             $payload = [
                 'nis' => $nis,
                 'name' => $name,
                 'class_name' => $this->csvValue($row, $map, 'class_name') ?: 'X',
                 'major' => $this->csvValue($row, $map, 'major') ?: 'Teknik Elektronika Industri',
-                'email' => $this->csvValue($row, $map, 'email') ?: null,
+                'email' => $email,
                 'username' => $this->csvValue($row, $map, 'username') ?: null,
                 'phone' => $this->csvValue($row, $map, 'phone') ?: null,
                 'uid_kartu' => $this->csvValue($row, $map, 'uid_kartu') ?: null,

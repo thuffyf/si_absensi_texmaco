@@ -18,6 +18,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
   String _message = '';
   String _selectedDate = '';
   String _selectedClass = '';
+  String _selectedScheduleId = '';
   String _dayName = '';
   String _view = 'hadir';
   Map<String, int> _summary = const {
@@ -51,6 +52,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
       token: widget.token,
       date: _selectedDate,
       className: _selectedClass,
+      scheduleId: _selectedScheduleId,
     );
 
     if (!mounted) {
@@ -63,6 +65,11 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
         .map((item) => item.toString())
         .where((item) => item.isNotEmpty)
         .toList();
+    final schedules = _mapsFrom(data['schedules']);
+    final scheduleIds = schedules
+        .map((item) => item['id']?.toString() ?? '')
+        .where((id) => id.isNotEmpty)
+        .toSet();
 
     setState(() {
       _loading = false;
@@ -72,6 +79,20 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
       if (_selectedClass.isNotEmpty && !_classes.contains(_selectedClass)) {
         _selectedClass = '';
       }
+      if (_selectedScheduleId.isNotEmpty &&
+          !scheduleIds.contains(_selectedScheduleId)) {
+        _selectedScheduleId = '';
+      }
+      if (_selectedScheduleId.isNotEmpty) {
+        final selected = schedules.firstWhere(
+          (item) => item['id']?.toString() == _selectedScheduleId,
+          orElse: () => <String, dynamic>{},
+        );
+        final className = selected['class_name']?.toString() ?? '';
+        if (className.isNotEmpty) {
+          _selectedClass = className;
+        }
+      }
       _summary = {
         'total_students': _intValue(summary['total_students']),
         'hadir': _intValue(summary['hadir']),
@@ -80,7 +101,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
         'alfa': _intValue(summary['alfa']),
         'belum_absen': _intValue(summary['belum_absen']),
       };
-      _schedules = _mapsFrom(data['schedules']);
+      _schedules = schedules;
       _present = _mapsFrom(data['present']);
       _absences = _mapsFrom(data['absences']);
       _notRecorded = _mapsFrom(data['not_recorded']);
@@ -182,7 +203,31 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
             value: _selectedClass,
             classes: _classes,
             onChanged: (value) async {
-              setState(() => _selectedClass = value ?? '');
+              setState(() {
+                _selectedClass = value ?? '';
+                _selectedScheduleId = '';
+              });
+              await _load();
+            },
+          ),
+          const SizedBox(height: 12),
+          _ScheduleFilter(
+            value: _selectedScheduleId,
+            schedules: _schedules,
+            onChanged: (value) async {
+              setState(() {
+                _selectedScheduleId = value ?? '';
+                if (_selectedScheduleId.isNotEmpty) {
+                  final selected = _schedules.firstWhere(
+                    (item) => item['id']?.toString() == _selectedScheduleId,
+                    orElse: () => <String, dynamic>{},
+                  );
+                  final className = selected['class_name']?.toString() ?? '';
+                  if (className.isNotEmpty) {
+                    _selectedClass = className;
+                  }
+                }
+              });
               await _load();
             },
           ),
@@ -297,7 +342,7 @@ class _ScheduleCard extends StatelessWidget {
             const SizedBox(height: 10),
             if (schedules.isEmpty)
               Text(
-                'Tidak ada jadwal di tanggal ini. Data ditampilkan dari kelas yang pernah diajar.',
+                'Tidak ada jadwal di tanggal ini.',
                 style: Theme.of(context).textTheme.bodySmall,
               )
             else
@@ -334,6 +379,48 @@ class _ScheduleCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ScheduleFilter extends StatelessWidget {
+  const _ScheduleFilter({
+    required this.value,
+    required this.schedules,
+    required this.onChanged,
+  });
+
+  final String value;
+  final List<Map<String, dynamic>> schedules;
+  final ValueChanged<String?> onChanged;
+
+  String _labelFor(Map<String, dynamic> schedule) {
+    final className = schedule['class_name']?.toString() ?? '-';
+    final subject = schedule['subject']?.toString() ?? '-';
+    final start = schedule['start_time']?.toString() ?? '-';
+    final end = schedule['end_time']?.toString() ?? '-';
+    return '$className | $subject | $start-$end';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      key: ValueKey(value),
+      initialValue: value,
+      decoration: const InputDecoration(
+        labelText: 'Jadwal',
+        prefixIcon: Icon(Icons.menu_book_outlined),
+      ),
+      items: [
+        const DropdownMenuItem(value: '', child: Text('Semua jadwal hari ini')),
+        ...schedules.map(
+          (schedule) => DropdownMenuItem(
+            value: schedule['id']?.toString() ?? '',
+            child: Text(_labelFor(schedule)),
+          ),
+        ),
+      ],
+      onChanged: onChanged,
     );
   }
 }

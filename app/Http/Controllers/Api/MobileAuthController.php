@@ -15,18 +15,19 @@ class MobileAuthController extends Controller
     public function loginStudent(Request $request)
     {
         $data = $request->validate([
-            'username' => 'required|string',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        $student = Student::where('username', $data['username'])->first();
+        $email = trim($data['email']);
+        $student = Student::where('email', $email)->first();
 
         if (!$student || !$student->password) {
             return response()->json(['message' => 'Akun siswa tidak valid.'], 401);
         }
 
         if (!Hash::check($data['password'], $student->password)) {
-            return response()->json(['message' => 'Username atau password salah.'], 401);
+            return response()->json(['message' => 'Email atau password salah.'], 401);
         }
 
         if (!$student->uid_kartu) {

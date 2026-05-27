@@ -41,7 +41,7 @@ class ApiClient {
   }
 
   Future<ApiResult> loginStudent({
-    required String username,
+    required String email,
     required String password,
   }) async {
     final uri = Uri.parse('$baseUrl/mobile/login/student');
@@ -51,7 +51,7 @@ class ApiClient {
           .post(
             uri,
             headers: _jsonHeaders(),
-            body: jsonEncode({'username': username, 'password': password}),
+            body: jsonEncode({'email': email, 'password': password}),
           )
           .timeout(timeout);
 
@@ -104,10 +104,14 @@ class ApiClient {
     required String token,
     required String date,
     String? className,
+    String? scheduleId,
   }) async {
     final query = <String, String>{'date': date};
     if (className != null && className.isNotEmpty) {
       query['class_name'] = className;
+    }
+    if (scheduleId != null && scheduleId.isNotEmpty) {
+      query['schedule_id'] = scheduleId;
     }
 
     final uri = Uri.parse(

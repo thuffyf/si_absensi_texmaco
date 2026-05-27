@@ -413,6 +413,12 @@ class StudentSeeder extends Seeder
                 $student['uid_kartu'] = 'UID-' . $student['nis'];
             }
 
+            if (empty($student['email'])) {
+                $student['email'] = strtolower($student['nis'] . '@texmaco.sch.id');
+            } else {
+                $student['email'] = strtolower($student['email']);
+            }
+
             Student::updateOrCreate(
                 ['nis' => $student['nis']],
                 $student
