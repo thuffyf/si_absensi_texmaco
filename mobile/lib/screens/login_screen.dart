@@ -33,10 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<ApiResult> _attemptStudentLogin(
-    String email,
-    String birthDate,
-  ) async {
+  Future<ApiResult> _attemptStudentLogin(String email, String birthDate) async {
     final result = await _apiClient.loginStudent(
       email: email,
       birthDate: birthDate,
@@ -59,10 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return result;
   }
 
-  Future<ApiResult> _attemptTeacherLogin(
-    String email,
-    String birthDate,
-  ) async {
+  Future<ApiResult> _attemptTeacherLogin(String email, String birthDate) async {
     final result = await _apiClient.loginTeacher(
       email: email,
       birthDate: birthDate,
@@ -115,12 +109,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     const helperText =
-      'Gunakan email dan tanggal lahir (YYYY-MM-DD), contoh 2010-12-23.';
+        'Gunakan email dan tanggal lahir (YYYY-MM-DD), contoh 2010-12-23.';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login Absensi NFC'),
-      ),
+      appBar: AppBar(title: const Text('Login Absensi NFC')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
