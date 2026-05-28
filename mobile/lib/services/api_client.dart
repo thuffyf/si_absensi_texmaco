@@ -40,6 +40,16 @@ class ApiClient {
     return headers;
   }
 
+  Map<String, String> _headers({String? token}) {
+    final headers = <String, String>{'Accept': 'application/json'};
+
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    return headers;
+  }
+
   Future<ApiResult> loginStudent({
     required String email,
     required String birthDate,
@@ -264,22 +274,28 @@ class ApiClient {
     required String startDate,
     required String endDate,
     required String reason,
+    String? photoPath,
   }) async {
     final uri = Uri.parse('$baseUrl/mobile/student/leave-requests');
 
     try {
-      final response = await _client
-          .post(
-            uri,
-            headers: _jsonHeaders(token: token),
-            body: jsonEncode({
-              'type': type,
-              'start_date': startDate,
-              'end_date': endDate,
-              'reason': reason,
-            }),
-          )
-          .timeout(timeout);
+      final request = http.MultipartRequest('POST', uri)
+        ..headers.addAll(_headers(token: token))
+        ..fields.addAll({
+          'type': type,
+          'start_date': startDate,
+          'end_date': endDate,
+          'reason': reason,
+        });
+
+      if (photoPath != null && photoPath.isNotEmpty) {
+        request.files.add(
+          await http.MultipartFile.fromPath('photo', photoPath),
+        );
+      }
+
+      final streamedResponse = await request.send().timeout(timeout);
+      final response = await http.Response.fromStream(streamedResponse);
 
       final payload = response.body.isNotEmpty
           ? jsonDecode(response.body) as Map<String, dynamic>

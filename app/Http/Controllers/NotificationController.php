@@ -121,14 +121,14 @@ class NotificationController extends Controller
             'rejection_reason' => 'Admin konfirmasi: ' . ($request->string('rejection_reason')->toString() ?: 'Ditolak oleh Admin'),
         ]);
 
-        // Create attendance record as alpha
+        // Create attendance record as alpa
         Attendance::updateOrCreate(
             [
                 'student_id' => $leaveRequest->student_id,
                 'attendance_date' => $leaveRequest->request_date ?? Carbon::today()->toDateString(),
             ],
             [
-                'status' => 'alpha',
+                'status' => 'alpa',
                 'attendance_time' => '00:00:00',
                 'note' => $leaveRequest->rejection_reason,
             ]
@@ -136,6 +136,6 @@ class NotificationController extends Controller
 
         return redirect()
             ->route('notifications.tu-approvals')
-            ->with('success', 'Permintaan ditolak. Siswa dianggap alpha.');
+            ->with('success', 'Permintaan ditolak. Siswa dianggap alpa.');
     }
 }

@@ -37,7 +37,7 @@
 
 <div class="glass-card p-6 rounded-2xl mb-6">
     <h2 class="text-lg font-bold text-white mb-4">Buat Request Baru</h2>
-    <form method="POST" action="{{ route('requests.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <form method="POST" action="{{ route('requests.store') }}" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @csrf
         <select name="student_id" class="input-field text-sm" required>
             <option value="">Pilih siswa</option>
@@ -52,6 +52,11 @@
         <input name="start_date" type="date" value="{{ old('start_date') }}" class="input-field" required />
         <input name="end_date" type="date" value="{{ old('end_date') }}" class="input-field" />
         <textarea name="reason" class="input-field md:col-span-2 lg:col-span-4" rows="3" placeholder="Alasan" required>{{ old('reason') }}</textarea>
+        <div class="md:col-span-2 lg:col-span-4">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Bukti gambar opsional</label>
+            <input type="file" name="photo" accept="image/*" class="input-field" />
+            <p class="mt-2 text-xs text-gray-500">Contoh: foto surat dokter atau surat izin.</p>
+        </div>
         <button type="submit" class="btn-primary md:col-span-2 lg:col-span-4">Simpan Request</button>
     </form>
 </div>
@@ -75,6 +80,12 @@
                 <div>
                     <p class="text-xs text-gray-500 mb-2">Alasan</p>
                     <p class="text-sm text-gray-300 mb-4">{{ $request->reason }}</p>
+                    @if($request->photo)
+                        <div class="mb-4 overflow-hidden rounded-xl border border-white/10 bg-black/20">
+                            <img src="{{ asset('storage/' . $request->photo) }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-48 w-full object-cover" />
+                            <div class="px-3 py-2 text-xs text-gray-400">Lampiran bukti</div>
+                        </div>
+                    @endif
                     <div class="flex flex-col gap-2">
                         <form method="POST" action="{{ route('requests.approve', $request) }}">
                             @csrf
@@ -107,6 +118,11 @@
                 </div>
                 <p class="text-xs text-gray-400">Tanggal: {{ $request->start_date?->format('d M Y') }}{{ $request->end_date ? ' - ' . $request->end_date->format('d M Y') : '' }}</p>
                 <p class="text-xs text-gray-300 mt-2">{{ $request->reason }}</p>
+                @if($request->photo)
+                    <div class="mt-3 overflow-hidden rounded-xl border border-white/10 bg-black/20">
+                        <img src="{{ asset('storage/' . $request->photo) }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-36 w-full object-cover" />
+                    </div>
+                @endif
             </div>
         @empty
             <div class="text-sm text-gray-400">Belum ada request disetujui.</div>
@@ -128,6 +144,11 @@
                 </div>
                 <p class="text-xs text-gray-400">Tanggal: {{ $request->start_date?->format('d M Y') }}{{ $request->end_date ? ' - ' . $request->end_date->format('d M Y') : '' }}</p>
                 <p class="text-xs text-gray-300 mt-2">{{ $request->reason }}</p>
+                @if($request->photo)
+                    <div class="mt-3 overflow-hidden rounded-xl border border-white/10 bg-black/20">
+                        <img src="{{ asset('storage/' . $request->photo) }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-36 w-full object-cover" />
+                    </div>
+                @endif
             </div>
         @empty
             <div class="text-sm text-gray-400">Belum ada request ditolak.</div>

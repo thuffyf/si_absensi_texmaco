@@ -63,7 +63,7 @@ class MobileTeacherController extends Controller
                         'student_name' => $attendance->student?->name ?? '-',
                         'nis' => $attendance->student?->nis ?? '-',
                         'classroom' => $attendance->student?->class_name ?? '-',
-                        'status' => $attendance->status === 'alpha' ? 'alfa' : $attendance->status,
+                        'status' => $attendance->status === 'alpa' ? 'alpa' : $attendance->status,
                         'time' => $attendance->attendance_time,
                         'note' => $attendance->note,
                     ];
@@ -94,7 +94,7 @@ class MobileTeacherController extends Controller
         }
 
         $present = $records->where('status', 'hadir')->values();
-        $absences = $records->whereIn('status', ['izin', 'sakit', 'alfa'])->values();
+        $absences = $records->whereIn('status', ['izin', 'sakit', 'alpa'])->values();
         $allItems = $records->concat($notRecorded)->values();
 
         return response()->json([
@@ -117,7 +117,7 @@ class MobileTeacherController extends Controller
                 'hadir' => $present->count(),
                 'izin' => $records->where('status', 'izin')->count(),
                 'sakit' => $records->where('status', 'sakit')->count(),
-                'alfa' => $records->where('status', 'alfa')->count(),
+                'alpa' => $records->where('status', 'alpa')->count(),
                 'belum_absen' => $notRecorded->count(),
             ],
             'present' => $present,

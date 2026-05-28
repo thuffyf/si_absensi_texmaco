@@ -10,7 +10,7 @@
         $hadir = $statusCounts['hadir'] ?? 0;
         $izin = $statusCounts['izin'] ?? 0;
         $sakit = $statusCounts['sakit'] ?? 0;
-        $alpha = $statusCounts['alpha'] ?? 0;
+        $alpa = $statusCounts['alpa'] ?? 0;
         $total = max($totalRecords, 1);
         $attendanceRate = round(($hadir / $total) * 100, 1);
     @endphp
@@ -36,7 +36,7 @@
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p class="text-sm font-medium text-slate-500">Alpa</p>
-            <p class="text-3xl font-bold text-slate-900 mt-2">{{ $alpha }}</p>
+            <p class="text-3xl font-bold text-slate-900 mt-2">{{ $alpa }}</p>
         </div>
     </div>
 
@@ -63,7 +63,7 @@
                     <option value="hadir" @selected(($filters['status'] ?? '') === 'hadir')>Hadir</option>
                     <option value="izin" @selected(($filters['status'] ?? '') === 'izin')>Izin</option>
                     <option value="sakit" @selected(($filters['status'] ?? '') === 'sakit')>Sakit</option>
-                    <option value="alpha" @selected(($filters['status'] ?? '') === 'alpha')>Alpa</option>
+                    <option value="alpa" @selected(($filters['status'] ?? '') === 'alpa')>Alpa</option>
                 </select>
             </div>
             <div class="flex flex-wrap gap-2 md:col-span-2 lg:col-span-4">
@@ -137,7 +137,7 @@
                                 <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">{{ $row['sakit'] }}</span>
                             </td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">{{ $row['alpha'] }}</span>
+                                <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">{{ $row['alpa'] }}</span>
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-700">{{ $row['total'] }}</td>
                             <td class="px-4 py-3">

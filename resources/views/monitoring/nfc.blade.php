@@ -53,28 +53,28 @@
                                 $borderClass = match ($event['status']) {
                                     'hadir' => 'border-emerald-200',
                                     'izin' => 'border-amber-200',
-                                    'sakit', 'alpha' => 'border-red-200',
+                                       'sakit', 'alpa' => 'border-red-200',
                                     'unregistered' => 'border-amber-300',
                                     default => 'border-slate-200',
                                 };
                                 $iconClass = match ($event['status']) {
                                     'hadir' => 'bg-emerald-100 text-emerald-700',
                                     'izin' => 'bg-amber-100 text-amber-700',
-                                    'sakit', 'alpha' => 'bg-red-100 text-red-700',
+                                       'sakit', 'alpa' => 'bg-red-100 text-red-700',
                                     'unregistered' => 'bg-amber-100 text-amber-700',
                                     default => 'bg-slate-100 text-slate-700',
                                 };
                                 $iconText = match ($event['status']) {
                                     'hadir' => '✓',
                                     'izin' => '⚠',
-                                    'sakit', 'alpha' => '✕',
+                                       'sakit', 'alpa' => '✕',
                                     'unregistered' => '?',
                                     default => '•',
                                 };
                                 $badgeClass = match ($event['status']) {
                                     'hadir' => 'inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800',
                                     'izin' => 'inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800',
-                                    'sakit', 'alpha' => 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
+                                       'sakit', 'alpa' => 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
                                     'unregistered' => 'inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800',
                                     default => 'inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800',
                                 };
@@ -188,32 +188,32 @@
                     const borderClass = {
                         'hadir': 'border-emerald-200',
                         'izin': 'border-amber-200',
-                        'sakit': 'border-red-200',
-                        'alpha': 'border-red-200',
+                           'sakit': 'border-red-200',
+                           'alpa': 'border-red-200',
                         'unregistered': 'border-amber-300',
                     }[event.status] || 'border-slate-200';
                     
                     const iconClass = {
                         'hadir': 'bg-emerald-100 text-emerald-700',
                         'izin': 'bg-amber-100 text-amber-700',
-                        'sakit': 'bg-red-100 text-red-700',
-                        'alpha': 'bg-red-100 text-red-700',
+                           'sakit': 'bg-red-100 text-red-700',
+                           'alpa': 'bg-red-100 text-red-700',
                         'unregistered': 'bg-amber-100 text-amber-700',
                     }[event.status] || 'bg-slate-100 text-slate-700';
                     
                     const iconText = {
                         'hadir': '✓',
                         'izin': '⚠',
-                        'sakit': '✕',
-                        'alpha': '✕',
+                           'sakit': '✕',
+                           'alpa': '✕',
                         'unregistered': '?',
                     }[event.status] || '•';
                     
                     const badgeClass = {
                         'hadir': 'inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800',
                         'izin': 'inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800',
-                        'sakit': 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
-                        'alpha': 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
+                           'sakit': 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
+                           'alpa': 'inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800',
                         'unregistered': 'inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800',
                     }[event.status] || 'inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800';
                     

@@ -61,7 +61,7 @@ class MobileStudentController extends Controller
         $hadir = $counts->get('hadir', 0);
         $izin = $counts->get('izin', 0);
         $sakit = $counts->get('sakit', 0);
-        $alpha = $counts->get('alpha', 0);
+        $alpa = $counts->get('alpa', 0);
 
         return response()->json([
             'message' => 'Ringkasan absensi siswa.',
@@ -69,8 +69,8 @@ class MobileStudentController extends Controller
                 'hadir' => $hadir,
                 'izin' => $izin,
                 'sakit' => $sakit,
-                'alfa' => $alpha,
-                'total' => $hadir + $izin + $sakit + $alpha,
+                'alpa' => $alpa,
+                'total' => $hadir + $izin + $sakit + $alpa,
             ],
             'period' => [
                 'from' => $fromDate->toDateString(),
@@ -143,6 +143,8 @@ class MobileStudentController extends Controller
                 'responded_at' => $leaveRequest->responded_at?->toDateTimeString(),
                 'response_note' => $leaveRequest->response_note,
                 'rejection_reason' => $leaveRequest->rejection_reason,
+                'photo' => $leaveRequest->photo,
+                'photo_url' => $leaveRequest->photo ? asset('storage/' . $leaveRequest->photo) : null,
             ]),
         ]);
     }
@@ -159,6 +161,7 @@ class MobileStudentController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'reason' => 'required|string|max:500',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $startDate = Carbon::parse($data['start_date'])->toDateString();
@@ -189,6 +192,11 @@ class MobileStudentController extends Controller
             ], 422);
         }
 
+        $photoPath = null;
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            $photoPath = $request->file('photo')->store('leave-requests', 'public');
+        }
+
         $leaveRequest = LeaveRequest::create([
             'student_id' => $student->id,
             'type' => $data['type'],
@@ -198,6 +206,7 @@ class MobileStudentController extends Controller
             'reason' => $data['reason'],
             'status' => 'pending_admin',
             'requested_at' => Carbon::now(),
+            'photo' => $photoPath,
         ]);
 
         return response()->json([
@@ -210,6 +219,8 @@ class MobileStudentController extends Controller
                 'reason' => $leaveRequest->reason,
                 'status' => $leaveRequest->status,
                 'requested_at' => $leaveRequest->requested_at?->toDateTimeString(),
+                'photo' => $leaveRequest->photo,
+                'photo_url' => $leaveRequest->photo ? asset('storage/' . $leaveRequest->photo) : null,
             ],
         ], 201);
     }

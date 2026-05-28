@@ -34,7 +34,7 @@
                                 $day['attendance']->status === 'hadir' ? 'text-emerald-900' : 
                                 ($day['attendance']->status === 'izin' ? 'text-amber-900' : 
                                 ($day['attendance']->status === 'sakit' ? 'text-red-900' : 'text-red-900')) 
-                            }} uppercase">{{ $day['attendance']->status === 'alpha' ? 'ALPA' : strtoupper($day['attendance']->status) }}</dd>
+                            }} uppercase">{{ $day['attendance']->status === 'alpa' ? 'ALPA' : strtoupper($day['attendance']->status) }}</dd>
                             <p class="mt-1 text-xs font-medium text-slate-500">{{ $day['attendance']->attendance_time }}</p>
                         @else
                             <dd class="mt-0.5 text-lg font-bold tabular-nums text-slate-900">Belum</dd>

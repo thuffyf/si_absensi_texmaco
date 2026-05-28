@@ -73,7 +73,7 @@ class StudentDashboardController extends Controller
             ->where('status', 'hadir')
             ->count();
         $totalAbsent = Attendance::where('student_id', $student->id)
-            ->whereIn('status', ['izin', 'sakit', 'alpha'])
+            ->whereIn('status', ['izin', 'sakit', 'alpa'])
             ->count();
         $totalRecords = $totalPresent + $totalAbsent;
         $attendanceRate = $totalRecords > 0 ? round(($totalPresent / $totalRecords) * 100, 1) : 0;

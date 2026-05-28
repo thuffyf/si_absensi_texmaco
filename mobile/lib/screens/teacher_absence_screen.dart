@@ -26,7 +26,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
     'hadir': 0,
     'izin': 0,
     'sakit': 0,
-    'alfa': 0,
+    'alpa': 0,
     'belum_absen': 0,
   };
   List<String> _classes = [];
@@ -98,7 +98,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
         'hadir': _intValue(summary['hadir']),
         'izin': _intValue(summary['izin']),
         'sakit': _intValue(summary['sakit']),
-        'alfa': _intValue(summary['alfa']),
+        'alpa': _intValue(summary['alpa']),
         'belum_absen': _intValue(summary['belum_absen']),
       };
       _schedules = schedules;
@@ -146,7 +146,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
   String get _activeEmptyText {
     switch (_view) {
       case 'tidak_hadir':
-        return 'Tidak ada siswa izin, sakit, atau alfa pada tanggal ini.';
+        return 'Tidak ada siswa izin, sakit, atau alpa pada tanggal ini.';
       case 'belum_absen':
         return 'Semua siswa di kelas ini sudah punya catatan absensi.';
       default:
@@ -261,7 +261,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
                   value: 'tidak_hadir',
                   icon: const Icon(Icons.warning_amber_outlined),
                   label: Text(
-                    'Tidak (${(_summary['izin'] ?? 0) + (_summary['sakit'] ?? 0) + (_summary['alfa'] ?? 0)})',
+                    'Tidak (${(_summary['izin'] ?? 0) + (_summary['sakit'] ?? 0) + (_summary['alpa'] ?? 0)})',
                   ),
                 ),
                 ButtonSegment(
@@ -568,9 +568,8 @@ String _statusLabel(String status) {
       return 'Izin';
     case 'sakit':
       return 'Sakit';
-    case 'alfa':
-    case 'alpha':
-      return 'Alfa';
+    case 'alpa':
+      return 'Alpa';
     case 'belum_absen':
       return 'Belum';
     default:
@@ -586,8 +585,7 @@ IconData _statusIcon(String status) {
       return Icons.event_busy_outlined;
     case 'sakit':
       return Icons.medical_services_outlined;
-    case 'alfa':
-    case 'alpha':
+    case 'alpa':
       return Icons.cancel_outlined;
     default:
       return Icons.hourglass_empty_outlined;
@@ -602,8 +600,7 @@ Color _statusColor(String status) {
       return Colors.orange;
     case 'sakit':
       return Colors.red;
-    case 'alfa':
-    case 'alpha':
+    case 'alpa':
       return Colors.redAccent;
     default:
       return Colors.blueGrey;

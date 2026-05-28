@@ -45,7 +45,7 @@ class MonitoringController extends Controller
                 'hadir' => 'badge-success',
                 'izin' => 'badge-warning',
                 'sakit' => 'badge-danger',
-                'alpha' => 'badge-danger',
+                'alpa' => 'badge-danger',
                 default => 'badge-info',
             };
 
@@ -53,7 +53,7 @@ class MonitoringController extends Controller
                 'hadir' => 'Hadir',
                 'izin' => 'Izin',
                 'sakit' => 'Sakit',
-                'alpha' => 'Alpha',
+                'alpa' => 'Alpa',
                 default => ucfirst($status),
             };
 
@@ -101,7 +101,7 @@ class MonitoringController extends Controller
 
         $totalScans = $attendances->whereNotNull('attendance_time')->count() + $unregisteredScans->count();
         $successCount = $attendances->where('status', 'hadir')->count();
-        $failedCount = $attendances->whereIn('status', ['alpha', 'izin', 'sakit'])->count();
+        $failedCount = $attendances->whereIn('status', ['alpa', 'izin', 'sakit'])->count();
         $unknownCount = $unregisteredScans->count();
 
         $devices = NfcDevice::orderBy('name')->get();
@@ -152,7 +152,7 @@ class MonitoringController extends Controller
                 'hadir' => 'badge-success',
                 'izin' => 'badge-warning',
                 'sakit' => 'badge-danger',
-                'alpha' => 'badge-danger',
+                'alpa' => 'badge-danger',
                 default => 'badge-info',
             };
 
@@ -160,7 +160,7 @@ class MonitoringController extends Controller
                 'hadir' => 'Hadir',
                 'izin' => 'Izin',
                 'sakit' => 'Sakit',
-                'alpha' => 'Alpha',
+                'alpa' => 'Alpa',
                 default => ucfirst($status),
             };
 
@@ -208,7 +208,7 @@ class MonitoringController extends Controller
 
         $totalScans = $attendances->whereNotNull('attendance_time')->count() + $unregisteredScans->count();
         $successCount = $attendances->where('status', 'hadir')->count();
-        $failedCount = $attendances->whereIn('status', ['alpha', 'izin', 'sakit'])->count();
+        $failedCount = $attendances->whereIn('status', ['alpa', 'izin', 'sakit'])->count();
         $unknownCount = $unregisteredScans->count();
 
         $devices = NfcDevice::orderBy('name')->get()->map(function ($device) {

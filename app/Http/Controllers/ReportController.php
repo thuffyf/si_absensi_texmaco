@@ -69,7 +69,7 @@ class ReportController extends Controller
                 'hadir' => $studentRecords->where('status', 'hadir')->count(),
                 'izin' => $studentRecords->where('status', 'izin')->count(),
                 'sakit' => $studentRecords->where('status', 'sakit')->count(),
-                'alpha' => $studentRecords->where('status', 'alpha')->count(),
+                'alpa' => $studentRecords->where('status', 'alpa')->count(),
                 'total' => $studentRecords->count(),
                 'last_time' => $lastTime,
             ];
@@ -83,7 +83,7 @@ class ReportController extends Controller
                 'hadir' => $statusCounts->get('hadir', 0),
                 'izin' => $statusCounts->get('izin', 0),
                 'sakit' => $statusCounts->get('sakit', 0),
-                'alpha' => $statusCounts->get('alpha', 0),
+                'alpa' => $statusCounts->get('alpa', 0),
             ],
             'filters' => [
                 'start_date' => $startDate,
@@ -137,7 +137,7 @@ class ReportController extends Controller
                 'hadir' => $studentRecords->where('status', 'hadir')->count(),
                 'izin' => $studentRecords->where('status', 'izin')->count(),
                 'sakit' => $studentRecords->where('status', 'sakit')->count(),
-                'alpha' => $studentRecords->where('status', 'alpha')->count(),
+                'alpa' => $studentRecords->where('status', 'alpa')->count(),
                 'total' => $studentRecords->count(),
             ];
         })->filter(function($row) { return $row['total'] > 0; });
@@ -149,7 +149,7 @@ class ReportController extends Controller
 
         $callback = function () use ($rows) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Nama Siswa', 'NIS', 'Kelas', 'Jurusan', 'Hadir', 'Izin', 'Sakit', 'Alpha', 'Total']);
+            fputcsv($file, ['Nama Siswa', 'NIS', 'Kelas', 'Jurusan', 'Hadir', 'Izin', 'Sakit', 'Alpa', 'Total']);
 
             foreach ($rows as $row) {
                 fputcsv($file, [
@@ -160,7 +160,7 @@ class ReportController extends Controller
                     $row['hadir'],
                     $row['izin'],
                     $row['sakit'],
-                    $row['alpha'],
+                    $row['alpa'],
                     $row['total'],
                 ]);
             }
@@ -214,7 +214,7 @@ class ReportController extends Controller
                 'hadir' => $studentRecords->where('status', 'hadir')->count(),
                 'izin' => $studentRecords->where('status', 'izin')->count(),
                 'sakit' => $studentRecords->where('status', 'sakit')->count(),
-                'alpha' => $studentRecords->where('status', 'alpha')->count(),
+                'alpa' => $studentRecords->where('status', 'alpa')->count(),
                 'total' => $studentRecords->count(),
             ];
         })->filter(function($row) { return $row['total'] > 0; });

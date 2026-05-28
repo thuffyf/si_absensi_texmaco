@@ -73,7 +73,7 @@
             border-radius: 3px;
             font-weight: bold;
         }
-        .status-alpha {
+        .status-alpa {
             background-color: #f3f4f6;
             color: #374151;
             padding: 2px 8px;
@@ -164,7 +164,7 @@
                 <td style="text-align: center;"><span class="status-hadir">{{ $row['hadir'] }}</span></td>
                 <td style="text-align: center;"><span class="status-izin">{{ $row['izin'] }}</span></td>
                 <td style="text-align: center;"><span class="status-sakit">{{ $row['sakit'] }}</span></td>
-                <td style="text-align: center;"><span class="status-alpha">{{ $row['alpha'] }}</span></td>
+                <td style="text-align: center;"><span class="status-alpa">{{ $row['alpa'] }}</span></td>
                 <td style="text-align: center; font-weight: bold;">{{ $row['total'] }}</td>
             </tr>
             @endforeach

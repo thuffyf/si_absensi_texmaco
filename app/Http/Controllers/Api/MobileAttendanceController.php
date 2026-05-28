@@ -18,7 +18,7 @@ class MobileAttendanceController extends Controller
         $data = $request->validate([
             'uid_kartu' => 'required|string',
             'device_id' => 'nullable|exists:nfc_devices,id',
-            'status' => 'nullable|in:hadir,izin,sakit,alpha,late',
+            'status' => 'nullable|in:hadir,izin,sakit,alpa,late',
             'note' => 'nullable|string|max:255',
         ]);
 

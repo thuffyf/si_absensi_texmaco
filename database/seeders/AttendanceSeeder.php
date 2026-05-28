@@ -18,7 +18,7 @@ class AttendanceSeeder extends Seeder
         $scheduleId = Schedule::orderBy('id')->value('id');
         $today = Carbon::today();
 
-        $statusRotation = ['hadir', 'hadir', 'hadir', 'izin', 'sakit', 'alpha'];
+        $statusRotation = ['hadir', 'hadir', 'hadir', 'izin', 'sakit', 'alpa'];
 
         foreach ($students as $index => $student) {
             $status = $statusRotation[$index % count($statusRotation)];
@@ -33,7 +33,7 @@ class AttendanceSeeder extends Seeder
                     'schedule_id' => $scheduleId,
                     'attendance_time' => $status === 'hadir' ? '07:30:00' : null,
                     'status' => $status,
-                    'note' => $status === 'alpha' ? 'Tidak hadir tanpa keterangan' : null,
+                    'note' => $status === 'alpa' ? 'Tidak hadir tanpa keterangan' : null,
                 ]
             );
         }

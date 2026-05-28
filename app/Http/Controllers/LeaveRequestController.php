@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\LeaveRequest;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class LeaveRequestController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'reason' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         // Check if attendance already exists for this date

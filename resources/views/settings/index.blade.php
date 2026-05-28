@@ -97,7 +97,7 @@
                     <input type="number" name="late_tolerance" class="input-field" value="{{ old('late_tolerance', $settings['late_tolerance'] ?? '') }}" />
                 </div>
                 <div>
-                    <label class="text-sm font-semibold text-neon-cyan mb-2 block">Threshold Alpha (hari)</label>
+                    <label class="text-sm font-semibold text-neon-cyan mb-2 block">Threshold Alpa (hari)</label>
                     <input type="number" name="alpha_threshold" class="input-field" value="{{ old('alpha_threshold', $settings['alpha_threshold'] ?? '') }}" />
                 </div>
                 <div>

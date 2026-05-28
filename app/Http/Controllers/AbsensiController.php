@@ -46,7 +46,7 @@ class AbsensiController extends Controller
     {
         $data = $request->validate([
             'student_id' => 'required|exists:students,id',
-            'status' => 'required|in:hadir,izin,sakit,alpha',
+            'status' => 'required|in:hadir,izin,sakit,alpa',
             'attendance_date' => 'required|date',
             'attendance_time' => 'nullable|string',
             'note' => 'nullable|string',

@@ -36,7 +36,7 @@ Mengubah sistem dari "Izin & Sakit" menjadi "Absensi" yang terhubung ke API ekst
 - Mengubah menu "Izin & Sakit" menjadi "Absensi"
 - Mengubah route dari `requests.izin-sakit` menjadi `absensi.index`
 - Mengubah icon dari "IS" menjadi "AB"
-- Mengubah aria-label notification dari "Persetujuan izin dan alpha" menjadi "Persetujuan absensi"
+- Mengubah aria-label notification dari "Persetujuan izin dan alpa" menjadi "Persetujuan absensi"
 
 #### View Baru (`resources/views/absensi/index.blade.php`)
 - Membuat view baru untuk manajemen absensi
@@ -44,7 +44,7 @@ Mengubah sistem dari "Izin & Sakit" menjadi "Absensi" yang terhubung ke API ekst
   - Form tambah data absensi baru
   - Tabel riwayat absensi
   - Tombol sinkronisasi dari API eksternal
-  - Status badges: Hadir (hijau), Izin (kuning), Sakit (biru), Alpha (merah)
+  - Status badges: Hadir (hijau), Izin (kuning), Sakit (biru), Alpa (merah)
 
 #### Settings (`resources/views/settings/index.blade.php`)
 - Mengubah "Notifikasi Izin/Sakit Pending" menjadi "Notifikasi Absensi Pending"
@@ -104,7 +104,7 @@ Mengubah sistem dari "Izin & Sakit" menjadi "Absensi" yang terhubung ke API ekst
     'nama' => $student->name,
     'kelas' => $student->class_name,
     'jurusan' => $student->major,
-    'status' => $data['status'], // hadir, izin, sakit, alpha
+    'status' => $data['status'], // hadir, izin, sakit, alpa
     'tanggal' => $data['attendance_date'],
     'waktu' => $data['attendance_time'],
     'keterangan' => $data['note'],
@@ -119,7 +119,7 @@ Mengubah sistem dari "Izin & Sakit" menjadi "Absensi" yang terhubung ke API ekst
 
 3. **View Lama**: `resources/views/requests/izin-sakit.blade.php` masih ada sebagai backup.
 
-4. **Status Types**: Sistem masih mendukung 4 status: hadir, izin, sakit, alpha. Perubahan hanya pada terminology dan integrasi API.
+4. **Status Types**: Sistem masih mendukung 4 status: hadir, izin, sakit, alpa. Perubahan hanya pada terminology dan integrasi API.
 
 ## Langkah Selanjutnya
 
