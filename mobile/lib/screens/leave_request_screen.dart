@@ -16,9 +16,9 @@ class LeaveRequestScreen extends StatefulWidget {
 
 class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   final _apiClient = ApiClient();
-  final _imagePicker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
+  final _imagePicker = ImagePicker();
 
   bool _loading = true;
   bool _submitting = false;
@@ -43,19 +43,28 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   }
 
   Future<void> _pickPhoto() async {
-    final selected = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
+    try {
+      final result = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
 
-    if (!mounted || selected == null) {
-      return;
+      if (!mounted || result == null) {
+        return;
+      }
+
+      setState(() {
+        _photo = result;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _messageOk = false;
+        _message = 'Gagal memilih gambar: $error';
+      });
     }
-
-    setState(() {
-      _photo = selected;
-    });
-  }
 
   void _clearPhoto() {
     setState(() {
