@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard — SITEXA Absensi')
-@section('page_title', 'Dashboard tesweb')
+@section('page_title', 'Dashboard tesweb123')
 @section('page_subtitle')
     SITEXA Absensi Texmaco Purwasari - Kelas {{ $targetClass }}
 @endsection
