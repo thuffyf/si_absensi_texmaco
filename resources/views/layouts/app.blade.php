@@ -273,7 +273,7 @@
                                 aria-label="Buka menu profil"
                             >
                                 @if(auth()->user()->photo)
-                                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
+                                    <img src="{{ auth()->user()->photo_url }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
                                 @else
                                     <span class="inline-flex h-full w-full items-center justify-center">{{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
                                 @endif

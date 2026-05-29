@@ -16,7 +16,7 @@
     <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div class="flex items-center gap-6">
             <div class="relative">
-                <img id="profile-preview" src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=eff6ff&color=0284c7' }}" alt="Profile Photo" class="w-24 h-24 rounded-full object-cover border-4 border-sky-200">
+                <img id="profile-preview" src="{{ auth()->user()->photo_url }}" alt="Profile Photo" class="w-24 h-24 rounded-full object-cover border-4 border-sky-200">
                 <div class="absolute bottom-0 right-0 flex gap-2">
                     <button type="button" id="change-photo-btn" class="bg-sky-500 text-white p-2 rounded-full hover:bg-sky-600 transition-colors" title="Ubah Foto">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

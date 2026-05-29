@@ -44,4 +44,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function getPhotoUrlAttribute(): string
+    {
+        if (empty($this->photo)) {
+            $name = urlencode((string) $this->name);
+
+            return 'https://ui-avatars.com/api/?name=' . $name . '&background=eff6ff&color=0284c7';
+        }
+
+        if (filter_var($this->photo, FILTER_VALIDATE_URL)) {
+            return $this->photo;
+        }
+
+        $photoPath = ltrim($this->photo, '/');
+        $photoPath = preg_replace('#^storage_public/#', '', $photoPath) ?? $photoPath;
+        $photoPath = preg_replace('#^storage/#', '', $photoPath) ?? $photoPath;
+
+        return asset('storage_public/' . $photoPath);
+    }
 }
