@@ -92,7 +92,7 @@ class NotificationController extends Controller
         $leaveRequest->update([
             'status' => 'approved',
             'responded_at' => Carbon::now(),
-            'response_note' => 'Admin override: ' . ($request->string('response_note')->toString() ?: 'Disetujui oleh Admin'),
+            'response_note' => $request->string('response_note')->toString() ?: null,
         ]);
 
         // Create attendance record for approved leave
@@ -110,7 +110,7 @@ class NotificationController extends Controller
 
         return redirect()
             ->route('notifications.tu-approvals')
-            ->with('success', 'Permintaan disetujui (override). Absensi telah dicatat.');
+            ->with('success', 'Permintaan disetujui. Absensi telah dicatat.');
     }
 
     public function tuReject(Request $request, LeaveRequest $leaveRequest): RedirectResponse
@@ -118,7 +118,7 @@ class NotificationController extends Controller
         $leaveRequest->update([
             'status' => 'rejected',
             'responded_at' => Carbon::now(),
-            'rejection_reason' => 'Admin konfirmasi: ' . ($request->string('rejection_reason')->toString() ?: 'Ditolak oleh Admin'),
+            'rejection_reason' => $request->string('rejection_reason')->toString() ?: 'Ditolak oleh TU',
         ]);
 
         // Create attendance record as alpa

@@ -329,18 +329,24 @@ class _RequestCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(request['reason']?.toString() ?? '-'),
-            if ((request['rejection_reason']?.toString() ?? '').isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text(
-                  'Alasan ditolak: ${request['rejection_reason']}',
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
+            Builder(
+              builder: (context) {
+                var reason = request['rejection_reason']?.toString() ?? '';
+                reason = reason.replaceAll(RegExp(r'admin konfirmasi:\s*', caseSensitive: false), '').trim();
+                if (reason.isEmpty) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    'Alasan ditolak: $reason',
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                );
+              },
+            ),
             Builder(
               builder: (context) {
                 var note = request['response_note']?.toString() ?? '';
-                note = note.replaceAll(RegExp(r'(?i)admin override:\s*'), '').trim();
+                note = note.replaceAll(RegExp(r'admin override:\s*', caseSensitive: false), '').trim();
                 if (note.toLowerCase() == 'dissetujui oleh admin' || note.toLowerCase() == 'disetujui oleh admin') {
                   note = 'Disetujui oleh admin';
                 }
