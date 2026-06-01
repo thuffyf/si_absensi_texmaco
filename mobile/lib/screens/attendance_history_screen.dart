@@ -151,8 +151,9 @@ String _statusLabel(String status) {
       return 'Izin';
     case 'sakit':
       return 'Sakit';
-    case 'alpa':
-      return 'Alpa';
+    case 'alpha':
+    case 'alfa':
+      return 'Alfa';
     default:
       return status.isEmpty ? '-' : status;
   }

@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../services/api_client.dart';
 
@@ -18,14 +15,12 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   final _apiClient = ApiClient();
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
-  final _imagePicker = ImagePicker();
 
   bool _loading = true;
   bool _submitting = false;
   String _type = 'izin';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
-  XFile? _photo;
   String _message = '';
   bool _messageOk = false;
   List<Map<String, dynamic>> _requests = [];
@@ -40,36 +35,6 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   void dispose() {
     _reasonController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickPhoto() async {
-    try {
-      final result = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
-
-      if (!mounted || result == null) {
-        return;
-      }
-
-      setState(() {
-        _photo = result;
-      });
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _messageOk = false;
-        _message = 'Gagal memilih gambar: $error';
-      });
-    }
-
-  void _clearPhoto() {
-    setState(() {
-      _photo = null;
-    });
   }
 
   Future<void> _loadRequests() async {
@@ -114,7 +79,6 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
       startDate: _formatDate(_startDate),
       endDate: _formatDate(_endDate),
       reason: _reasonController.text.trim(),
-      photoPath: _photo?.path,
     );
 
     if (!mounted) {
@@ -129,7 +93,6 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
 
     if (result.ok) {
       _reasonController.clear();
-      _clearPhoto();
       await _loadRequests();
     }
   }
@@ -249,72 +212,6 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Bukti Surat Dokter/Surat Izin',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        TextButton.icon(
-                          onPressed: _pickPhoto,
-                          icon: const Icon(Icons.photo_library_outlined),
-                          label: const Text('Pilih gambar'),
-                        ),
-                      ],
-                    ),
-                    if (_photo != null) ...[
-                      const SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.file(
-                                File(_photo!.path),
-                                height: 180,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        _photo!.name,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: _clearPhoto,
-                                      child: const Text('Hapus'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ] else ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        'Opsional. Bisa dipakai untuk surat dokter atau surat izin.',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
@@ -444,25 +341,6 @@ class _RequestCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 6),
                 child: Text('Catatan: ${request['response_note']}'),
-              ),
-            if ((request['photo_url']?.toString() ?? '').isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    request['photo_url'].toString(),
-                    height: 160,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Text(
-                      'Lampiran tersedia, tetapi gagal dimuat.',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ),
-                ),
               ),
           ],
         ),

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.absensi.nfc.mobile"
-    compileSdk = 36
+    compileSdk = 35
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -24,12 +24,10 @@ android {
         applicationId = "com.absensi.nfc.mobile"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        // Use explicit values to avoid early provider resolution issues during Gradle configuration.
-        minSdk = 21
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
-
+        minSdk = flutter.minSdkVersion
+        targetSdk = 35
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     buildTypes {

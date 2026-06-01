@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'hadir': 0,
     'izin': 0,
     'sakit': 0,
-    'alpa': 0,
+    'alfa': 0,
     'total': 0,
   };
   List<Map<String, dynamic>> _latestRecords = [];
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'hadir': int.tryParse('${summary['hadir'] ?? 0}') ?? 0,
         'izin': int.tryParse('${summary['izin'] ?? 0}') ?? 0,
         'sakit': int.tryParse('${summary['sakit'] ?? 0}') ?? 0,
-        'alpa': int.tryParse('${summary['alpa'] ?? 0}') ?? 0,
+        'alfa': int.tryParse('${summary['alfa'] ?? 0}') ?? 0,
         'total': int.tryParse('${summary['total'] ?? 0}') ?? 0,
       };
       final from = period['from']?.toString() ?? '';
@@ -208,7 +208,7 @@ class _SummaryCard extends StatelessWidget {
                 _MetricTile('Hadir', summary['hadir'] ?? 0, Colors.green),
                 _MetricTile('Izin', summary['izin'] ?? 0, Colors.orange),
                 _MetricTile('Sakit', summary['sakit'] ?? 0, Colors.red),
-                _MetricTile('Alpa', summary['alpa'] ?? 0, Colors.blueGrey),
+                _MetricTile('Alfa', summary['alfa'] ?? 0, Colors.blueGrey),
               ],
             ),
           ],
@@ -365,8 +365,9 @@ String _statusLabel(Object? status) {
       return 'Izin';
     case 'sakit':
       return 'Sakit';
-    case 'alpa':
-      return 'Alpa';
+    case 'alpha':
+    case 'alfa':
+      return 'Alfa';
     default:
       return status?.toString() ?? '-';
   }
