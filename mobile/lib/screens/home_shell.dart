@@ -98,12 +98,6 @@ class _StudentShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Halo, ${session.name}'),
-        actions: [
-          IconButton(onPressed: onLogout, icon: const Icon(Icons.logout)),
-        ],
-      ),
       body: SafeArea(child: _pages(session)[index]),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,

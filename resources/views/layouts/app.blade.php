@@ -216,7 +216,7 @@
                             $pendingCount = \App\Models\LeaveRequest::query()
                                 ->where('status', 'pending_teacher')
                                 ->count();
-                        } elseif (auth()->user()->role === 'admin' || auth()->user()->role === 'tu') {
+                        } elseif (in_array(auth()->user()->role, ['admin', 'tu', 'tata_usaha'])) {
                             $pendingCount = \App\Models\LeaveRequest::query()
                                 ->where('status', 'pending_admin')
                                 ->count();

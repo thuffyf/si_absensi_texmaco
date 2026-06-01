@@ -32,15 +32,23 @@ use Illuminate\Support\Carbon;
 
 // Login Routes
 Route::get('/login', function () {
-    return view('auth.login');
+    $num1 = rand(1, 10);
+    $num2 = rand(1, 10);
+    session(['captcha_answer' => $num1 + $num2]);
+
+    return view('auth.login', compact('num1', 'num2'));
 })->name('login');
 
 Route::post('/login', function (Request $request) {
     $request->validate([
         'username' => 'required|email',
         'password' => 'required|string',
-        'user_type' => 'required|in:siswa,guru,tata_usaha',
+        'captcha' => 'required|numeric',
     ]);
+
+    if ($request->captcha != session('captcha_answer')) {
+        return back()->withErrors(['captcha' => 'Jawaban matematika salah.'])->withInput($request->only('username'));
+    }
 
     $user = User::where('email', $request->username)->first();
 
@@ -52,8 +60,6 @@ Route::post('/login', function (Request $request) {
         if ($looksHashed) {
             $passwordOk = Hash::check($request->password, $stored);
         } else {
-            // Mode percobaan: jika password di DB masih plaintext, izinkan sekali,
-            // lalu upgrade ke hash agar berikutnya aman.
             $passwordOk = hash_equals($stored, (string) $request->password);
             if ($passwordOk) {
                 $user->password = Hash::make($request->password);
@@ -62,8 +68,8 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    // Validate role matches user_type selection
-    $roleMatch = $user && $user->role === $request->user_type;
+    // Hanya izinkan admin / tata_usaha
+    $roleMatch = $user && in_array($user->role, ['tata_usaha', 'admin']);
 
     if ($user && $passwordOk && $roleMatch) {
         Auth::login($user);
@@ -71,8 +77,8 @@ Route::post('/login', function (Request $request) {
     }
 
     return back()->withErrors([
-        'login' => 'Email, password, atau tipe pengguna tidak valid.',
-    ])->withInput($request->only('username', 'user_type'));
+        'login' => 'Email, password, atau akses ditolak.',
+    ])->withInput($request->only('username'));
 })->name('login.submit');
 
 // Dashboard Routes (Protected by auth middleware)

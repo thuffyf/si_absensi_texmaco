@@ -337,11 +337,20 @@ class _RequestCard extends StatelessWidget {
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
-            if ((request['response_note']?.toString() ?? '').isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text('Catatan: ${request['response_note']}'),
-              ),
+            Builder(
+              builder: (context) {
+                var note = request['response_note']?.toString() ?? '';
+                note = note.replaceAll(RegExp(r'(?i)admin override:\s*'), '').trim();
+                if (note.toLowerCase() == 'dissetujui oleh admin' || note.toLowerCase() == 'disetujui oleh admin') {
+                  note = 'Disetujui oleh admin';
+                }
+                if (note.isEmpty) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text('Catatan: $note'),
+                );
+              },
+            ),
           ],
         ),
       ),

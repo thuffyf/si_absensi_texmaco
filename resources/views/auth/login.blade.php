@@ -50,17 +50,16 @@
                             </div>
                         </div>
 
-                        <div>
-                            <select name="user_type" required class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
-                                <option value="">Silahkan pilih status SITEXA</option>
-                                <option value="siswa" @selected(old('user_type') === 'siswa')>SITEXA Siswa</option>
-                                <option value="guru" @selected(old('user_type') === 'guru')>SITEXA Guru</option>
-                                <option value="tata_usaha" @selected(old('user_type') === 'tata_usaha')>SITEXA Tata Usaha</option>
-                            </select>
-                        </div>
+                        @if ($errors->has('captcha'))
+                            <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                {{ $errors->first('captcha') }}
+                            </div>
+                        @endif
 
-                        <div class="flex justify-center my-4">
-                            <div class="g-recaptcha" data-sitekey="6LdtS-IsAAAAAGF0Z0mn2oP-1wy6dWEmKzaT2spq"></div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Berapa hasil dari {{ $num1 }} + {{ $num2 }}?</label>
+                            <input name="captcha" type="number" required placeholder="Jawaban"
+                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 placeholder-slate-400" />
                         </div>
 
                         <button type="submit" class="w-full rounded-2xl bg-slate-900 px-4 py-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
@@ -72,8 +71,6 @@
         </div>
     </div>
 
-    <!-- reCAPTCHA Script -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <script>
         const passwordInput = document.getElementById('password');
