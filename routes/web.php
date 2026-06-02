@@ -17,6 +17,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
@@ -32,22 +33,35 @@ use Illuminate\Support\Carbon;
 
 // Login Routes
 Route::get('/login', function () {
-    $num1 = rand(1, 10);
-    $num2 = rand(1, 10);
-    session(['captcha_answer' => $num1 + $num2]);
-
-    return view('auth.login', compact('num1', 'num2'));
+    return view('auth.login', [
+        'recaptchaSiteKey' => config('services.recaptcha.site_key'),
+    ]);
 })->name('login');
 
 Route::post('/login', function (Request $request) {
     $request->validate([
         'username' => 'required|email',
         'password' => 'required|string',
-        'captcha' => 'required|numeric',
+        'g-recaptcha-response' => 'required|string',
     ]);
 
-    if ($request->captcha != session('captcha_answer')) {
-        return back()->withErrors(['captcha' => 'Jawaban matematika salah.'])->withInput($request->only('username'));
+    $recaptchaSecret = config('services.recaptcha.secret_key');
+    if (!$recaptchaSecret) {
+        return back()
+            ->withErrors(['captcha' => 'Konfigurasi captcha belum lengkap.'])
+            ->withInput($request->only('username'));
+    }
+
+    $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        'secret' => $recaptchaSecret,
+        'response' => $request->input('g-recaptcha-response'),
+        'remoteip' => $request->ip(),
+    ]);
+
+    if (!$recaptcha->ok() || !($recaptcha->json('success') === true)) {
+        return back()
+            ->withErrors(['captcha' => 'Verifikasi captcha gagal.'])
+            ->withInput($request->only('username'));
     }
 
     $user = User::where('email', $request->username)->first();

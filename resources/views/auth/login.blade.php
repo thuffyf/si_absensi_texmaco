@@ -56,10 +56,14 @@
                             </div>
                         @endif
 
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Berapa hasil dari {{ $num1 }} + {{ $num2 }}?</label>
-                            <input name="captcha" type="number" required placeholder="Jawaban"
-                                class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 bg-slate-50 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 placeholder-slate-400" />
+                        <div class="flex justify-center my-4">
+                            @if($recaptchaSiteKey)
+                                <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
+                            @else
+                                <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                                    Site key captcha belum diatur.
+                                </div>
+                            @endif
                         </div>
 
                         <button type="submit" class="w-full rounded-2xl bg-slate-900 px-4 py-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
@@ -71,6 +75,7 @@
         </div>
     </div>
 
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <script>
         const passwordInput = document.getElementById('password');
