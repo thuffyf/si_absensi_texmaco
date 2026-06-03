@@ -26,7 +26,7 @@ Route::prefix('mobile')->group(function () {
     Route::post('/login/student', [MobileAuthController::class, 'loginStudent']);
     Route::post('/login/teacher', [MobileAuthController::class, 'loginTeacher']);
     Route::post('/register', [MobileAuthController::class, 'registerDevice']);
-    Route::post('/attendance', [MobileAttendanceController::class, 'tap']);
+    Route::post('/attendance', [MobileAttendanceController::class, 'tap'])->middleware('nfc.api.key');
 
     Route::get('/student/profile', [MobileStudentController::class, 'profile']);
     Route::get('/student/summary', [MobileStudentController::class, 'summary']);
@@ -37,4 +37,4 @@ Route::prefix('mobile')->group(function () {
 });
 
 // NFC Monitoring API
-Route::get('/monitoring/nfc-data', [App\Http\Controllers\MonitoringController::class, 'nfcData']);
+Route::get('/monitoring/nfc-data', [App\Http\Controllers\MonitoringController::class, 'nfcData'])->middleware('nfc.api.key');

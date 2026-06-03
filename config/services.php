@@ -36,4 +36,8 @@ return [
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
 
+    'nfc' => [
+        'api_key' => env('NFC_API_KEY'),
+    ],
+
 ];

@@ -218,8 +218,8 @@ class SettingsController extends Controller
                 'username' => $this->csvValue($row, $map, 'username') ?: null,
                 'phone' => $this->csvValue($row, $map, 'phone') ?: null,
                 'uid_kartu' => $this->csvValue($row, $map, 'uid_kartu') ?: null,
-                'status' => $this->csvValue($row, $map, 'status') ?: 'aktif',
-                'nfc_type' => $this->csvValue($row, $map, 'nfc_type') ?: 'belum_terdaftar',
+                'status' => $this->enumCsvValue($row, $map, 'status', ['aktif', 'tidak_aktif', 'lulus'], 'aktif'),
+                'nfc_type' => $this->enumCsvValue($row, $map, 'nfc_type', ['kartu', 'handphone', 'belum_terdaftar'], 'belum_terdaftar'),
             ];
 
             $dob = $this->csvValue($row, $map, 'date_of_birth');
@@ -333,5 +333,12 @@ class SettingsController extends Controller
 
         $index = $map[$key];
         return isset($row[$index]) ? trim((string) $row[$index]) : '';
+    }
+
+    private function enumCsvValue(array $row, array $map, string $key, array $allowed, string $default): string
+    {
+        $value = $this->csvValue($row, $map, $key);
+
+        return in_array($value, $allowed, true) ? $value : $default;
     }
 }

@@ -218,32 +218,32 @@
 
 <!-- Data untuk semua requests -->
 <script>
-const requestsData = {
-    @foreach($allRequests as $request)
-        {{ $request->id }}: {
-            id: {{ $request->id }},
-            student_name: '{{ $request->student->name }}',
-            student_info: 'NIS {{ $request->student->nis }} · {{ $request->student->class_name }}',
-            type: '{{ $request->type }}',
-            type_label: '{{ $request->type === 'izin' ? 'Izin' : 'Sakit' }}',
-            status: '{{ $request->status }}',
-            status_label: '{{ match($request->status) {
+const requestsData = @json($allRequests->mapWithKeys(function ($request) {
+    return [
+        $request->id => [
+            'id' => $request->id,
+            'student_name' => $request->student->name,
+            'student_info' => 'NIS ' . $request->student->nis . ' · ' . $request->student->class_name,
+            'type' => $request->type,
+            'type_label' => $request->type === 'izin' ? 'Izin' : 'Sakit',
+            'status' => $request->status,
+            'status_label' => match ($request->status) {
                 'approved' => 'Disetujui',
                 'rejected' => 'Ditolak',
                 'pending_teacher' => 'Menunggu',
                 'pending_admin' => 'Menunggu TU',
                 default => strtoupper($request->status),
-            } }}',
-            requested_at: '{{ $request->requested_at?->format('d M Y H:i') ?? '-' }}',
-            start_date: '{{ $request->start_date?->format('d/m/Y') ?? '-' }}',
-            end_date: '{{ $request->end_date?->format('d/m/Y') ?? '—' }}',
-            reason: '{{ str_replace("'", "\\'", $request->reason) }}',
-            photo: '{{ $request->photo ? asset('storage/' . $request->photo) : '' }}',
-            response_note: '{{ str_replace("'", "\\'", $request->response_note ?? '') }}',
-            rejection_reason: '{{ str_replace("'", "\\'", str_replace('Admin konfirmasi: ', '', $request->rejection_reason ?? '')) }}',
-        },
-    @endforeach
-};
+            },
+            'requested_at' => $request->requested_at?->format('d M Y H:i') ?? '-',
+            'start_date' => $request->start_date?->format('d/m/Y') ?? '-',
+            'end_date' => $request->end_date?->format('d/m/Y') ?? '—',
+            'reason' => $request->reason,
+            'photo' => $request->photo ? asset('storage/' . $request->photo) : '',
+            'response_note' => $request->response_note ?? '',
+            'rejection_reason' => str_replace('Admin konfirmasi: ', '', $request->rejection_reason ?? ''),
+        ],
+    ];
+}));
 
 // Filter function
 function filterRequests(status) {

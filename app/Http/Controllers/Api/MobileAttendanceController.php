@@ -18,7 +18,7 @@ class MobileAttendanceController extends Controller
         $data = $request->validate([
             'uid_kartu' => 'required|string',
             'device_id' => 'nullable|exists:nfc_devices,id',
-            'status' => 'nullable|in:hadir,izin,sakit,alpa,late',
+            'status' => 'nullable|in:hadir,izin,sakit,alpha,late',
             'note' => 'nullable|string|max:255',
         ]);
 
@@ -60,15 +60,19 @@ class MobileAttendanceController extends Controller
         // Set MySQL session timezone to Asia/Jakarta
         DB::statement("SET time_zone = '+07:00'");
 
-        $attendance = Attendance::create([
-            'student_id' => $student->id,
-            'device_id' => $data['device_id'] ?? null,
-            'schedule_id' => $schedule?->id,
-            'attendance_date' => $now->toDateString(),
-            'attendance_time' => $now->format('H:i:s'),
-            'status' => $status,
-            'note' => $data['note'] ?? null,
-        ]);
+        $attendance = Attendance::updateOrCreate(
+            [
+                'student_id' => $student->id,
+                'attendance_date' => $now->toDateString(),
+            ],
+            [
+                'device_id' => $data['device_id'] ?? null,
+                'schedule_id' => $schedule?->id,
+                'attendance_time' => $now->format('H:i:s'),
+                'status' => $status,
+                'note' => $data['note'] ?? null,
+            ]
+        );
 
         if (!empty($data['device_id'])) {
             $device = NfcDevice::find($data['device_id']);

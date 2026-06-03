@@ -96,7 +96,7 @@ Route::post('/login', function (Request $request) {
 })->name('login.submit');
 
 // Dashboard Routes (Protected by auth middleware)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
     Route::post('/logout', function (Request $request) {
         Auth::logout();
 
