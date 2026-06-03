@@ -34,6 +34,7 @@ Route::prefix('mobile')->group(function () {
     Route::get('/student/leave-requests', [MobileStudentController::class, 'leaveRequests']);
     Route::post('/student/leave-requests', [MobileStudentController::class, 'storeLeaveRequest']);
     Route::get('/teacher/absences', [MobileTeacherController::class, 'absences']);
+    Route::post('/teacher/attendance', [MobileTeacherController::class, 'updateAttendance']);
 });
 
 // NFC Monitoring API

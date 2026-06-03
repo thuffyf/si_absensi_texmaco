@@ -73,6 +73,41 @@ class AbsensiController extends Controller
         return back()->with('success', 'Data absensi berhasil disimpan dan disinkronisasi.');
     }
 
+    public function update(Request $request, Attendance $attendance)
+    {
+        $data = $request->validate([
+            'status' => 'required|in:hadir,izin,sakit,alpa',
+            'note' => 'nullable|string',
+        ]);
+
+        $attendance->update([
+            'status' => $data['status'],
+            'note' => $data['note'],
+        ]);
+
+        $student = $attendance->student;
+        if ($student) {
+            $this->syncToExternalApi([
+                'nis' => $student->nis,
+                'nama' => $student->name,
+                'kelas' => $student->class_name,
+                'jurusan' => $student->major,
+                'status' => $data['status'],
+                'tanggal' => $attendance->attendance_date->toDateString(),
+                'waktu' => $attendance->attendance_time,
+                'keterangan' => $data['note'] ?? '',
+            ]);
+        }
+
+        return back()->with('success', 'Data absensi berhasil diperbarui.');
+    }
+
+    public function destroy(Attendance $attendance)
+    {
+        $attendance->delete();
+        return back()->with('success', 'Data absensi berhasil dihapus.');
+    }
+
     public function syncFromExternal(Request $request)
     {
         try {
@@ -93,9 +128,9 @@ class AbsensiController extends Controller
                             [
                                 'student_id' => $student->id,
                                 'attendance_date' => $item['tanggal'],
-                                'attendance_time' => $item['waktu'],
                             ],
                             [
+                                'attendance_time' => $item['waktu'],
                                 'status' => $item['status'],
                                 'note' => $item['keterangan'] ?? null,
                             ]

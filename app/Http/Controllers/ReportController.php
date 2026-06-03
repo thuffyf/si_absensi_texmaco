@@ -26,10 +26,6 @@ class ReportController extends Controller
             $attendanceQuery->whereDate('attendance_date', '<=', $endDate);
         }
 
-        if ($status) {
-            $attendanceQuery->where('status', $status);
-        }
-
         if ($className) {
             $attendanceQuery->whereHas('student', function ($builder) use ($className) {
                 $builder->where('class_name', $className);
@@ -75,6 +71,12 @@ class ReportController extends Controller
             ];
         });
 
+        if ($status) {
+            $rows = $rows->filter(function ($row) use ($status) {
+                return $row[$status] > 0;
+            })->values();
+        }
+
         return view('reports.absensi', [
             'rows' => $rows,
             'totalStudents' => $students->count(),
@@ -111,10 +113,6 @@ class ReportController extends Controller
             $attendanceQuery->whereDate('attendance_date', '<=', $endDate);
         }
 
-        if ($status) {
-            $attendanceQuery->where('status', $status);
-        }
-
         if ($className) {
             $attendanceQuery->whereHas('student', function ($builder) use ($className) {
                 $builder->where('class_name', $className);
@@ -140,7 +138,18 @@ class ReportController extends Controller
                 'alpa' => $studentRecords->where('status', 'alpa')->count(),
                 'total' => $studentRecords->count(),
             ];
-        })->filter(function($row) { return $row['total'] > 0; });
+        });
+        
+        if ($status) {
+            $rows = $rows->filter(function ($row) use ($status) {
+                return $row[$status] > 0;
+            });
+        } else {
+            $rows = $rows->filter(function ($row) {
+                return $row['total'] > 0;
+            });
+        }
+        $rows = $rows->values();
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -188,10 +197,6 @@ class ReportController extends Controller
             $attendanceQuery->whereDate('attendance_date', '<=', $endDate);
         }
 
-        if ($status) {
-            $attendanceQuery->where('status', $status);
-        }
-
         if ($className) {
             $attendanceQuery->whereHas('student', function ($builder) use ($className) {
                 $builder->where('class_name', $className);
@@ -217,7 +222,18 @@ class ReportController extends Controller
                 'alpa' => $studentRecords->where('status', 'alpa')->count(),
                 'total' => $studentRecords->count(),
             ];
-        })->filter(function($row) { return $row['total'] > 0; });
+        });
+
+        if ($status) {
+            $rows = $rows->filter(function ($row) use ($status) {
+                return $row[$status] > 0;
+            });
+        } else {
+            $rows = $rows->filter(function ($row) {
+                return $row['total'] > 0;
+            });
+        }
+        $rows = $rows->values();
 
         $html = view('reports.pdf-absensi', [
             'rows' => $rows,

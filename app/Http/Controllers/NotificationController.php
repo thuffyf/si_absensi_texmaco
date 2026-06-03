@@ -43,18 +43,30 @@ class NotificationController extends Controller
             'response_note' => $request->string('response_note')->toString() ?: null,
         ]);
 
-        // Create attendance record for approved leave
-        Attendance::updateOrCreate(
-            [
-                'student_id' => $leaveRequest->student_id,
-                'attendance_date' => $leaveRequest->request_date ?? Carbon::today()->toDateString(),
-            ],
-            [
-                'status' => $leaveRequest->type,
-                'attendance_time' => '00:00:00',
-                'note' => $leaveRequest->reason,
-            ]
-        );
+        // Loop through the requested dates and create attendance records
+        $startDate = $leaveRequest->start_date ?? Carbon::parse($leaveRequest->request_date ?? Carbon::today());
+        $endDate = $leaveRequest->end_date ?? $startDate;
+
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            $existing = Attendance::where('student_id', $leaveRequest->student_id)
+                ->where('attendance_date', $date->toDateString())
+                ->first();
+
+            // Jangan timpa jika siswa ternyata sudah absen hadir secara fisik
+            if (!($existing && $existing->status === 'hadir')) {
+                Attendance::updateOrCreate(
+                    [
+                        'student_id' => $leaveRequest->student_id,
+                        'attendance_date' => $date->toDateString(),
+                    ],
+                    [
+                        'status' => $leaveRequest->type,
+                        'attendance_time' => '00:00:00',
+                        'note' => $leaveRequest->reason,
+                    ]
+                );
+            }
+        }
 
         return redirect()
             ->route('notifications.guru-approvals')
@@ -95,18 +107,30 @@ class NotificationController extends Controller
             'response_note' => $request->string('response_note')->toString() ?: null,
         ]);
 
-        // Create attendance record for approved leave
-        Attendance::updateOrCreate(
-            [
-                'student_id' => $leaveRequest->student_id,
-                'attendance_date' => $leaveRequest->request_date ?? Carbon::today()->toDateString(),
-            ],
-            [
-                'status' => $leaveRequest->type,
-                'attendance_time' => '00:00:00',
-                'note' => $leaveRequest->reason,
-            ]
-        );
+        // Loop through the requested dates and create attendance records
+        $startDate = $leaveRequest->start_date ?? Carbon::parse($leaveRequest->request_date ?? Carbon::today());
+        $endDate = $leaveRequest->end_date ?? $startDate;
+
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            $existing = Attendance::where('student_id', $leaveRequest->student_id)
+                ->where('attendance_date', $date->toDateString())
+                ->first();
+
+            // Jangan timpa jika siswa ternyata sudah absen hadir secara fisik
+            if (!($existing && $existing->status === 'hadir')) {
+                Attendance::updateOrCreate(
+                    [
+                        'student_id' => $leaveRequest->student_id,
+                        'attendance_date' => $date->toDateString(),
+                    ],
+                    [
+                        'status' => $leaveRequest->type,
+                        'attendance_time' => '00:00:00',
+                        'note' => $leaveRequest->reason,
+                    ]
+                );
+            }
+        }
 
         return redirect()
             ->route('notifications.tu-approvals')
@@ -122,17 +146,28 @@ class NotificationController extends Controller
         ]);
 
         // Create attendance record as alpa
-        Attendance::updateOrCreate(
-            [
-                'student_id' => $leaveRequest->student_id,
-                'attendance_date' => $leaveRequest->request_date ?? Carbon::today()->toDateString(),
-            ],
-            [
-                'status' => 'alpa',
-                'attendance_time' => '00:00:00',
-                'note' => $leaveRequest->rejection_reason,
-            ]
-        );
+        $startDate = $leaveRequest->start_date ?? Carbon::parse($leaveRequest->request_date ?? Carbon::today());
+        $endDate = $leaveRequest->end_date ?? $startDate;
+
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            $existing = Attendance::where('student_id', $leaveRequest->student_id)
+                ->where('attendance_date', $date->toDateString())
+                ->first();
+
+            if (!($existing && $existing->status === 'hadir')) {
+                Attendance::updateOrCreate(
+                    [
+                        'student_id' => $leaveRequest->student_id,
+                        'attendance_date' => $date->toDateString(),
+                    ],
+                    [
+                        'status' => 'alpa',
+                        'attendance_time' => '00:00:00',
+                        'note' => $leaveRequest->rejection_reason,
+                    ]
+                );
+            }
+        }
 
         return redirect()
             ->route('notifications.tu-approvals')

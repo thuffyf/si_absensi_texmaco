@@ -26,7 +26,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
     'hadir': 0,
     'izin': 0,
     'sakit': 0,
-    'alfa': 0,
+    'alpa': 0,
     'belum_absen': 0,
   };
   List<String> _classes = [];
@@ -98,7 +98,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
         'hadir': _intValue(summary['hadir']),
         'izin': _intValue(summary['izin']),
         'sakit': _intValue(summary['sakit']),
-        'alfa': _intValue(summary['alfa']),
+        'alpa': _intValue(summary['alpa']),
         'belum_absen': _intValue(summary['belum_absen']),
       };
       _schedules = schedules;
@@ -146,7 +146,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
   String get _activeEmptyText {
     switch (_view) {
       case 'tidak_hadir':
-        return 'Tidak ada siswa izin, sakit, atau alfa pada tanggal ini.';
+        return 'Tidak ada siswa izin, sakit, atau alpa pada tanggal ini.';
       case 'belum_absen':
         return 'Semua siswa di kelas ini sudah punya catatan absensi.';
       default:
@@ -261,7 +261,7 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
                   value: 'tidak_hadir',
                   icon: const Icon(Icons.warning_amber_outlined),
                   label: Text(
-                    'Tidak (${(_summary['izin'] ?? 0) + (_summary['sakit'] ?? 0) + (_summary['alfa'] ?? 0)})',
+                    'Tidak (${(_summary['izin'] ?? 0) + (_summary['sakit'] ?? 0) + (_summary['alpa'] ?? 0)})',
                   ),
                 ),
                 ButtonSegment(
@@ -279,11 +279,100 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
             if (_activeItems.isEmpty)
               _EmptyState(text: _activeEmptyText)
             else
-              ..._activeItems.map((item) => _AttendanceTile(item: item)),
+              ..._activeItems.map((item) => _AttendanceTile(
+                    item: item,
+                    onTap: () => _showEditDialog(item),
+                  )),
           ],
         ],
       ),
     );
+  }
+  Future<void> _showEditDialog(Map<String, dynamic> item) async {
+    final statusOptions = ['hadir', 'izin', 'sakit', 'alpa'];
+    String selectedStatus = item['status']?.toString() ?? 'belum_absen';
+    if (!statusOptions.contains(selectedStatus)) {
+      selectedStatus = 'hadir';
+    }
+    final noteController =
+        TextEditingController(text: item['note']?.toString() ?? '');
+
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setSheetState) {
+              return Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Edit Absensi: ${item['student_name']}',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    ...statusOptions.map(
+                      (status) => RadioListTile<String>(
+                        title: Text(_statusLabel(status)),
+                        value: status,
+                        groupValue: selectedStatus,
+                        onChanged: (value) {
+                          setSheetState(() => selectedStatus = value!);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: noteController,
+                      decoration: const InputDecoration(
+                        labelText: 'Keterangan (opsional)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Simpan'),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    if (result == true && mounted) {
+      setState(() {
+        _loading = true;
+      });
+      final res = await _apiClient.updateStudentAttendance(
+        token: widget.token,
+        nis: item['nis']?.toString() ?? '',
+        date: _selectedDate,
+        status: selectedStatus,
+        note: noteController.text.trim(),
+      );
+      if (!res.ok && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(res.message)));
+      }
+      await _load();
+    }
   }
 }
 
@@ -483,9 +572,10 @@ class _MetricTile extends StatelessWidget {
 }
 
 class _AttendanceTile extends StatelessWidget {
-  const _AttendanceTile({required this.item});
+  const _AttendanceTile({required this.item, this.onTap});
 
   final Map<String, dynamic> item;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -497,6 +587,7 @@ class _AttendanceTile extends StatelessWidget {
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: _statusColor(status).withValues(alpha: 0.12),
           foregroundColor: _statusColor(status),
@@ -570,7 +661,8 @@ String _statusLabel(String status) {
       return 'Sakit';
     case 'alfa':
     case 'alpha':
-      return 'Alfa';
+    case 'alpa':
+      return 'Alpa';
     case 'belum_absen':
       return 'Belum';
     default:
@@ -588,6 +680,7 @@ IconData _statusIcon(String status) {
       return Icons.medical_services_outlined;
     case 'alfa':
     case 'alpha':
+    case 'alpa':
       return Icons.cancel_outlined;
     default:
       return Icons.hourglass_empty_outlined;
@@ -604,6 +697,7 @@ Color _statusColor(String status) {
       return Colors.red;
     case 'alfa':
     case 'alpha':
+    case 'alpa':
       return Colors.redAccent;
     default:
       return Colors.blueGrey;

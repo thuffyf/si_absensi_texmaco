@@ -50,11 +50,13 @@ class MobileTeacherController extends Controller
         $scopedClasses = $scopedSchedules->pluck('class_name')->unique()->values();
 
         $records = collect();
-        if ($scheduleIds->isNotEmpty()) {
+        if ($scopedClasses->isNotEmpty()) {
             $records = Attendance::query()
                 ->with('student')
                 ->whereDate('attendance_date', $dateString)
-                ->whereIn('schedule_id', $scheduleIds)
+                ->whereHas('student', function ($query) use ($scopedClasses) {
+                    $query->whereIn('class_name', $scopedClasses);
+                })
                 ->orderBy('attendance_time')
                 ->get()
                 ->map(function ($attendance) {
@@ -124,6 +126,44 @@ class MobileTeacherController extends Controller
             'absences' => $absences,
             'not_recorded' => $notRecorded,
             'all' => $allItems,
+        ]);
+    }
+    public function updateAttendance(Request $request)
+    {
+        $teacher = $this->resolveTeacher($request);
+        if (!$teacher) {
+            return response()->json(['message' => 'Token tidak valid.'], 401);
+        }
+
+        $request->validate([
+            'nis' => 'required|string',
+            'date' => 'required|date',
+            'status' => 'required|in:hadir,izin,sakit,alpa',
+            'note' => 'nullable|string',
+        ]);
+
+        $student = Student::where('nis', $request->nis)->first();
+        if (!$student) {
+            return response()->json(['message' => 'Siswa tidak ditemukan.'], 404);
+        }
+
+        $dateString = Carbon::parse($request->date)->toDateString();
+        
+        $attendance = Attendance::updateOrCreate(
+            [
+                'student_id' => $student->id,
+                'attendance_date' => $dateString,
+            ],
+            [
+                'status' => $request->status,
+                'attendance_time' => $request->status === 'hadir' ? Carbon::now('Asia/Jakarta')->format('H:i:s') : '00:00:00',
+                'note' => $request->note,
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Absensi berhasil diperbarui.',
+            'data' => $attendance
         ]);
     }
 

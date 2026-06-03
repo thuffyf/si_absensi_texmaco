@@ -295,4 +295,41 @@ class ApiClient {
       return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
     }
   }
+  Future<ApiResult> updateStudentAttendance({
+    required String token,
+    required String nis,
+    required String date,
+    required String status,
+    String? note,
+  }) async {
+    final uri = Uri.parse('$baseUrl/mobile/teacher/attendance');
+
+    try {
+      final response = await _client
+          .post(
+            uri,
+            headers: _jsonHeaders(token: token),
+            body: jsonEncode({
+              'nis': nis,
+              'date': date,
+              'status': status,
+              'note': note ?? '',
+            }),
+          )
+          .timeout(timeout);
+
+      final payload = response.body.isNotEmpty
+          ? jsonDecode(response.body) as Map<String, dynamic>
+          : <String, dynamic>{};
+
+      return ApiResult(
+        ok: response.statusCode >= 200 && response.statusCode < 300,
+        message: payload['message']?.toString() ?? 'Update berhasil.',
+        statusCode: response.statusCode,
+        data: payload,
+      );
+    } catch (error) {
+      return ApiResult(ok: false, message: 'Gagal konek ke server: $error');
+    }
+  }
 }

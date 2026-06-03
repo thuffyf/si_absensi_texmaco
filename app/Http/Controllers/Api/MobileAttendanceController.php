@@ -45,34 +45,44 @@ class MobileAttendanceController extends Controller
             ->orderBy('start_time')
             ->get()
             ->first(function (Schedule $item) use ($now) {
-                $startTime = $item->start_time instanceof Carbon
-                    ? $item->start_time->copy()
-                    : Carbon::parse((string) $item->start_time);
                 $endTime = $item->end_time instanceof Carbon
                     ? $item->end_time->copy()
                     : Carbon::parse((string) $item->end_time);
-                $startTime->setDate($now->year, $now->month, $now->day);
                 $endTime->setDate($now->year, $now->month, $now->day);
-                return $now->between($startTime, $endTime, true);
+                
+                // Cukup cek apakah waktu sekarang sebelum kelas berakhir.
+                // Karena datanya sudah diurutkan dari pagi (orderBy start_time), 
+                // ini otomatis akan memilih jadwal kelas yang sedang atau akan segera berlangsung.
+                return $now->lte($endTime);
             });
         $status = $data['status'] ?? 'hadir';
 
         // Set MySQL session timezone to Asia/Jakarta
         DB::statement("SET time_zone = '+07:00'");
 
-        $attendance = Attendance::updateOrCreate(
-            [
-                'student_id' => $student->id,
-                'attendance_date' => $now->toDateString(),
-            ],
-            [
-                'device_id' => $data['device_id'] ?? null,
-                'schedule_id' => $schedule?->id,
-                'attendance_time' => $now->format('H:i:s'),
-                'status' => $status,
-                'note' => $data['note'] ?? null,
-            ]
-        );
+        $existingAttendance = Attendance::where('student_id', $student->id)
+            ->where('attendance_date', $now->toDateString())
+            ->first();
+
+        if ($existingAttendance && $existingAttendance->status === 'hadir') {
+            // Jika sudah hadir, biarkan saja (jangan timpa waktu absensi awalnya)
+            $attendance = $existingAttendance;
+        } else {
+            // Jika belum ada, atau status sebelumnya bukan hadir (misal Alpa/Sakit lalu tiba-tiba tap), maka update
+            $attendance = Attendance::updateOrCreate(
+                [
+                    'student_id' => $student->id,
+                    'attendance_date' => $now->toDateString(),
+                ],
+                [
+                    'device_id' => $data['device_id'] ?? null,
+                    'schedule_id' => $schedule?->id,
+                    'attendance_time' => $now->format('H:i:s'),
+                    'status' => $status,
+                    'note' => $data['note'] ?? null,
+                ]
+            );
+        }
 
         if (!empty($data['device_id'])) {
             $device = NfcDevice::find($data['device_id']);

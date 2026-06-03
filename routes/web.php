@@ -150,6 +150,8 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
 
     // Absensi (formerly Izin & Sakit)
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::put('/absensi/{attendance}', [AbsensiController::class, 'update'])->name('absensi.update');
+    Route::delete('/absensi/{attendance}', [AbsensiController::class, 'destroy'])->name('absensi.destroy');
     // POST /absensi dihapus - Absensi otomatis terisi dari tap in alat NFC, notifikasi siswa sakit/izin, atau penolakan dari TU
     Route::post('/absensi/sync', [AbsensiController::class, 'syncFromExternal'])->name('absensi.sync');
 
