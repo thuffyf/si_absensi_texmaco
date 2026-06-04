@@ -31,16 +31,6 @@ use Illuminate\Support\Carbon;
 |
 */
 
-Route::get('/favicon.ico', function () {
-    $path = public_path('favicon.png');
-
-    if (! is_file($path)) {
-        abort(404);
-    }
-
-    return response()->file($path, ['Content-Type' => 'image/png']);
-});
-
 // Login Routes
 Route::get('/login', function () {
     return view('auth.login', [
