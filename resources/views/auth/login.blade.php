@@ -13,7 +13,7 @@
             <!-- Left panel -->
             <div class="flex flex-col justify-center items-center px-6 py-10">
                 <div class="space-y-6 text-center">
-                    <img src="{{ asset('images/Logo Texmaco-transparent.png') }}" alt="SMK Purwasari Texmaco" class="h-64 object-contain mx-auto opacity-50" />
+                    <img src="{{ asset('images/Logo Texmaco.jpg') }}" alt="SMK Purwasari Texmaco" class="h-64 object-contain mx-auto opacity-90" />
                 </div>
             </div>
 
