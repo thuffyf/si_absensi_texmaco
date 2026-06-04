@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'SITEXA Absensi — Texmaco Purwasari')</title>
+    @include('partials.favicon')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body @class(['min-h-screen text-slate-900 font-sans antialiased', 'lg:h-dvh lg:overflow-hidden' => request()->routeIs('dashboard')])>

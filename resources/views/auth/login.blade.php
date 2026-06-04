@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login - Sistem Absensi NFC Texmaco</title>
+    @include('partials.favicon')
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 text-slate-900 flex items-center justify-center p-4">
