@@ -12,6 +12,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NotificationController;
+use App\Support\RecaptchaBypass;
 use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -32,36 +33,43 @@ use Illuminate\Support\Carbon;
 */
 
 // Login Routes
-Route::get('/login', function () {
+Route::get('/login', function (Request $request) {
+    $recaptchaBypass = RecaptchaBypass::enabled($request);
+
     return view('auth.login', [
-        'recaptchaSiteKey' => config('services.recaptcha.site_key'),
+        'recaptchaSiteKey' => $recaptchaBypass ? null : config('services.recaptcha.site_key'),
+        'recaptchaBypass' => $recaptchaBypass,
     ]);
 })->name('login');
 
 Route::post('/login', function (Request $request) {
+    $recaptchaBypass = RecaptchaBypass::enabled($request);
+
     $request->validate([
         'username' => 'required|email',
         'password' => 'required|string',
-        'g-recaptcha-response' => 'required|string',
+        'g-recaptcha-response' => $recaptchaBypass ? 'nullable|string' : 'required|string',
     ]);
 
-    $recaptchaSecret = config('services.recaptcha.secret_key');
-    if (!$recaptchaSecret) {
-        return back()
-            ->withErrors(['captcha' => 'Konfigurasi captcha belum lengkap.'])
-            ->withInput($request->only('username'));
-    }
+    if (! $recaptchaBypass) {
+        $recaptchaSecret = config('services.recaptcha.secret_key');
+        if (! $recaptchaSecret) {
+            return back()
+                ->withErrors(['captcha' => 'Konfigurasi captcha belum lengkap.'])
+                ->withInput($request->only('username'));
+        }
 
-    $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-        'secret' => $recaptchaSecret,
-        'response' => $request->input('g-recaptcha-response'),
-        'remoteip' => $request->ip(),
-    ]);
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $recaptchaSecret,
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
 
-    if (!$recaptcha->ok() || !($recaptcha->json('success') === true)) {
-        return back()
-            ->withErrors(['captcha' => 'Verifikasi captcha gagal.'])
-            ->withInput($request->only('username'));
+        if (! $recaptcha->ok() || ! ($recaptcha->json('success') === true)) {
+            return back()
+                ->withErrors(['captcha' => 'Verifikasi captcha gagal.'])
+                ->withInput($request->only('username'));
+        }
     }
 
     $user = User::where('email', $request->username)->first();

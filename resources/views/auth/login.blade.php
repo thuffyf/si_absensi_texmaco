@@ -57,15 +57,17 @@
                             </div>
                         @endif
 
-                        <div class="flex justify-center my-4">
-                            @if($recaptchaSiteKey)
-                                <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
-                            @else
-                                <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                                    Site key captcha belum diatur.
-                                </div>
-                            @endif
-                        </div>
+                        @unless($recaptchaBypass ?? false)
+                            <div class="flex justify-center my-4">
+                                @if($recaptchaSiteKey)
+                                    <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
+                                @else
+                                    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                                        Site key captcha belum diatur.
+                                    </div>
+                                @endif
+                            </div>
+                        @endunless
 
                         <button type="submit" class="w-full rounded-2xl bg-slate-900 px-4 py-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
                             MASUK
@@ -76,7 +78,9 @@
         </div>
     </div>
 
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @unless($recaptchaBypass ?? false)
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @endunless
 
     <script>
         const passwordInput = document.getElementById('password');
