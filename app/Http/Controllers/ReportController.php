@@ -9,12 +9,46 @@ use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
+    /**
+     * @return array<int, string>
+     */
+    private function classOptions(): array
+    {
+        return Student::query()
+            ->select('class_name')
+            ->whereNotNull('class_name')
+            ->where('class_name', '!=', '')
+            ->distinct()
+            ->orderBy('class_name')
+            ->pluck('class_name')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Normalisasi nilai filter kelas:
+     * - '' / null / 'all' => null (tanpa filter)
+     * - selain itu => hanya diterima jika ada di daftar kelas
+     */
+    private function normalizeClassFilter(?string $className, array $classOptions): ?string
+    {
+        $className = $className !== null ? trim($className) : null;
+
+        if (empty($className) || $className === 'all') {
+            return null;
+        }
+
+        return in_array($className, $classOptions, true) ? $className : null;
+    }
+
     public function absensi(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $status = $request->input('status');
-        $className = $request->input('class');
+        $classOptions = $this->classOptions();
+        $classFilter = $request->input('class');
+        $className = $this->normalizeClassFilter($classFilter, $classOptions);
 
         $attendanceQuery = Attendance::query()->with('student');
 
@@ -87,11 +121,12 @@ class ReportController extends Controller
                 'sakit' => $statusCounts->get('sakit', 0),
                 'alpa' => $statusCounts->get('alpa', 0),
             ],
+            'classOptions' => $classOptions,
             'filters' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => $status,
-                'class' => $className,
+                'class' => $classFilter,
             ],
         ]);
     }
@@ -101,7 +136,8 @@ class ReportController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $status = $request->input('status');
-        $className = $request->input('class');
+        $classOptions = $this->classOptions();
+        $className = $this->normalizeClassFilter($request->input('class'), $classOptions);
 
         $attendanceQuery = Attendance::query()->with('student');
 
@@ -185,7 +221,8 @@ class ReportController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $status = $request->input('status');
-        $className = $request->input('class');
+        $classOptions = $this->classOptions();
+        $className = $this->normalizeClassFilter($request->input('class'), $classOptions);
 
         $attendanceQuery = Attendance::query()->with('student');
 

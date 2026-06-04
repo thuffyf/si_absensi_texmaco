@@ -166,23 +166,36 @@
 <script>
     // Auto-refresh setiap 2 detik menggunakan AJAX
     setInterval(function() {
-        fetch('/api/monitoring/nfc-data')
+        // Pakai endpoint web agar tidak butuh API key (API key khusus untuk perangkat NFC)
+        fetch('{{ route('monitoring.nfc-data') }}', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
             .then(response => response.json())
             .then(data => {
+                if (!data || !Array.isArray(data.events) || !Array.isArray(data.devices)) {
+                    throw new Error('Response monitoring tidak valid');
+                }
+
                 // Update stats
                 document.getElementById('total-scans').textContent = data.totalScans;
                 document.getElementById('success-count').textContent = data.successCount;
                 document.getElementById('failed-count').textContent = data.failedCount;
                 document.getElementById('unknown-count').textContent = data.unknownCount;
                 
-                const successRate = data.totalScans > 0 ? Math.round((data.successCount / data.totalScans) * 100, 1) : 0;
-                const errorRate = data.totalScans > 0 ? Math.round((data.failedCount / data.totalScans) * 100, 1) : 0;
+                const successRate = data.totalScans > 0 ? ((data.successCount / data.totalScans) * 100).toFixed(1) : '0.0';
+                const errorRate = data.totalScans > 0 ? ((data.failedCount / data.totalScans) * 100).toFixed(1) : '0.0';
                 document.getElementById('success-rate').textContent = successRate + '% Success Rate';
                 document.getElementById('error-rate').textContent = errorRate + '% Error Rate';
                 
                 // Update events
                 const eventsContainer = document.getElementById('events-container');
-                eventsContainer.innerHTML = '';
+                const previousScrollTop = eventsContainer.scrollTop;
+                const previousScrollHeight = eventsContainer.scrollHeight;
+                const isUserScrollingList = previousScrollTop > 0;
+
+                let eventsHtml = '';
                 
                 data.events.forEach(function(event) {
                     const borderClass = {
@@ -220,7 +233,7 @@
                     const scanStatus = event.is_unregistered ? 'Scan Gagal' : 'Scan OK';
                     const scanStatusClass = event.is_unregistered ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700';
                     
-                    const eventHtml = `
+                    eventsHtml += `
                         <div class="flex items-start gap-3 rounded-xl border ${borderClass} bg-white p-3 hover:bg-slate-50 transition-colors">
                             <div class="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full ${iconClass} font-bold text-sm sm:text-lg">
                                 ${iconText}
@@ -244,12 +257,27 @@
                             </div>
                         </div>
                     `;
-                    eventsContainer.innerHTML += eventHtml;
                 });
+
+                eventsContainer.innerHTML = eventsHtml || `
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+                        Belum ada event absensi hari ini.
+                    </div>
+                `;
+
+                // Kalau user sedang scroll untuk melihat history, jangan bikin tampilan "hilang"
+                if (isUserScrollingList) {
+                    const maxScrollTop = Math.max(0, eventsContainer.scrollHeight - eventsContainer.clientHeight);
+                    // Pertahankan posisi scroll relatif
+                    const ratio = previousScrollHeight > 0 ? (previousScrollTop / previousScrollHeight) : 0;
+                    eventsContainer.scrollTop = Math.min(maxScrollTop, Math.round(ratio * eventsContainer.scrollHeight));
+                } else {
+                    eventsContainer.scrollTop = 0;
+                }
                 
                 // Update devices
                 const devicesContainer = document.getElementById('devices-container');
-                devicesContainer.innerHTML = '';
+                let devicesHtml = '';
                 
                 data.devices.forEach(function(device) {
                     const statusBorder = {
@@ -282,12 +310,17 @@
                             <p class="text-xs text-slate-500">Scans hari ini: <span class="font-semibold text-slate-900">${device.scan_today}</span></p>
                         </div>
                     `;
-                    devicesContainer.innerHTML += deviceHtml;
+                    devicesHtml += deviceHtml;
                 });
+
+                devicesContainer.innerHTML = devicesHtml || `
+                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-500">
+                        Belum ada perangkat NFC.
+                    </div>
+                `;
             })
             .catch(error => console.error('Error fetching data:', error));
     }, 2000);
 </script>
 @endpush
 @endsection
-

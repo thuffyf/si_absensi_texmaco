@@ -71,13 +71,15 @@
                 <form method="GET" action="{{ route('schedules.index') }}" class="flex flex-wrap gap-2">
                     <input type="text" name="subject" value="{{ request('subject') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" />
                     <select name="day_of_week" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
-                        <option value="">Pilih hari</option>
+                        <option value="" disabled @selected(!request()->filled('day_of_week'))>Pilih hari</option>
+                        <option value="all" @selected(request('day_of_week') === 'all')>Semua hari</option>
                         @foreach($dayOptions as $dayName)
                             <option value="{{ $dayName }}" @selected(request('day_of_week') === $dayName)>{{ $dayName }}</option>
                         @endforeach
                     </select>
                     <select name="class_name" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
-                        <option value="">Pilih kelas</option>
+                        <option value="" disabled @selected(!request()->filled('class_name'))>Pilih kelas</option>
+                        <option value="all" @selected(request('class_name') === 'all')>Semua kelas</option>
                         @foreach($classOptions as $className)
                             <option value="{{ $className }}" @selected(request('class_name') === $className)>{{ $className }}</option>
                         @endforeach
@@ -118,7 +120,7 @@
                             <td class="px-3 py-3 tabular-nums">{{ $schedule->start_time?->format('H:i') }} - {{ $schedule->end_time?->format('H:i') }}</td>
                             <td class="px-3 py-3">{{ $schedule->class_name }}</td>
                             <td class="px-3 py-3">{{ $schedule->subject }}</td>
-                            <td class="px-3 py-3">{{ $schedule->teacher?->name ?? 'â€”' }}</td>
+                            <td class="px-3 py-3">{{ $schedule->teacher?->name ?? '—' }}</td>
                             <td class="px-3 py-3">
                                 <span @class([
                                     'rounded-full px-2.5 py-1 text-xs font-semibold',

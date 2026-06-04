@@ -54,7 +54,13 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-2">Kelas</label>
-                <input type="text" name="class" value="{{ $filters['class'] ?? '' }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full" placeholder="Kelas" />
+                <select name="class" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 w-full">
+                    <option value="" disabled @selected(!filled($filters['class'] ?? null))>Pilih kelas</option>
+                    <option value="all" @selected(($filters['class'] ?? '') === 'all')>Semua kelas</option>
+                    @foreach(($classOptions ?? []) as $classOption)
+                        <option value="{{ $classOption }}" @selected(($filters['class'] ?? '') === $classOption)>{{ $classOption }}</option>
+                    @endforeach
+                </select>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>

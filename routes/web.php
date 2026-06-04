@@ -125,6 +125,7 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
 
     // Monitoring NFC Real-Time
     Route::get('/monitoring/nfc', [MonitoringController::class, 'nfc'])->name('monitoring.nfc');
+    Route::get('/monitoring/nfc-data', [MonitoringController::class, 'nfcWebData'])->name('monitoring.nfc-data');
 
     // Data Siswa
     Route::get('/siswa', [StudentController::class, 'index'])->name('students.index');
