@@ -195,9 +195,27 @@ class ScheduleController extends Controller
 
         $todaySchedules = $dbTodaySchedules->isNotEmpty() ? $dbTodaySchedules : $fallbackTodaySchedules;
 
-        $managedSchedules = Schedule::query()
+        $subjectFilter = $request->query('subject');
+        $dayFilter = $request->query('day_of_week');
+        $classFilter = $request->query('class_name');
+
+        $managedSchedulesQuery = Schedule::query()
             ->with('teacher')
-            ->whereIn('class_name', self::TEI_CLASS_NAMES)
+            ->whereIn('class_name', self::TEI_CLASS_NAMES);
+
+        if ($subjectFilter) {
+            $managedSchedulesQuery->where('subject', 'like', '%' . $subjectFilter . '%');
+        }
+
+        if ($dayFilter) {
+            $managedSchedulesQuery->where('day_of_week', $dayFilter);
+        }
+
+        if ($classFilter) {
+            $managedSchedulesQuery->where('class_name', $classFilter);
+        }
+
+        $managedSchedules = $managedSchedulesQuery
             ->get()
             ->sortBy(function (Schedule $schedule) {
                 $dayIndex = array_search($schedule->day_of_week, self::DAY_NAMES, true);

@@ -2,7 +2,6 @@
 
 @section('title', 'Jadwal — SITEXA Absensi')
 @section('page_title', 'Jadwal')
-@section('page_subtitle', 'Kelas TEI · waktu ditampilkan WIB (Asia/Jakarta, UTC+7)')
 
 @section('content')
 <div class="mx-auto max-w-6xl space-y-8 animate-fade-in">
@@ -21,37 +20,6 @@
             </ul>
         </div>
     @endif
-
-    <div class="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
-        @foreach($classCards as $card)
-            <article class="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-                <h2 class="border-b border-slate-100 pb-3 text-xl font-bold text-slate-900">{{ $card['class_name'] }}</h2>
-                <dl class="mt-4 flex flex-1 flex-col gap-3 text-sm">
-                    <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Wali kelas</dt>
-                        <dd class="mt-0.5 font-medium text-slate-800">{{ $card['homeroom_teacher_name'] }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Sudah absen hari ini</dt>
-                        <dd class="mt-0.5 text-lg font-bold tabular-nums text-slate-900">{{ $card['attendance_count'] }}</dd>
-                        <p class="mt-1 text-xs font-medium text-slate-500">Total siswa: {{ $card['student_count'] }}</p>
-                    </div>
-                    <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Hari ini</dt>
-                        <dd class="mt-0.5 font-medium text-slate-800">{{ $todayLabel }}</dd>
-                    </div>
-                </dl>
-                <div class="mt-6">
-                    <a
-                        href="{{ route('schedules.presence', ['slug' => $card['slug']]) }}"
-                        class="flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                    >
-                        Lihat Jadwal
-                    </a>
-                </div>
-            </article>
-        @endforeach
-    </div>
 
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-3">
@@ -98,37 +66,37 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('schedules.store') }}" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            @csrf
-            <select name="teacher_id" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
-                <option value="">Pilih guru</option>
-                @foreach($teachers as $teacher)
-                    <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
-                @endforeach
-            </select>
-            <select name="class_name" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
-                <option value="">Pilih kelas</option>
-                @foreach($classOptions as $className)
-                    <option value="{{ $className }}" @selected(old('class_name') === $className)>{{ $className }}</option>
-                @endforeach
-            </select>
-            <input name="subject" value="{{ old('subject') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" required />
-            <select name="day_of_week" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
-                <option value="">Pilih hari</option>
-                @foreach($dayOptions as $dayName)
-                    <option value="{{ $dayName }}" @selected(old('day_of_week') === $dayName)>{{ $dayName }}</option>
-                @endforeach
-            </select>
-            <input name="start_time" type="time" value="{{ old('start_time') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required />
-            <input name="end_time" type="time" value="{{ old('end_time') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required />
-            <select name="status" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" required>
-                <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
-                <option value="idle" @selected(old('status') === 'idle')>Idle</option>
-            </select>
-            <button type="submit" class="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 md:col-span-2 lg:col-span-4">
+        <div class="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-wrap gap-2">
+                <form method="GET" action="{{ route('schedules.index') }}" class="flex flex-wrap gap-2">
+                    <input type="text" name="subject" value="{{ request('subject') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" />
+                    <select name="day_of_week" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                        <option value="">Pilih hari</option>
+                        @foreach($dayOptions as $dayName)
+                            <option value="{{ $dayName }}" @selected(request('day_of_week') === $dayName)>{{ $dayName }}</option>
+                        @endforeach
+                    </select>
+                    <select name="class_name" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                        <option value="">Pilih kelas</option>
+                        @foreach($classOptions as $className)
+                            <option value="{{ $className }}" @selected(request('class_name') === $className)>{{ $className }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                        Cari
+                    </button>
+                    <a href="{{ route('schedules.index') }}" class="flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                        Reset
+                    </a>
+                </form>
+            </div>
+            <button onclick="document.getElementById('add-schedule-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
                 Tambah Jadwal
             </button>
-        </form>
+        </div>
 
         <div class="mt-8 overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-sm">
@@ -186,5 +154,48 @@
             </table>
         </div>
     </section>
+
+    <!-- Modal Tambah Jadwal -->
+    <div id="add-schedule-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">Tambah Jadwal Baru</h3>
+                <button onclick="document.getElementById('add-schedule-modal').classList.add('hidden')" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('schedules.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                @csrf
+                <select name="teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="">Pilih guru</option>
+                    @foreach($teachers as $teacher)
+                        <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
+                    @endforeach
+                </select>
+                <select name="class_name" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="">Pilih kelas</option>
+                    @foreach($classOptions as $className)
+                        <option value="{{ $className }}" @selected(old('class_name') === $className)>{{ $className }}</option>
+                    @endforeach
+                </select>
+                <input name="subject" value="{{ old('subject') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
+                <select name="day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="">Pilih hari</option>
+                    @foreach($dayOptions as $dayName)
+                        <option value="{{ $dayName }}" @selected(old('day_of_week') === $dayName)>{{ $dayName }}</option>
+                    @endforeach
+                </select>
+                <input name="start_time" type="time" value="{{ old('start_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                <input name="end_time" type="time" value="{{ old('end_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                <select name="status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
+                    <option value="idle" @selected(old('status') === 'idle')>Idle</option>
+                </select>
+                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Jadwal</button>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
