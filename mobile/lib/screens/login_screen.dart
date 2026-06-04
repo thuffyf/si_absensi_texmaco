@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
@@ -78,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    TextInput.finishAutofillContext();
     setState(() {
       _loading = true;
       _message = '';
@@ -113,78 +115,89 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Login Absensi NFC')),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text('Login', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Text(helperText, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 20),
-          Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Contoh: nama@sekolah.id',
-                  ),
-                  validator: (value) {
-                    final input = value?.trim() ?? '';
-                    if (input.isEmpty) {
-                      return 'Email wajib diisi.';
-                    }
-                    if (!input.contains('@')) {
-                      return 'Email harus memakai @.';
-                    }
-                    return null;
-                  },
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Text('Login', style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 8),
+            Text(helperText, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 20),
+            AutofillGroup(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      autofillHints: const [AutofillHints.email],
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Contoh: nama@sekolah.id',
+                      ),
+                      validator: (value) {
+                        final input = value?.trim() ?? '';
+                        if (input.isEmpty) {
+                          return 'Email wajib diisi.';
+                        }
+                        if (!input.contains('@')) {
+                          return 'Email harus memakai @.';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _birthDateController,
+                      keyboardType: TextInputType.datetime,
+                      textInputAction: TextInputAction.done,
+                      autofillHints: const [AutofillHints.birthday],
+                      decoration: const InputDecoration(
+                        labelText: 'Tanggal Lahir',
+                        hintText: 'Contoh: 2010-12-23',
+                      ),
+                      validator: (value) {
+                        final input = value?.trim() ?? '';
+                        if (input.isEmpty) {
+                          return 'Tanggal lahir wajib diisi.';
+                        }
+                        final datePattern = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+                        if (!datePattern.hasMatch(input)) {
+                          return 'Tanggal lahir gunakan format YYYY-MM-DD.';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (_) => _loading ? null : _submit(),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _loading ? null : _submit,
+                        child: _loading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Masuk'),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _birthDateController,
-                  keyboardType: TextInputType.datetime,
-                  decoration: const InputDecoration(
-                    labelText: 'Tanggal Lahir',
-                    hintText: 'Contoh: 2010-12-23',
-                  ),
-                  validator: (value) {
-                    final input = value?.trim() ?? '';
-                    if (input.isEmpty) {
-                      return 'Tanggal lahir wajib diisi.';
-                    }
-                    final datePattern = RegExp(r'^\d{4}-\d{2}-\d{2}$');
-                    if (!datePattern.hasMatch(input)) {
-                      return 'Tanggal lahir gunakan format YYYY-MM-DD.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _loading ? null : _submit,
-                    child: _loading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Masuk'),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          if (_message.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: _ResultBanner(ok: _messageOk, message: _message),
-            ),
-        ],
+            if (_message.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: _ResultBanner(ok: _messageOk, message: _message),
+              ),
+          ],
+        ),
       ),
     );
   }

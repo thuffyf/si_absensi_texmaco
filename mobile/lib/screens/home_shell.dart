@@ -97,8 +97,11 @@ class _StudentShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pages = _pages(session);
     return Scaffold(
-      body: SafeArea(child: _pages(session)[index]),
+      body: SafeArea(
+        child: IndexedStack(index: index, children: pages),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: onSelectIndex,

@@ -11,13 +11,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/screens/login_screen.dart';
 
 void main() {
-  testWidgets('Login screen shows tabs', (WidgetTester tester) async {
+  testWidgets('Login screen shows form', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(home: LoginScreen(onLoggedIn: _noop)),
     );
-    expect(find.text('Login Siswa'), findsOneWidget);
-    expect(find.text('Siswa'), findsOneWidget);
-    expect(find.text('Guru'), findsOneWidget);
+    expect(find.text('Login Absensi NFC'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Tanggal Lahir'), findsOneWidget);
+    expect(find.text('Masuk'), findsOneWidget);
   });
 }
 

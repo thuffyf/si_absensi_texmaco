@@ -68,6 +68,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final name = (_profile['name']?.toString() ?? '').trim();
+    final initial = (name.isNotEmpty ? name : 'S')
+        .characters
+        .first
+        .toUpperCase();
+    final uid = (_profile['uid_kartu']?.toString() ?? '').trim();
+    final hasUid = uid.isNotEmpty;
+
     return RefreshIndicator(
       onRefresh: _loadProfile,
       child: ListView(
@@ -96,12 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: 28,
-                          child: Text(
-                            (_profile['name']?.toString() ?? 'S')
-                                .characters
-                                .first
-                                .toUpperCase(),
-                          ),
+                          child: Text(initial),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
@@ -109,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _profile['name']?.toString() ?? '-',
+                                name.isNotEmpty ? name : '-',
                                 style: Theme.of(context).textTheme.titleLarge
                                     ?.copyWith(fontWeight: FontWeight.w800),
                               ),
@@ -161,9 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 8),
                     SelectableText(
-                      _profile['uid_kartu']?.toString().isNotEmpty == true
-                          ? _profile['uid_kartu'].toString()
-                          : 'UID belum diatur',
+                      hasUid ? uid : 'UID belum diatur',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontFamily: 'monospace',
                         fontWeight: FontWeight.w700,
@@ -171,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
-                      onPressed: _copyUid,
+                      onPressed: hasUid ? _copyUid : null,
                       icon: const Icon(Icons.copy_outlined),
                       label: const Text('Salin UID'),
                     ),

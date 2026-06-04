@@ -34,16 +34,16 @@
                 <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari siswa..." />
                 <select name="class" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
                     <option value="">Semua Kelas</option>
-                    <option value="X" @selected(request('class') === 'X')">X</option>
-                    <option value="XI" @selected(request('class') === 'XI')">XI</option>
-                    <option value="XII" @selected(request('class') === 'XII')">XII</option>
+                    <option value="X" @selected(request('class') === 'X')>X</option>
+                    <option value="XI" @selected(request('class') === 'XI')>XI</option>
+                    <option value="XII" @selected(request('class') === 'XII')>XII</option>
                 </select>
                 <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
                     <option value="">Semua Status</option>
-                    <option value="hadir" @selected(request('status') === 'hadir')">Hadir</option>
-                    <option value="izin" @selected(request('status') === 'izin')">Izin</option>
-                    <option value="sakit" @selected(request('status') === 'sakit')">Sakit</option>
-                    <option value="alpa" @selected(request('status') === 'alpa')">Alpa</option>
+                    <option value="hadir" @selected(request('status') === 'hadir')>Hadir</option>
+                    <option value="izin" @selected(request('status') === 'izin')>Izin</option>
+                    <option value="sakit" @selected(request('status') === 'sakit')>Sakit</option>
+                    <option value="alpa" @selected(request('status') === 'alpa')>Alpa</option>
                 </select>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                     <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,7 +77,6 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Nama Siswa</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">NIS</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Kelas</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">UID</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Tanggal</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Waktu</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Status</th>
@@ -109,7 +108,6 @@
                             </td>
                             <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $record->student?->nis ?? '-' }}</td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->student?->class_name ?? '-' }}</td>
-                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $record->student?->uid_kartu ?? '-' }}</td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_date?->format('d M Y') }}</td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_time }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
@@ -189,7 +187,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada data absensi.</td>
+                            <td colspan="8" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada data absensi.</td>
                         </tr>
                     @endforelse
                 </tbody>

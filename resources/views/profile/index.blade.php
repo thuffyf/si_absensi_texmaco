@@ -162,21 +162,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const profilePreview = document.getElementById('profile-preview');
 
     // Handle change photo button click
-    changePhotoBtn.addEventListener('click', function() {
-        photoInput.click();
-    });
+    if (changePhotoBtn && photoInput) {
+        changePhotoBtn.addEventListener('click', function() {
+            photoInput.click();
+        });
+    }
 
     // Handle file selection
-    photoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                profilePreview.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    if (photoInput && profilePreview) {
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profilePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 
     // Handle delete photo button click
     if (deletePhotoBtn) {
@@ -189,11 +193,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
+                .then(async response => {
+                    if (!response.ok) {
+                        throw new Error('Request gagal');
                     }
+                    try {
+                        return await response.json();
+                    } catch (e) {
+                        throw new Error('Response tidak valid');
+                    }
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        window.location.reload();
+                        return;
+                    }
+                    alert('Gagal menghapus foto profil.');
                 })
                 .catch(error => {
                     alert('Terjadi kesalahan saat menghapus foto.');

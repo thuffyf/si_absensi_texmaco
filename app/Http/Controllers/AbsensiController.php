@@ -11,7 +11,12 @@ use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
-    private $externalApiUrl = 'http://localhost/absensi_api/absen.php';
+    private string $externalApiUrl;
+
+    public function __construct()
+    {
+        $this->externalApiUrl = (string) config('services.absensi.external_api_url');
+    }
 
     public function index(Request $request)
     {
@@ -110,8 +115,12 @@ class AbsensiController extends Controller
 
     public function syncFromExternal(Request $request)
     {
+        if ($this->externalApiUrl === '') {
+            return back()->with('error', 'Konfigurasi API eksternal belum diatur.');
+        }
+
         try {
-            $response = Http::get($this->externalApiUrl, [
+            $response = Http::timeout(10)->retry(2, 250)->get($this->externalApiUrl, [
                 'action' => 'get_all',
                 'start_date' => $request->query('start_date'),
                 'end_date' => $request->query('end_date'),
@@ -143,17 +152,28 @@ class AbsensiController extends Controller
 
             return back()->with('error', 'Gagal menghubungi API eksternal.');
         } catch (\Exception $e) {
-            Log::error('External API sync error: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat sinkronisasi: ' . $e->getMessage());
+            Log::error('External API sync error', ['exception' => $e]);
+            return back()->with('error', 'Terjadi kesalahan saat sinkronisasi.');
         }
     }
 
     private function syncToExternalApi(array $data)
     {
+        if ($this->externalApiUrl === '') {
+            return;
+        }
+
         try {
-            Http::post($this->externalApiUrl, array_merge($data, ['action' => 'create']));
+            $response = Http::timeout(10)->retry(2, 250)->post($this->externalApiUrl, array_merge($data, ['action' => 'create']));
+
+            if (!$response->successful()) {
+                Log::warning('External API push failed', [
+                    'status' => $response->status(),
+                    'body' => mb_substr((string) $response->body(), 0, 500),
+                ]);
+            }
         } catch (\Exception $e) {
-            Log::error('External API push error: ' . $e->getMessage());
+            Log::error('External API push error', ['exception' => $e]);
             // Don't fail the local operation if external API fails
         }
     }

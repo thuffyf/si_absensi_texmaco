@@ -21,6 +21,7 @@
                             Auto-refresh setiap 2s
                         </span>
                         <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800">Hari ini</span>
+                        <span id="monitoring-connection" class="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">Live</span>
                     </div>
                 </div>
 
@@ -165,15 +166,50 @@
 @push('scripts')
 <script>
     // Auto-refresh setiap 2 detik menggunakan AJAX
-    setInterval(function() {
-        // Pakai endpoint web agar tidak butuh API key (API key khusus untuk perangkat NFC)
-        fetch('{{ route('monitoring.nfc-data') }}', {
-            headers: {
-                'Accept': 'application/json'
+    (function () {
+        const statusBadge = document.getElementById('monitoring-connection');
+        let timer = null;
+        let consecutiveErrors = 0;
+        let delayMs = 2000;
+
+        function setBadge(state, text) {
+            if (!statusBadge) return;
+            statusBadge.textContent = text;
+            statusBadge.className = {
+                live: 'rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800',
+                loading: 'rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800',
+                paused: 'rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-700',
+                error: 'rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-800',
+            }[state] || statusBadge.className;
+        }
+
+        function scheduleNext(ms) {
+            if (timer) window.clearTimeout(timer);
+            timer = window.setTimeout(refresh, ms);
+        }
+
+        async function refresh() {
+            if (document.hidden) {
+                setBadge('paused', 'Jeda');
+                scheduleNext(2000);
+                return;
             }
-        })
-            .then(response => response.json())
-            .then(data => {
+
+            try {
+                setBadge('loading', 'Memuat');
+
+                const response = await fetch('{{ route('monitoring.nfc-data') }}', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Request gagal');
+                }
+
+                const data = await response.json();
+
                 if (!data || !Array.isArray(data.events) || !Array.isArray(data.devices)) {
                     throw new Error('Response monitoring tidak valid');
                 }
@@ -183,12 +219,12 @@
                 document.getElementById('success-count').textContent = data.successCount;
                 document.getElementById('failed-count').textContent = data.failedCount;
                 document.getElementById('unknown-count').textContent = data.unknownCount;
-                
+
                 const successRate = data.totalScans > 0 ? ((data.successCount / data.totalScans) * 100).toFixed(1) : '0.0';
                 const errorRate = data.totalScans > 0 ? ((data.failedCount / data.totalScans) * 100).toFixed(1) : '0.0';
                 document.getElementById('success-rate').textContent = successRate + '% Success Rate';
                 document.getElementById('error-rate').textContent = errorRate + '% Error Rate';
-                
+
                 // Update events
                 const eventsContainer = document.getElementById('events-container');
                 const previousScrollTop = eventsContainer.scrollTop;
@@ -196,7 +232,7 @@
                 const isUserScrollingList = previousScrollTop > 0;
 
                 let eventsHtml = '';
-                
+
                 data.events.forEach(function(event) {
                     const borderClass = {
                         'hadir': 'border-emerald-200',
@@ -318,9 +354,26 @@
                         Belum ada perangkat NFC.
                     </div>
                 `;
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }, 2000);
+                consecutiveErrors = 0;
+                delayMs = 2000;
+                setBadge('live', 'Live');
+            } catch (error) {
+                consecutiveErrors += 1;
+                delayMs = Math.min(15000, 2000 * Math.pow(2, consecutiveErrors));
+                setBadge('error', 'Gagal');
+            } finally {
+                scheduleNext(delayMs);
+            }
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                scheduleNext(0);
+            }
+        });
+
+        scheduleNext(0);
+    })();
 </script>
 @endpush
 @endsection

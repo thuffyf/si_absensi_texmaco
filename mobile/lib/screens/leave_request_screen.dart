@@ -156,43 +156,61 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SegmentedButton<String>(
-                      segments: const [
-                        ButtonSegment(
-                          value: 'izin',
-                          icon: Icon(Icons.event_busy_outlined),
-                          label: Text('Izin'),
-                        ),
-                        ButtonSegment(
-                          value: 'sakit',
-                          icon: Icon(Icons.medical_services_outlined),
-                          label: Text('Sakit'),
-                        ),
-                      ],
-                      selected: {_type},
-                      onSelectionChanged: (value) {
-                        setState(() => _type = value.first);
-                      },
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SegmentedButton<String>(
+                        segments: const [
+                          ButtonSegment(
+                            value: 'izin',
+                            icon: Icon(Icons.event_busy_outlined),
+                            label: Text('Izin'),
+                          ),
+                          ButtonSegment(
+                            value: 'sakit',
+                            icon: Icon(Icons.medical_services_outlined),
+                            label: Text('Sakit'),
+                          ),
+                        ],
+                        selected: {_type},
+                        onSelectionChanged: (value) {
+                          setState(() => _type = value.first);
+                        },
+                      ),
                     ),
                     const SizedBox(height: 14),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _DateField(
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final children = [
+                          _DateField(
                             label: 'Mulai',
                             value: _formatDate(_startDate),
                             onTap: () => _pickDate(start: true),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _DateField(
+                          _DateField(
                             label: 'Sampai',
                             value: _formatDate(_endDate),
                             onTap: () => _pickDate(start: false),
                           ),
-                        ),
-                      ],
+                        ];
+
+                        if (constraints.maxWidth < 380) {
+                          return Column(
+                            children: [
+                              children[0],
+                              const SizedBox(height: 12),
+                              children[1],
+                            ],
+                          );
+                        }
+
+                        return Row(
+                          children: [
+                            Expanded(child: children[0]),
+                            const SizedBox(width: 12),
+                            Expanded(child: children[1]),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 14),
                     TextFormField(

@@ -320,14 +320,23 @@ class _TeacherAbsenceScreenState extends State<TeacherAbsenceScreen> {
                       ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    ...statusOptions.map(
-                      (status) => RadioListTile<String>(
-                        title: Text(_statusLabel(status)),
-                        value: status,
-                        groupValue: selectedStatus,
-                        onChanged: (value) {
-                          setSheetState(() => selectedStatus = value!);
-                        },
+                    RadioGroup<String>(
+                      groupValue: selectedStatus,
+                      onChanged: (value) {
+                        if (value == null) {
+                          return;
+                        }
+                        setSheetState(() => selectedStatus = value);
+                      },
+                      child: Column(
+                        children: statusOptions
+                            .map(
+                              (status) => RadioListTile<String>(
+                                title: Text(_statusLabel(status)),
+                                value: status,
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
                     const SizedBox(height: 12),

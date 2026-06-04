@@ -40,15 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
       _message = '';
     });
 
-    final summaryResult = await _apiClient.fetchStudentSummary(
-      token: widget.authToken,
-    );
-    final absensiResult = await _apiClient.fetchStudentAbsensi(
-      token: widget.authToken,
-    );
-    final leaveResult = await _apiClient.fetchStudentLeaveRequests(
-      token: widget.authToken,
-    );
+    final results = await Future.wait<ApiResult>([
+      _apiClient.fetchStudentSummary(token: widget.authToken),
+      _apiClient.fetchStudentAbsensi(token: widget.authToken),
+      _apiClient.fetchStudentLeaveRequests(token: widget.authToken),
+    ]);
+    final summaryResult = results[0];
+    final absensiResult = results[1];
+    final leaveResult = results[2];
 
     if (!mounted) {
       return;
@@ -197,19 +196,24 @@ class _SummaryCard extends StatelessWidget {
               Text(period, style: Theme.of(context).textTheme.bodySmall),
             ],
             const SizedBox(height: 16),
-            GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 2.4,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _MetricTile('Hadir', summary['hadir'] ?? 0, Colors.green),
-                _MetricTile('Izin', summary['izin'] ?? 0, Colors.orange),
-                _MetricTile('Sakit', summary['sakit'] ?? 0, Colors.red),
-                _MetricTile('Alpa', summary['alpa'] ?? 0, Colors.blueGrey),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final columns = constraints.maxWidth < 340 ? 1 : 2;
+                return GridView.count(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: columns == 1 ? 5 : 2.4,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _MetricTile('Hadir', summary['hadir'] ?? 0, Colors.green),
+                    _MetricTile('Izin', summary['izin'] ?? 0, Colors.orange),
+                    _MetricTile('Sakit', summary['sakit'] ?? 0, Colors.red),
+                    _MetricTile('Alpa', summary['alpa'] ?? 0, Colors.blueGrey),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -352,7 +356,14 @@ class _InfoBanner extends StatelessWidget {
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(message),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, color: color),
+          const SizedBox(width: 10),
+          Expanded(child: Text(message)),
+        ],
+      ),
     );
   }
 }

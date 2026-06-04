@@ -41,4 +41,8 @@ return [
         'api_key' => env('NFC_API_KEY'),
     ],
 
+    'absensi' => [
+        'external_api_url' => env('EXTERNAL_ABSENSI_API_URL'),
+    ],
+
 ];

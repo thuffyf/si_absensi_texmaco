@@ -4,7 +4,9 @@
  */
 
 document.addEventListener("DOMContentLoaded", function () {
-    initializeDashboard();
+    if (document.querySelectorAll(".nav-item").length > 0) {
+        initializeDashboard();
+    }
 });
 
 function initializeDashboard() {
@@ -75,8 +77,6 @@ function updatePageTitle(page) {
 function loadPageContent(page) {
     const contentArea = document.getElementById("content-area");
 
-    console.log(`Loading page: ${page}`);
-
     // In a real application, this would fetch content via AJAX
     // contentArea.innerHTML = `Loading ${page}...`;
 }
@@ -85,6 +85,9 @@ function loadPageContent(page) {
  * Initialize real-time monitoring
  */
 function initializeRealtimeMonitoring() {
+    const eventStream = document.querySelector('[id*="event-stream"]');
+    if (!eventStream) return;
+
     // Simulate real-time events
     setInterval(function () {
         simulateRealtimeEvent();
@@ -99,7 +102,6 @@ function simulateRealtimeEvent() {
 
     if (eventStream) {
         // This would be connected to a WebSocket in production
-        console.log("Real-time monitoring active");
     }
 }
 
@@ -144,7 +146,6 @@ function initializeNotifications() {
  */
 function showNotificationPanel() {
     // This would show a notification dropdown
-    console.log("Showing notifications...");
 }
 
 /**
@@ -179,49 +180,6 @@ function showToast(message, type = "info") {
     setTimeout(() => {
         toast.remove();
     }, 3000);
-}
-
-/**
- * Handle button actions
- */
-document.addEventListener("click", function (e) {
-    // Accept button for requests
-    if (
-        e.target.classList.contains("btn-success") &&
-        e.target.textContent.includes("Terima")
-    ) {
-        handleAcceptRequest(e.target);
-    }
-
-    // Reject button for requests
-    if (
-        e.target.classList.contains("btn-danger") &&
-        e.target.textContent.includes("Tolak")
-    ) {
-        handleRejectRequest(e.target);
-    }
-});
-
-/**
- * Handle accept request
- */
-function handleAcceptRequest(button) {
-    showToast("✓ Pengajuan berhasil diterima", "success");
-    button.closest(".glass-card").style.opacity = "0.5";
-    setTimeout(() => {
-        button.closest(".glass-card").remove();
-    }, 500);
-}
-
-/**
- * Handle reject request
- */
-function handleRejectRequest(button) {
-    showToast("✕ Pengajuan berhasil ditolak", "info");
-    button.closest(".glass-card").style.opacity = "0.5";
-    setTimeout(() => {
-        button.closest(".glass-card").remove();
-    }, 500);
 }
 
 /**
