@@ -11,11 +11,19 @@ use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
+<<<<<<< HEAD
     private string $externalApiUrl;
 
     public function __construct()
     {
         $this->externalApiUrl = (string) config('services.absensi.external_api_url');
+=======
+    private $externalApiUrl;
+
+    public function __construct()
+    {
+        $this->externalApiUrl = env('EXTERNAL_ATTENDANCE_API_URL', 'http://localhost/absensi_api/absen.php');
+>>>>>>> 8b68358 (nfc)
     }
 
     public function index(Request $request)
