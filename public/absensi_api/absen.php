@@ -2,10 +2,10 @@
 header('Content-Type: text/plain');
 
 // Koneksi database
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "si_absensi_texmaco";
+$host = "127.0.0.1";
+$user = "sitexamy_sitexatu";
+$pass = "admintutexmaco123";
+$db   = "sitexamy_si_absensi_texmaco";
 
 $conn = new mysqli($host, $user, $pass, $db);
 
