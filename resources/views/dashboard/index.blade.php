@@ -3,7 +3,7 @@
 @section('title', 'Dashboard — SITEXA Absensi')
 @section('page_title', 'Dashboard')
 @section('page_subtitle')
-    SITEXA Absensi Texmaco Purwasari - Kelas {{ $targetClass }}
+    SITEXA Absensi Texmaco Purwasari
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
             <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <h2 class="text-lg font-bold text-slate-900 lg:text-xl">Statistik Kehadiran - {{ $targetClass }}</h2>
+                        <h2 class="text-lg font-bold text-slate-900 lg:text-xl">Statistik Kehadiran</h2>
                         <p class="mt-1 text-xs text-slate-500 lg:text-sm">Jumlah siswa tap in per hari kerja</p>
                     </div>
                     <div class="flex shrink-0 flex-wrap items-center gap-2">
