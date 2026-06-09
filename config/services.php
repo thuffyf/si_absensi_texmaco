@@ -42,7 +42,7 @@ return [
     ],
 
     'absensi' => [
-        'external_api_url' => env('EXTERNAL_ABSENSI_API_URL'),
+        'external_api_url' => env('EXTERNAL_ABSENSI_API_URL', 'http://localhost/absensi_api/absen.php'),
     ],
 
 ];
