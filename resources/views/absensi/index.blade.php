@@ -2,7 +2,7 @@
 
 @section('title', 'Absensi — SITEXA Absensi')
 @section('page_title', 'Absensi')
-@section('page_subtitle', 'Kelola data absensi siswa dan sinkronisasi API')
+@section('page_subtitle', 'Kelola data absensi siswa')
 
 @section('content')
 <div class="mx-auto max-w-6xl space-y-8 animate-fade-in">
@@ -58,17 +58,6 @@
                     Cari
                 </button>
                 <a href="{{ route('absensi.index') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
-            </form>
-        </div>
-        <div class="flex gap-2">
-            <form method="POST" action="{{ route('absensi.sync') }}" class="inline">
-                @csrf
-                <button type="submit" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Sync API
-                </button>
             </form>
         </div>
     </div>

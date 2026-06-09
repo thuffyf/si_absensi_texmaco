@@ -116,49 +116,7 @@ class AbsensiController extends Controller
         return back()->with('success', 'Data absensi berhasil dihapus.');
     }
 
-    public function syncFromExternal(Request $request)
-    {
-        if ($this->externalApiUrl === '') {
-            return back()->with('error', 'Konfigurasi API eksternal belum diatur.');
-        }
 
-        try {
-            $response = Http::timeout(10)->retry(2, 250)->get($this->externalApiUrl, [
-                'action' => 'get_all',
-                'start_date' => $request->query('start_date'),
-                'end_date' => $request->query('end_date'),
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-
-                foreach ($data['data'] ?? [] as $item) {
-                    $student = Student::where('nis', $item['nis'])->first();
-
-                    if ($student) {
-                        Attendance::updateOrCreate(
-                            [
-                                'student_id' => $student->id,
-                                'attendance_date' => $item['tanggal'],
-                            ],
-                            [
-                                'attendance_time' => $item['waktu'],
-                                'status' => $item['status'],
-                                'note' => $item['keterangan'] ?? null,
-                            ]
-                        );
-                    }
-                }
-
-                return back()->with('success', 'Sinkronisasi dari API eksternal berhasil.');
-            }
-
-            return back()->with('error', 'Gagal menghubungi API eksternal.');
-        } catch (\Exception $e) {
-            Log::error('External API sync error', ['exception' => $e]);
-            return back()->with('error', 'Terjadi kesalahan saat sinkronisasi.');
-        }
-    }
 
     private function syncToExternalApi(array $data)
     {
