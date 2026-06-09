@@ -336,10 +336,16 @@
                 if (!isLarge()) setMobileOpen(false);
             }
 
+            // Restore state for desktop sidebar
+            if (isLarge() && localStorage.getItem('sidebar-collapsed') === 'true') {
+                root.classList.add("sidebar-collapsed");
+            }
+
             if (toggle) {
                 toggle.addEventListener("click", function () {
                     if (isLarge()) {
                         root.classList.toggle("sidebar-collapsed");
+                        localStorage.setItem('sidebar-collapsed', root.classList.contains("sidebar-collapsed"));
                         return;
                     }
                     var open = sidebar.classList.contains("-translate-x-full");

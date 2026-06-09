@@ -38,6 +38,12 @@
                     <option value="tidak_aktif" @selected(request('status') === 'tidak_aktif')>Tidak aktif</option>
                     <option value="lulus" @selected(request('status') === 'lulus')>Lulus</option>
                 </select>
+                <select name="nfc" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua NFC</option>
+                    <option value="kartu" @selected(request('nfc') === 'kartu')>Kartu</option>
+                    <option value="handphone" @selected(request('nfc') === 'handphone')>Handphone</option>
+                    <option value="belum_terdaftar" @selected(request('nfc') === 'belum_terdaftar')>Belum terdaftar</option>
+                </select>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                     <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

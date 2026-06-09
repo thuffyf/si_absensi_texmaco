@@ -31,7 +31,7 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-wrap gap-2">
             <form method="GET" action="{{ route('absensi.index') }}" class="flex gap-2">
-                <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari siswa..." />
+                <input type="text" name="search" value="{{ request('search') }}" class="w-48 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari siswa..." />
                 <select name="class" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
                     <option value="">Semua Kelas</option>
                     <option value="X" @selected(request('class') === 'X')>X</option>
