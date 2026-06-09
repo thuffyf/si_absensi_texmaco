@@ -45,10 +45,12 @@
                     <option value="sakit" @selected(request('status') === 'sakit')>Sakit</option>
                     <option value="alpa" @selected(request('status') === 'alpa')>Alpa</option>
                 </select>
-                <select name="date" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <option value="" @selected(!request('date'))>Hari Ini</option>
-                    <option value="all" @selected(request('date') === 'all')>Semua Tanggal</option>
-                </select>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-slate-500">Dari:</span>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" title="Dari Tanggal">
+                    <span class="text-sm text-slate-500">Hingga:</span>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" title="Hingga Tanggal">
+                </div>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                     <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
