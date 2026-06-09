@@ -121,9 +121,23 @@ class MonitoringController extends Controller
         $failedCount = $attendances->whereIn('status', ['alpa', 'izin', 'sakit'])->count();
         $unknownCount = $unregisteredScans->count();
 
+        $devicesList = NfcDevice::orderBy('name')->get();
+        foreach ($devicesList as $device) {
+            $unregisteredCount = ScanAttempt::where('device_id', $device->id)
+                ->whereDate('scanned_at', $today)
+                ->where('status', 'unregistered')
+                ->count();
+
+            $attendanceCount = Attendance::where('device_id', $device->id)
+                ->whereDate('attendance_date', $today)
+                ->count();
+
+            $device->scan_today = $unregisteredCount + $attendanceCount;
+        }
+
         $devices = $includeDevicesAsModels
-            ? NfcDevice::orderBy('name')->get()
-            : NfcDevice::orderBy('name')->get()->map(fn ($device) => [
+            ? $devicesList
+            : $devicesList->map(fn ($device) => [
                 'id' => $device->id,
                 'name' => $device->name,
                 'status' => $device->status,
