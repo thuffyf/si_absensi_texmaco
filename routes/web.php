@@ -370,13 +370,13 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
     Route::post('/profile/change-password', function (Request $request) {
         $request->validate([
             'password_current' => 'required|string',
-            'password_new' => 'required|string|min:8|confirmed|different:password_current',
-            'password_confirmation' => 'required|string',
+            'password_new' => 'required|string|min:8|different:password_current',
+            'password_confirmation' => 'required|string|same:password_new',
         ], [
             'password_current.required' => 'Password saat ini harus diisi.',
             'password_new.required' => 'Password baru harus diisi.',
             'password_new.min' => 'Password baru minimal 8 karakter.',
-            'password_new.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok.',
             'password_new.different' => 'Password baru harus berbeda dari password saat ini.',
             'password_confirmation.required' => 'Konfirmasi password harus diisi.',
         ]);
