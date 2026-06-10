@@ -207,6 +207,7 @@ Route::prefix('app')->name('portal.')->group(function () {
         Route::middleware('role:guru')->prefix('guru')->name('teacher.')->group(function () {
             Route::get('/absensi', [PortalController::class, 'teacherAttendance'])->name('attendance');
             Route::post('/absensi', [PortalController::class, 'updateTeacherAttendance'])->name('attendance.update');
+            Route::get('/profil', [PortalController::class, 'teacherProfile'])->name('profile');
         });
     });
 });

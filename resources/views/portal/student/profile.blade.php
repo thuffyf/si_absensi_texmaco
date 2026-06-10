@@ -14,7 +14,7 @@
     {{-- Profile hero --}}
     <section class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-600 via-sky-700 to-slate-900 p-5 text-white shadow-lg shadow-sky-200/40">
         <div class="flex items-center gap-4">
-            <div class="relative">
+            <div class="relative shrink-0">
                 <div class="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 text-3xl font-bold backdrop-blur ring-2 ring-white/30">
                     {{ $initial }}
                 </div>
@@ -22,12 +22,12 @@
                     <svg class="h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                 </span>
             </div>
-            <div class="min-w-0">
-                <h2 class="truncate text-xl font-bold">{{ $student->name }}</h2>
+            <div class="min-w-0 flex-1">
+                <h2 class="break-words text-xl font-bold leading-snug">{{ $student->name }}</h2>
                 <p class="mt-1 text-sm text-sky-100">NIS {{ $student->nis }}</p>
-                <p class="mt-1 inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium backdrop-blur">
-                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    {{ $student->class_name }} {{ $student->major }}
+                <p class="mt-1.5 inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium backdrop-blur max-w-full">
+                    <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    <span class="truncate">{{ $student->class_name }} {{ $student->major }}</span>
                 </p>
             </div>
         </div>
@@ -36,17 +36,17 @@
     {{-- Info cards --}}
     <section class="mt-4 space-y-3">
         @foreach ([
-            ['icon' => 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', 'label' => 'Email', 'value' => $student->email ?: '-'],
-            ['icon' => 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', 'label' => 'Telepon', 'value' => $student->phone ?: '-'],
-            ['icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'label' => 'Tanggal Lahir', 'value' => $student->date_of_birth ? portalFormatDate($student->date_of_birth, 'd F Y') : '-'],
+            ['icon' => 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', 'label' => 'Email', 'value' => $student->email ?: '-', 'break' => true],
+            ['icon' => 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', 'label' => 'Telepon', 'value' => $student->phone ?: '-', 'break' => false],
+            ['icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'label' => 'Tanggal Lahir', 'value' => $student->date_of_birth ? portalFormatDate($student->date_of_birth, 'd F Y') : '-', 'break' => false],
         ] as $info)
             <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $info['icon'] }}"/></svg>
                 </span>
-                <div class="min-w-0">
+                <div class="min-w-0 flex-1">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $info['label'] }}</p>
-                    <p class="mt-0.5 truncate text-sm font-semibold text-slate-900">{{ $info['value'] }}</p>
+                    <p class="mt-0.5 text-sm font-semibold text-slate-900 {{ $info['break'] ? 'break-all' : 'truncate' }}">{{ $info['value'] }}</p>
                 </div>
             </div>
         @endforeach
@@ -82,7 +82,7 @@
             @if ($student->uid_kartu)
                 <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 px-4 py-5">
                     <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(56,189,248,0.15),_transparent_50%)]"></div>
-                    <p class="relative text-center font-mono text-sm font-semibold tracking-[0.25em] text-sky-100">{{ $student->uid_kartu }}</p>
+                    <p class="relative break-all text-center font-mono text-sm font-semibold tracking-[0.15em] text-sky-100">{{ $student->uid_kartu }}</p>
                 </div>
                 <p class="mt-3 text-center text-xs text-slate-500">Berikan UID ini jika diminta admin sekolah</p>
             @else

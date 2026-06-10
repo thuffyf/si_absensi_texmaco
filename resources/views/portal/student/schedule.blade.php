@@ -61,18 +61,18 @@
                                         {{ $index + 1 }}
                                     </span>
                                 </div>
-                                <div class="min-w-0 flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div class="min-w-0">
+                                <div class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
                                             <p class="font-semibold text-slate-900">{{ $schedule->subject }}</p>
-                                            <p class="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
-                                                <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                                {{ $schedule->teacher?->name ?? 'Guru belum diatur' }}
-                                            </p>
+                                            <span class="shrink-0 rounded-full {{ $isToday ? 'bg-sky-600 text-white' : 'bg-slate-200 text-slate-600' }} px-2.5 py-1 text-[11px] font-semibold">
+                                                {{ $schedule->start_time?->format('H:i') ?? '-' }}–{{ $schedule->end_time?->format('H:i') ?? '-' }}
+                                            </span>
                                         </div>
-                                        <span class="shrink-0 rounded-full {{ $isToday ? 'bg-sky-600 text-white' : 'bg-white text-slate-600 shadow-sm' }} px-2.5 py-1 text-[10px] font-semibold">
-                                            {{ $schedule->start_time?->format('H:i') ?? '-' }}–{{ $schedule->end_time?->format('H:i') ?? '-' }}
-                                        </span>
+                                        <p class="mt-1 flex items-center gap-1 text-xs text-slate-500">
+                                            <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                            {{ $schedule->teacher?->name ?? 'Guru belum diatur' }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

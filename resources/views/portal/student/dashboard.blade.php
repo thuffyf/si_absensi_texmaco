@@ -25,7 +25,7 @@
             <div class="relative flex items-start justify-between gap-4">
                 <div class="min-w-0 flex-1">
                     <p class="text-sm font-medium text-sky-100">Selamat datang</p>
-                    <h2 class="mt-1 truncate text-2xl font-bold sm:text-3xl">{{ strtok($student->name, ' ') }}</h2>
+                    <h2 class="mt-1 break-words text-2xl font-bold sm:text-3xl">{{ strtok($student->name, ' ') }}</h2>
                     <p class="mt-1 text-sm font-medium text-sky-100">{{ $student->class_name }}</p>
                     <p class="mt-2 text-xs text-sky-100/80">NIS {{ $student->nis }} &middot; {{ $periodDisplay }}</p>
                 </div>
@@ -65,17 +65,19 @@
 
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-1">
             @foreach ([
-                ['key' => 'hadir', 'label' => 'Hadir', 'border' => 'border-emerald-100', 'dot' => 'bg-emerald-500', 'text' => 'text-emerald-600', 'desc' => 'Tercatat'],
-                ['key' => 'izin', 'label' => 'Izin', 'border' => 'border-amber-100', 'dot' => 'bg-amber-500', 'text' => 'text-amber-600', 'desc' => 'Resmi'],
-                ['key' => 'sakit', 'label' => 'Sakit', 'border' => 'border-rose-100', 'dot' => 'bg-rose-500', 'text' => 'text-rose-600', 'desc' => 'Keterangan'],
-                ['key' => 'alpa', 'label' => 'Alpa', 'border' => 'border-slate-200', 'dot' => 'bg-slate-500', 'text' => 'text-slate-700', 'desc' => 'Perhatian'],
+                ['key' => 'hadir', 'label' => 'Hadir', 'border' => 'border-emerald-100', 'dot' => 'bg-emerald-500', 'text' => 'text-emerald-600', 'bg' => 'bg-emerald-50', 'desc' => 'Tercatat'],
+                ['key' => 'izin', 'label' => 'Izin', 'border' => 'border-amber-100', 'dot' => 'bg-amber-500', 'text' => 'text-amber-600', 'bg' => 'bg-amber-50', 'desc' => 'Resmi'],
+                ['key' => 'sakit', 'label' => 'Sakit', 'border' => 'border-rose-100', 'dot' => 'bg-rose-500', 'text' => 'text-rose-600', 'bg' => 'bg-rose-50', 'desc' => 'Keterangan'],
+                ['key' => 'alpa', 'label' => 'Alpa', 'border' => 'border-slate-200', 'dot' => 'bg-slate-500', 'text' => 'text-slate-700', 'bg' => 'bg-slate-50', 'desc' => 'Perhatian'],
             ] as $stat)
                 <div class="portal-stat-card rounded-3xl border {{ $stat['border'] }} bg-white p-4 shadow-sm">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl {{ $stat['bg'] }}">
+                            <span class="h-2.5 w-2.5 rounded-full {{ $stat['dot'] }}"></span>
+                        </span>
                         <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ $stat['label'] }}</p>
-                        <span class="h-2 w-2 rounded-full {{ $stat['dot'] }}"></span>
                     </div>
-                    <p class="mt-2 text-3xl font-bold {{ $stat['text'] }}">{{ $summary[$stat['key']] }}</p>
+                    <p class="mt-2 text-2xl font-bold {{ $stat['text'] }} sm:text-3xl">{{ $summary[$stat['key']] }}</p>
                     <p class="mt-1 text-xs text-slate-400">{{ $stat['desc'] }}</p>
                 </div>
             @endforeach

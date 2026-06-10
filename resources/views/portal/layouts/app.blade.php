@@ -108,7 +108,7 @@
             </aside>
 
             <div id="portal-main-shell" class="flex min-h-screen flex-1 flex-col transition-[margin] duration-200 ease-out lg:ml-64">
-                <header class="sticky top-0 z-30 flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur-sm pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 @hasSection('page_subtitle') min-h-[4.25rem] @else h-16 @endif">
+                <header class="sticky top-0 z-30 flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur-sm pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 min-h-[4.25rem]">
                     <div class="flex min-w-0 flex-1 items-center gap-3">
                         <button
                             type="button"
@@ -126,13 +126,13 @@
                             @if ($isStudentPortal)
                                 <p class="truncate text-xs text-slate-500">Halo, {{ strtok(auth()->user()->name, ' ') }}</p>
                             @else
-                                <p class="truncate text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-700">SITEXA Handphone</p>
+                                <p class="truncate text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-700">Portal Guru</p>
                             @endif
-                            <h1 class="truncate text-lg font-bold tracking-tight text-slate-900">
+                            <h1 class="truncate text-base font-bold tracking-tight text-slate-900 sm:text-lg">
                                 @yield('page_title', 'Portal')
                             </h1>
                             @hasSection('page_subtitle')
-                                <p class="truncate text-xs font-medium text-slate-500 sm:text-sm">
+                                <p class="truncate text-xs font-medium text-slate-500">
                                     @yield('page_subtitle')
                                 </p>
                             @endif
@@ -141,16 +141,37 @@
 
                     <div class="flex items-center gap-3">
                         <div class="hidden text-right text-sm sm:block">
-                            <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Siswa' }}</p>
+                            <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Pengguna' }}</p>
                             <p class="text-xs text-slate-500">{{ auth()->user()->email ?? $portalTitle }}</p>
                         </div>
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700">
-                            {{ strtoupper(substr(trim(auth()->user()->name ?: 'S'), 0, 1)) }}
+                        <div class="relative">
+                            <button
+                                type="button"
+                                id="portal-profile-menu-button"
+                                class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-700 transition-colors hover:ring-2 hover:ring-sky-300"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-label="Buka menu profil"
+                            >
+                                {{ strtoupper(substr(trim(auth()->user()->name ?: 'P'), 0, 1)) }}
+                            </button>
+                            <div id="portal-profile-menu" class="profile-menu hidden" role="menu" aria-hidden="true" style="right:0;left:auto;min-width:10rem;">
+                                @if(auth()->user()->role === 'siswa')
+                                    <a href="{{ route('portal.student.profile') }}" class="profile-menu-item" role="menuitem">Profil</a>
+                                @elseif(auth()->user()->role === 'guru')
+                                    <a href="{{ route('portal.teacher.profile') }}" class="profile-menu-item" role="menuitem">Profil</a>
+                                @endif
+                                <div class="profile-menu-divider" role="separator"></div>
+                                <form method="POST" action="{{ route('portal.logout') }}">
+                                    @csrf
+                                    <button type="submit" class="profile-menu-item w-full text-left" role="menuitem">Logout</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </header>
 
-                <main class="flex-1 px-4 py-5 pb-8 sm:px-6 lg:px-8">
+                <main class="flex-1 px-4 py-5 sm:px-6 lg:px-8" style="padding-bottom: max(2rem, env(safe-area-inset-bottom))">
                     <div class="mx-auto w-full max-w-7xl">
                     @if (session('success'))
                         <div class="portal-toast mb-4 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm" role="status">
@@ -246,6 +267,40 @@
                         toast.remove();
                     }, 300);
                 }, 4500);
+            });
+
+            var portalProfileButton = document.getElementById('portal-profile-menu-button');
+            var portalProfileMenu = document.getElementById('portal-profile-menu');
+
+            function closePortalProfileMenu() {
+                if (!portalProfileMenu || !portalProfileButton) return;
+                portalProfileMenu.classList.add('hidden');
+                portalProfileButton.setAttribute('aria-expanded', 'false');
+                portalProfileMenu.setAttribute('aria-hidden', 'true');
+            }
+
+            if (portalProfileButton) {
+                portalProfileButton.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    var isHidden = portalProfileMenu.classList.contains('hidden');
+                    if (isHidden) {
+                        portalProfileMenu.classList.remove('hidden');
+                        portalProfileButton.setAttribute('aria-expanded', 'true');
+                        portalProfileMenu.setAttribute('aria-hidden', 'false');
+                    } else {
+                        closePortalProfileMenu();
+                    }
+                });
+            }
+
+            document.addEventListener('click', function (event) {
+                if (!portalProfileMenu || !portalProfileButton) return;
+                if (portalProfileMenu.contains(event.target) || portalProfileButton.contains(event.target)) return;
+                closePortalProfileMenu();
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') closePortalProfileMenu();
             });
 
             window.addEventListener('resize', function () {

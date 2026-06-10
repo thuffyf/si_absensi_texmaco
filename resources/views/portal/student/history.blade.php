@@ -19,16 +19,19 @@
         <h2 class="mt-1 text-xl font-bold">{{ $periodLabel }}</h2>
         <p class="mt-2 text-sm text-sky-100/80">{{ $totalRecords }} catatan absensi bulan ini</p>
 
-        <div class="mt-4 grid grid-cols-4 gap-2">
+        <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             @foreach ([
-                ['key' => 'hadir', 'label' => 'Hadir', 'color' => 'emerald'],
-                ['key' => 'izin', 'label' => 'Izin', 'color' => 'amber'],
-                ['key' => 'sakit', 'label' => 'Sakit', 'color' => 'rose'],
-                ['key' => 'alpa', 'label' => 'Alpa', 'color' => 'slate'],
+                ['key' => 'hadir', 'label' => 'Hadir', 'color' => 'emerald', 'dot' => 'bg-emerald-400'],
+                ['key' => 'izin', 'label' => 'Izin', 'color' => 'amber', 'dot' => 'bg-amber-400'],
+                ['key' => 'sakit', 'label' => 'Sakit', 'color' => 'rose', 'dot' => 'bg-rose-400'],
+                ['key' => 'alpa', 'label' => 'Alpa', 'color' => 'slate', 'dot' => 'bg-slate-400'],
             ] as $stat)
-                <div class="rounded-2xl bg-white/10 px-2 py-3 text-center backdrop-blur">
-                    <p class="text-lg font-bold">{{ $counts->get($stat['key'], 0) }}</p>
-                    <p class="mt-0.5 text-[10px] text-sky-100/70">{{ $stat['label'] }}</p>
+                <div class="rounded-2xl bg-white/10 px-3 py-3 text-center backdrop-blur">
+                    <div class="flex items-center justify-center gap-1.5">
+                        <span class="inline-block h-2 w-2 rounded-full {{ $stat['dot'] }}"></span>
+                        <p class="text-xs font-semibold text-sky-100/80">{{ $stat['label'] }}</p>
+                    </div>
+                    <p class="mt-1 text-2xl font-bold">{{ $counts->get($stat['key'], 0) }}</p>
                 </div>
             @endforeach
         </div>
@@ -36,7 +39,7 @@
 
     {{-- Filter chips --}}
     @if ($totalRecords > 0)
-        <div class="portal-filter-bar mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1" id="history-filters" role="group" aria-label="Filter status">
+        <div class="portal-filter-bar mt-4 -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6" id="history-filters" role="group" aria-label="Filter status">
             @foreach ([
                 ['value' => 'all', 'label' => 'Semua', 'count' => $totalRecords],
                 ['value' => 'hadir', 'label' => 'Hadir', 'count' => $counts->get('hadir', 0)],
@@ -47,10 +50,9 @@
                 <button
                     type="button"
                     data-filter="{{ $filter['value'] }}"
-                    class="portal-filter-chip shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition {{ $filter['value'] === 'all' ? 'bg-sky-600 text-white shadow-md shadow-sky-200' : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:ring-sky-200' }}"
+                    class="portal-filter-chip shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition {{ $filter['value'] === 'all' ? 'bg-sky-600 text-white shadow-md shadow-sky-200' : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:ring-sky-200' }}"
                 >
-                    {{ $filter['label'] }}
-                    <span class="ml-1 opacity-70">({{ $filter['count'] }})</span>
+                    {{ $filter['label'] }}&nbsp;<span class="opacity-60">{{ $filter['count'] }}</span>
                 </button>
             @endforeach
         </div>

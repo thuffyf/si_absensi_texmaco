@@ -180,6 +180,13 @@ class PortalController extends Controller
         ]);
     }
 
+    public function teacherProfile(): View
+    {
+        return view('portal.teacher.profile', [
+            'teacher' => $this->currentTeacher(),
+        ]);
+    }
+
     public function studentSchedule(): View
     {
         $student = $this->currentStudent();

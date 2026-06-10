@@ -46,9 +46,9 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
-                    <label for="start_date" class="mb-2 block text-sm font-semibold text-slate-700">Mulai</label>
+                    <label for="start_date" class="mb-2 block text-sm font-semibold text-slate-700">Tanggal Mulai</label>
                     <input
                         id="start_date"
                         name="start_date"
@@ -59,7 +59,7 @@
                     />
                 </div>
                 <div>
-                    <label for="end_date" class="mb-2 block text-sm font-semibold text-slate-700">Sampai</label>
+                    <label for="end_date" class="mb-2 block text-sm font-semibold text-slate-700">Tanggal Selesai</label>
                     <input
                         id="end_date"
                         name="end_date"
@@ -127,54 +127,56 @@
 
         <div class="mt-4 space-y-3">
             @forelse ($requests as $leaveRequest)
-                <article class="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="flex items-start gap-2">
-                            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl {{ $leaveRequest->type === 'sakit' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600' }}">
-                                @if ($leaveRequest->type === 'sakit')
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                @else
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                @endif
-                            </span>
-                            <div>
-                                <h3 class="font-semibold capitalize text-slate-900">{{ $leaveRequest->type }}</h3>
-                                <p class="mt-0.5 text-xs text-slate-500">
-                                    {{ portalFormatDate($leaveRequest->start_date, 'd M Y') }}
-                                    @if ($leaveRequest->end_date && $leaveRequest->end_date->ne($leaveRequest->start_date))
-                                        – {{ portalFormatDate($leaveRequest->end_date, 'd M Y') }}
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
-                        <span class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ring-1 {{ portalRequestBadge($leaveRequest->status) }}">
-                            {{ portalRequestLabel($leaveRequest->status) }}
+                <article class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+                    <div class="flex items-start gap-3 p-3">
+                        <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ $leaveRequest->type === 'sakit' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600' }}">
+                            @if ($leaveRequest->type === 'sakit')
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                            @else
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            @endif
                         </span>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
+                                <h3 class="font-semibold capitalize text-slate-900">{{ $leaveRequest->type }}</h3>
+                                <span class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ring-1 {{ portalRequestBadge($leaveRequest->status) }}">
+                                    {{ portalRequestLabel($leaveRequest->status) }}
+                                </span>
+                            </div>
+                            <p class="mt-0.5 text-xs text-slate-500">
+                                {{ portalFormatDate($leaveRequest->start_date, 'd M Y') }}
+                                @if ($leaveRequest->end_date && $leaveRequest->end_date->ne($leaveRequest->start_date))
+                                    – {{ portalFormatDate($leaveRequest->end_date, 'd M Y') }}
+                                @endif
+                            </p>
+                        </div>
                     </div>
 
-                    <p class="mt-2 text-sm text-slate-700">{{ $leaveRequest->reason }}</p>
+                    <div class="border-t border-slate-50 px-3 pb-3">
+                        <p class="pt-2 text-sm text-slate-700 leading-relaxed">{{ $leaveRequest->reason }}</p>
 
-                    @if ($leaveRequest->photo)
-                        <img
-                            src="{{ asset('storage/' . $leaveRequest->photo) }}"
-                            alt="Bukti {{ $leaveRequest->type }}"
-                            class="mt-3 h-36 w-full rounded-2xl object-cover"
-                        />
-                    @endif
+                        @if ($leaveRequest->photo)
+                            <img
+                                src="{{ asset('storage/' . $leaveRequest->photo) }}"
+                                alt="Bukti {{ $leaveRequest->type }}"
+                                class="mt-3 h-36 w-full rounded-2xl object-cover"
+                            />
+                        @endif
 
-                    @if ($leaveRequest->response_note)
-                        <div class="mt-3 flex items-start gap-2 rounded-2xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-                            <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
-                            <span>{{ $leaveRequest->response_note }}</span>
-                        </div>
-                    @endif
+                        @if ($leaveRequest->response_note)
+                            <div class="mt-3 flex items-start gap-2 rounded-2xl bg-emerald-50 px-3 py-2.5 text-sm text-emerald-700">
+                                <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                                <span>{{ $leaveRequest->response_note }}</span>
+                            </div>
+                        @endif
 
-                    @if ($leaveRequest->rejection_reason)
-                        <div class="mt-2 flex items-start gap-2 rounded-2xl bg-rose-50 px-3 py-2 text-sm text-rose-700">
-                            <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            <span>{{ preg_replace('/^admin konfirmasi:\s*/i', '', $leaveRequest->rejection_reason) }}</span>
-                        </div>
-                    @endif
+                        @if ($leaveRequest->rejection_reason)
+                            <div class="mt-2 flex items-start gap-2 rounded-2xl bg-rose-50 px-3 py-2.5 text-sm text-rose-700">
+                                <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <span>{{ preg_replace('/^admin konfirmasi:\s*/i', '', $leaveRequest->rejection_reason) }}</span>
+                            </div>
+                        @endif
+                    </div>
                 </article>
             @empty
                 @include('portal.partials.student-empty-state', [
