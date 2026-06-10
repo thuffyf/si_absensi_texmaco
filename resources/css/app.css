@@ -335,10 +335,6 @@ input[type="password"]::-ms-clear {
     display: none;
 }
 
-.portal-filter-chip {
-    @apply active:scale-95;
-}
-
 .portal-stat-card {
     @apply transition-shadow duration-200 hover:shadow-md;
 }
@@ -381,7 +377,6 @@ html {
 
 /* Minimum tap target size for accessibility */
 .portal-nav-item,
-.portal-filter-chip,
 .profile-menu-item {
     min-height: 44px;
     min-width: 44px;
@@ -392,6 +387,7 @@ html {
     min-width: unset;
     display: inline-flex;
     align-items: center;
+    @apply active:scale-95;
 }
 
 /* Prevent horizontal overflow on very small screens */

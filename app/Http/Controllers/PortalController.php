@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class PortalController extends Controller
@@ -180,11 +182,99 @@ class PortalController extends Controller
         ]);
     }
 
+    public function updateStudentPhoto(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
+        ], [
+            'photo.required' => 'Pilih foto terlebih dahulu.',
+            'photo.image'    => 'File harus berupa gambar.',
+            'photo.mimes'    => 'Format foto harus JPG, PNG, atau WEBP.',
+            'photo.max'      => 'Ukuran foto maksimal 3 MB.',
+        ]);
+
+        $student = $this->currentStudent();
+
+        // Hapus foto lama kalau ada
+        if ($student->photo_path) {
+            Storage::disk('public')->delete($student->photo_path);
+        }
+
+        $path = $request->file('photo')->store('profile-photos/students', 'public');
+        $student->update(['photo_path' => $path]);
+
+        return redirect()->route('portal.student.profile')
+            ->with('success', 'Foto profil berhasil diperbarui.');
+    }
+
+    public function updateStudentPassword(Request $request): RedirectResponse
+    {
+        $student = $this->currentStudent();
+
+        // Siswa login dengan tanggal lahir, bukan password User — kita update User password
+        $request->validate([
+            'new_password'              => 'required|string|min:8|confirmed',
+            'new_password_confirmation' => 'required|string',
+        ], [
+            'new_password.required'  => 'Password baru wajib diisi.',
+            'new_password.min'       => 'Password minimal 8 karakter.',
+            'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $user = Auth::user();
+        $user->forceFill(['password' => Hash::make($request->new_password)])->save();
+
+        return redirect()->route('portal.student.profile')
+            ->with('success', 'Password berhasil diperbarui.');
+    }
+
     public function teacherProfile(): View
     {
         return view('portal.teacher.profile', [
             'teacher' => $this->currentTeacher(),
         ]);
+    }
+
+    public function updateTeacherPhoto(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
+        ], [
+            'photo.required' => 'Pilih foto terlebih dahulu.',
+            'photo.image'    => 'File harus berupa gambar.',
+            'photo.mimes'    => 'Format foto harus JPG, PNG, atau WEBP.',
+            'photo.max'      => 'Ukuran foto maksimal 3 MB.',
+        ]);
+
+        $teacher = $this->currentTeacher();
+
+        if ($teacher->photo_path) {
+            Storage::disk('public')->delete($teacher->photo_path);
+        }
+
+        $path = $request->file('photo')->store('profile-photos/teachers', 'public');
+        $teacher->update(['photo_path' => $path]);
+
+        return redirect()->route('portal.teacher.profile')
+            ->with('success', 'Foto profil berhasil diperbarui.');
+    }
+
+    public function updateTeacherPassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'new_password'              => 'required|string|min:8|confirmed',
+            'new_password_confirmation' => 'required|string',
+        ], [
+            'new_password.required'  => 'Password baru wajib diisi.',
+            'new_password.min'       => 'Password minimal 8 karakter.',
+            'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $user = Auth::user();
+        $user->forceFill(['password' => Hash::make($request->new_password)])->save();
+
+        return redirect()->route('portal.teacher.profile')
+            ->with('success', 'Password berhasil diperbarui.');
     }
 
     public function studentSchedule(): View

@@ -50,9 +50,10 @@
                 <button
                     type="button"
                     data-filter="{{ $filter['value'] }}"
-                    class="portal-filter-chip shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition {{ $filter['value'] === 'all' ? 'bg-sky-600 text-white shadow-md shadow-sky-200' : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:ring-sky-200' }}"
+                    data-active="{{ $filter['value'] === 'all' ? 'true' : 'false' }}"
+                    class="portal-filter-chip shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition {{ $filter['value'] === 'all' ? 'bg-sky-600 text-white' : 'bg-white text-slate-600 ring-1 ring-slate-200' }}"
                 >
-                    {{ $filter['label'] }}&nbsp;<span class="opacity-60">{{ $filter['count'] }}</span>
+                    {{ $filter['label'] }}&nbsp;<span class="opacity-70">{{ $filter['count'] }}</span>
                 </button>
             @endforeach
         </div>
@@ -67,7 +68,7 @@
                 class="portal-history-item rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm transition"
             >
                 <div class="flex items-start gap-3">
-                    <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ portalStatusBadge($record->status) }} ring-0">
+                    <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ portalStatusBadge($record->status) }}">
                         <span class="h-2.5 w-2.5 rounded-full {{ portalStatusDot($record->status) }}"></span>
                     </span>
                     <div class="min-w-0 flex-1">
@@ -120,6 +121,20 @@
             const items = list.querySelectorAll('[data-status]');
             const buttons = filters.querySelectorAll('[data-filter]');
 
+            function setButtonActive(btn, active) {
+                // Reset semua class terlebih dahulu lalu set yang benar
+                // Ini menghindari bug teks putih di background putih dari toggle tidak sinkron
+                btn.className = btn.className
+                    .replace(/\bbg-sky-600\b|\bbg-white\b|\btext-white\b|\btext-slate-600\b|\bring-1\b|\bring-slate-200\b/g, '')
+                    .trim();
+
+                if (active) {
+                    btn.classList.add('bg-sky-600', 'text-white');
+                } else {
+                    btn.classList.add('bg-white', 'text-slate-600', 'ring-1', 'ring-slate-200');
+                }
+            }
+
             function applyFilter(value) {
                 let visible = 0;
                 items.forEach(function (item) {
@@ -133,15 +148,7 @@
                 }
 
                 buttons.forEach(function (btn) {
-                    const active = btn.getAttribute('data-filter') === value;
-                    btn.classList.toggle('bg-sky-600', active);
-                    btn.classList.toggle('text-white', active);
-                    btn.classList.toggle('shadow-md', active);
-                    btn.classList.toggle('shadow-sky-200', active);
-                    btn.classList.toggle('bg-white', !active);
-                    btn.classList.toggle('text-slate-600', !active);
-                    btn.classList.toggle('ring-1', !active);
-                    btn.classList.toggle('ring-slate-200', !active);
+                    setButtonActive(btn, btn.getAttribute('data-filter') === value);
                 });
             }
 
