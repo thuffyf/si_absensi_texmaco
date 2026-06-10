@@ -12,7 +12,7 @@
         $todayCount = $schedulesByDay->get($todayName)?->count() ?? 0;
     @endphp
 
-    <section class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-600 via-sky-700 to-slate-900 px-5 py-5 text-white shadow-lg shadow-sky-200/40">
+    <section class="overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-700 px-5 py-5 text-white shadow-lg">
         <p class="text-sm text-sky-100">Hari ini · {{ $todayName }}</p>
         <h2 class="mt-1 text-xl font-bold">{{ $student->class_name }}</h2>
         <div class="mt-3 flex gap-4">
@@ -31,8 +31,8 @@
     <section class="mt-4 space-y-4">
         @forelse ($schedulesByDay as $day => $items)
             @php $isToday = $day === $todayName; @endphp
-            <article class="overflow-hidden rounded-[1.75rem] border {{ $isToday ? 'border-sky-300 ring-2 ring-sky-100' : 'border-slate-200' }} bg-white shadow-sm">
-                <div class="flex items-center justify-between border-b border-slate-100 {{ $isToday ? 'bg-sky-50/80' : 'bg-slate-50/80' }} px-4 py-3">
+            <article class="overflow-hidden rounded-2xl {{ $isToday ? 'bg-sky-50' : 'bg-white' }} shadow-sm">
+                <div class="flex items-center justify-between border-b {{ $isToday ? 'border-sky-100 bg-sky-100/50' : 'border-slate-100 bg-slate-50' }} px-4 py-3">
                     <div class="flex items-center gap-2">
                         @if ($isToday)
                             <span class="flex h-2 w-2 animate-pulse rounded-full bg-sky-500"></span>
@@ -57,15 +57,15 @@
                         @foreach ($items as $index => $schedule)
                             <div class="portal-timeline-item relative flex gap-3">
                                 <div class="relative z-10 flex shrink-0 flex-col items-center">
-                                    <span class="flex h-9 w-9 items-center justify-center rounded-xl {{ $isToday ? 'bg-sky-100 text-sky-700 ring-2 ring-sky-200' : 'bg-slate-100 text-slate-600' }} text-xs font-bold">
+                                    <span class="flex h-9 w-9 items-center justify-center rounded-xl {{ $isToday ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-600' }} text-xs font-bold shadow-sm">
                                         {{ $index + 1 }}
                                     </span>
                                 </div>
-                                <div class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3">
+                                <div class="flex flex-1 items-start gap-3 rounded-xl bg-white px-3 py-3 {{ $isToday ? 'ring-1 ring-sky-200' : '' }}">
                                     <div class="min-w-0 flex-1">
                                         <div class="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
                                             <p class="font-semibold text-slate-900">{{ $schedule->subject }}</p>
-                                            <span class="shrink-0 rounded-full {{ $isToday ? 'bg-sky-600 text-white' : 'bg-slate-200 text-slate-600' }} px-2.5 py-1 text-[11px] font-semibold">
+                                            <span class="shrink-0 rounded-lg {{ $isToday ? 'bg-sky-600 text-white' : 'bg-slate-200 text-slate-700' }} px-2.5 py-1 text-[11px] font-semibold">
                                                 {{ $schedule->start_time?->format('H:i') ?? '-' }}–{{ $schedule->end_time?->format('H:i') ?? '-' }}
                                             </span>
                                         </div>

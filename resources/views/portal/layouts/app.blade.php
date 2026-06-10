@@ -123,11 +123,6 @@
                             </svg>
                         </button>
                         <div class="min-w-0 leading-tight">
-                            @if ($isStudentPortal)
-                                <p class="truncate text-xs text-slate-500">Halo, {{ strtok(auth()->user()->name, ' ') }}</p>
-                            @else
-                                <p class="truncate text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-700">Portal Guru</p>
-                            @endif
                             <h1 class="truncate text-base font-bold tracking-tight text-slate-900 sm:text-lg">
                                 @yield('page_title', 'Portal')
                             </h1>

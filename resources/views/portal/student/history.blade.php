@@ -14,22 +14,22 @@
     @endphp
 
     {{-- Summary hero --}}
-    <section class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-sky-800 px-5 py-5 text-white shadow-lg shadow-slate-200/40">
-        <p class="text-sm text-sky-100">Periode aktif</p>
+    <section class="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 px-5 py-5 text-white shadow-lg">
+        <p class="text-sm text-slate-300">Periode aktif</p>
         <h2 class="mt-1 text-xl font-bold">{{ $periodLabel }}</h2>
-        <p class="mt-2 text-sm text-sky-100/80">{{ $totalRecords }} catatan absensi bulan ini</p>
+        <p class="mt-2 text-sm text-slate-300">{{ $totalRecords }} catatan absensi bulan ini</p>
 
         <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             @foreach ([
-                ['key' => 'hadir', 'label' => 'Hadir', 'color' => 'emerald', 'dot' => 'bg-emerald-400'],
-                ['key' => 'izin', 'label' => 'Izin', 'color' => 'amber', 'dot' => 'bg-amber-400'],
-                ['key' => 'sakit', 'label' => 'Sakit', 'color' => 'rose', 'dot' => 'bg-rose-400'],
-                ['key' => 'alpa', 'label' => 'Alpa', 'color' => 'slate', 'dot' => 'bg-slate-400'],
+                ['key' => 'hadir', 'label' => 'Hadir', 'dot' => 'bg-emerald-400'],
+                ['key' => 'izin', 'label' => 'Izin', 'dot' => 'bg-amber-400'],
+                ['key' => 'sakit', 'label' => 'Sakit', 'dot' => 'bg-rose-400'],
+                ['key' => 'alpa', 'label' => 'Alpa', 'dot' => 'bg-slate-400'],
             ] as $stat)
-                <div class="rounded-2xl bg-white/10 px-3 py-3 text-center backdrop-blur">
+                <div class="rounded-xl bg-white/10 px-3 py-3 text-center backdrop-blur">
                     <div class="flex items-center justify-center gap-1.5">
                         <span class="inline-block h-2 w-2 rounded-full {{ $stat['dot'] }}"></span>
-                        <p class="text-xs font-semibold text-sky-100/80">{{ $stat['label'] }}</p>
+                        <p class="text-xs font-medium text-slate-200">{{ $stat['label'] }}</p>
                     </div>
                     <p class="mt-1 text-2xl font-bold">{{ $counts->get($stat['key'], 0) }}</p>
                 </div>
@@ -65,7 +65,7 @@
             @php $normalized = $normalizeStatus($record->status); @endphp
             <article
                 data-status="{{ $normalized }}"
-                class="portal-history-item rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm transition"
+                class="portal-history-item rounded-2xl bg-white p-4 shadow-sm transition"
             >
                 <div class="flex items-start gap-3">
                     <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ portalStatusBadge($record->status) }}">
@@ -74,7 +74,7 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex items-start justify-between gap-2">
                             <div>
-                                <h2 class="text-base font-bold text-slate-900">{{ portalStatusLabel($record->status) }}</h2>
+                                <h2 class="font-bold text-slate-900">{{ portalStatusLabel($record->status) }}</h2>
                                 <p class="mt-0.5 text-sm text-slate-500">
                                     {{ portalFormatDate($record->attendance_date, 'l, d M Y') }}
                                     @if ($record->attendance_time && $record->attendance_time !== '00:00:00')
@@ -88,7 +88,7 @@
                         </div>
 
                         @if ($record->note)
-                            <div class="mt-3 rounded-2xl bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                            <div class="mt-3 rounded-xl bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
                                 {{ $record->note }}
                             </div>
                         @endif
@@ -104,7 +104,7 @@
         @endforelse
     </section>
 
-    <div id="history-empty-filter" class="portal-empty hidden rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center">
+    <div id="history-empty-filter" class="portal-empty hidden rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center">
         <p class="text-sm font-semibold text-slate-700">Tidak ada data untuk filter ini</p>
         <p class="mt-1 text-xs text-slate-500">Coba pilih filter lain.</p>
     </div>
