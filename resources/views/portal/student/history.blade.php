@@ -1,0 +1,153 @@
+@extends('portal.layouts.app')
+
+@section('title', 'Riwayat Absensi - SITEXA')
+@section('page_title', 'Riwayat Absensi')
+@section('page_subtitle', 'Data absensi bulan ini')
+
+@section('content')
+    @include('portal.partials.student-status')
+
+    @php
+        $normalizeStatus = fn ($status) => in_array($status, ['alpha', 'alfa', 'alpa'], true) ? 'alpa' : ($status ?: 'unknown');
+        $counts = $records->map(fn ($r) => $normalizeStatus($r->status))->countBy();
+        $totalRecords = $records->count();
+    @endphp
+
+    {{-- Summary hero --}}
+    <section class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-sky-800 px-5 py-5 text-white shadow-lg shadow-slate-200/40">
+        <p class="text-sm text-sky-100">Periode aktif</p>
+        <h2 class="mt-1 text-xl font-bold">{{ $periodLabel }}</h2>
+        <p class="mt-2 text-sm text-sky-100/80">{{ $totalRecords }} catatan absensi bulan ini</p>
+
+        <div class="mt-4 grid grid-cols-4 gap-2">
+            @foreach ([
+                ['key' => 'hadir', 'label' => 'Hadir', 'color' => 'emerald'],
+                ['key' => 'izin', 'label' => 'Izin', 'color' => 'amber'],
+                ['key' => 'sakit', 'label' => 'Sakit', 'color' => 'rose'],
+                ['key' => 'alpa', 'label' => 'Alpa', 'color' => 'slate'],
+            ] as $stat)
+                <div class="rounded-2xl bg-white/10 px-2 py-3 text-center backdrop-blur">
+                    <p class="text-lg font-bold">{{ $counts->get($stat['key'], 0) }}</p>
+                    <p class="mt-0.5 text-[10px] text-sky-100/70">{{ $stat['label'] }}</p>
+                </div>
+            @endforeach
+        </div>
+    </section>
+
+    {{-- Filter chips --}}
+    @if ($totalRecords > 0)
+        <div class="portal-filter-bar mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1" id="history-filters" role="group" aria-label="Filter status">
+            @foreach ([
+                ['value' => 'all', 'label' => 'Semua', 'count' => $totalRecords],
+                ['value' => 'hadir', 'label' => 'Hadir', 'count' => $counts->get('hadir', 0)],
+                ['value' => 'izin', 'label' => 'Izin', 'count' => $counts->get('izin', 0)],
+                ['value' => 'sakit', 'label' => 'Sakit', 'count' => $counts->get('sakit', 0)],
+                ['value' => 'alpa', 'label' => 'Alpa', 'count' => $counts->get('alpa', 0)],
+            ] as $filter)
+                <button
+                    type="button"
+                    data-filter="{{ $filter['value'] }}"
+                    class="portal-filter-chip shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition {{ $filter['value'] === 'all' ? 'bg-sky-600 text-white shadow-md shadow-sky-200' : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:ring-sky-200' }}"
+                >
+                    {{ $filter['label'] }}
+                    <span class="ml-1 opacity-70">({{ $filter['count'] }})</span>
+                </button>
+            @endforeach
+        </div>
+    @endif
+
+    {{-- Records list --}}
+    <section class="mt-4 space-y-3" id="history-list">
+        @forelse ($records as $record)
+            @php $normalized = $normalizeStatus($record->status); @endphp
+            <article
+                data-status="{{ $normalized }}"
+                class="portal-history-item rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm transition"
+            >
+                <div class="flex items-start gap-3">
+                    <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ portalStatusBadge($record->status) }} ring-0">
+                        <span class="h-2.5 w-2.5 rounded-full {{ portalStatusDot($record->status) }}"></span>
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900">{{ portalStatusLabel($record->status) }}</h2>
+                                <p class="mt-0.5 text-sm text-slate-500">
+                                    {{ portalFormatDate($record->attendance_date, 'l, d M Y') }}
+                                    @if ($record->attendance_time && $record->attendance_time !== '00:00:00')
+                                        · {{ substr($record->attendance_time, 0, 5) }}
+                                    @endif
+                                </p>
+                            </div>
+                            <span class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ring-1 {{ portalStatusBadge($record->status) }}">
+                                {{ portalStatusLabel($record->status) }}
+                            </span>
+                        </div>
+
+                        @if ($record->note)
+                            <div class="mt-3 rounded-2xl bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                                {{ $record->note }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </article>
+        @empty
+            @include('portal.partials.student-empty-state', [
+                'icon' => 'clock',
+                'title' => 'Belum ada data absensi',
+                'description' => 'Riwayat absensi bulan ini akan tampil di sini setelah tercatat.',
+            ])
+        @endforelse
+    </section>
+
+    <div id="history-empty-filter" class="portal-empty hidden rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center">
+        <p class="text-sm font-semibold text-slate-700">Tidak ada data untuk filter ini</p>
+        <p class="mt-1 text-xs text-slate-500">Coba pilih filter lain.</p>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        (function () {
+            const filters = document.getElementById('history-filters');
+            const list = document.getElementById('history-list');
+            const emptyFilter = document.getElementById('history-empty-filter');
+            if (!filters || !list) return;
+
+            const items = list.querySelectorAll('[data-status]');
+            const buttons = filters.querySelectorAll('[data-filter]');
+
+            function applyFilter(value) {
+                let visible = 0;
+                items.forEach(function (item) {
+                    const show = value === 'all' || item.getAttribute('data-status') === value;
+                    item.classList.toggle('hidden', !show);
+                    if (show) visible++;
+                });
+
+                if (emptyFilter) {
+                    emptyFilter.classList.toggle('hidden', visible > 0 || value === 'all');
+                }
+
+                buttons.forEach(function (btn) {
+                    const active = btn.getAttribute('data-filter') === value;
+                    btn.classList.toggle('bg-sky-600', active);
+                    btn.classList.toggle('text-white', active);
+                    btn.classList.toggle('shadow-md', active);
+                    btn.classList.toggle('shadow-sky-200', active);
+                    btn.classList.toggle('bg-white', !active);
+                    btn.classList.toggle('text-slate-600', !active);
+                    btn.classList.toggle('ring-1', !active);
+                    btn.classList.toggle('ring-slate-200', !active);
+                });
+            }
+
+            buttons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    applyFilter(btn.getAttribute('data-filter'));
+                });
+            });
+        })();
+    </script>
+@endpush

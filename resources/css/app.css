@@ -280,3 +280,80 @@ input[type="password"]::-ms-clear {
     @apply lg:hidden;
 }
 
+#portal-layout-root.portal-sidebar-collapsed #portal-sidebar {
+    @apply lg:w-16;
+}
+
+#portal-layout-root.portal-sidebar-collapsed #portal-sidebar .nav-texmaco {
+    @apply lg:justify-center lg:px-2;
+}
+
+#portal-layout-root.portal-sidebar-collapsed #portal-main-shell {
+    @apply lg:ml-16;
+}
+
+#portal-layout-root.portal-sidebar-collapsed #portal-sidebar .nav-text {
+    @apply lg:sr-only;
+}
+
+#portal-layout-root.portal-sidebar-collapsed #portal-sidebar .sidebar-brand-hide {
+    @apply lg:hidden;
+}
+
+/* ========== Portal Student Utilities ========== */
+
+.portal-toast {
+    @apply transition-all duration-300 ease-out;
+}
+
+.portal-progress-ring {
+    transform: rotate(-90deg);
+}
+
+.portal-progress-ring circle:last-child {
+    transition: stroke-dashoffset 0.6s ease-out;
+}
+
+.portal-bottom-nav {
+    box-shadow: 0 -4px 24px -8px rgba(15, 23, 42, 0.08);
+}
+
+.portal-nav-item {
+    @apply active:scale-95;
+}
+
+.portal-filter-bar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.portal-filter-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.portal-filter-chip {
+    @apply active:scale-95;
+}
+
+.portal-stat-card {
+    @apply transition-shadow duration-200 hover:shadow-md;
+}
+
+.portal-timeline-line {
+    @apply pointer-events-none;
+}
+
+.portal-type-pill {
+    @apply active:scale-[0.98];
+}
+
+.portal-copy-btn:disabled {
+    @apply cursor-not-allowed opacity-50;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

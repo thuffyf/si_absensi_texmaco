@@ -12,8 +12,10 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PortalController;
 use App\Support\RecaptchaBypass;
 use App\Models\Attendance;
+use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 
 /*
@@ -34,6 +37,16 @@ use Illuminate\Support\Carbon;
 
 // Login Routes
 Route::get('/login', function (Request $request) {
+    if (Auth::check()) {
+        $role = Auth::user()->role;
+
+        return redirect()->route(match ($role) {
+            'siswa' => 'portal.student.dashboard',
+            'guru' => 'portal.teacher.attendance',
+            default => 'dashboard',
+        });
+    }
+
     $recaptchaBypass = RecaptchaBypass::enabled($request);
 
     return view('auth.login', [
@@ -44,6 +57,78 @@ Route::get('/login', function (Request $request) {
 
 Route::post('/login', function (Request $request) {
     $recaptchaBypass = RecaptchaBypass::enabled($request);
+    $loginMode = $request->string('login_mode')->toString() ?: 'admin';
+
+    if ($loginMode === 'portal') {
+        $data = $request->validate([
+            'portal_email' => 'required|email',
+            'birth_date' => 'required|date',
+        ], [
+            'portal_email.required' => 'Email wajib diisi.',
+            'portal_email.email' => 'Format email tidak valid.',
+            'birth_date.required' => 'Tanggal lahir wajib diisi.',
+            'birth_date.date' => 'Tanggal lahir tidak valid.',
+        ]);
+
+        $email = trim((string) $data['portal_email']);
+        $birthDate = Carbon::parse($data['birth_date'])->toDateString();
+
+        $student = Student::where('email', $email)->first();
+        if ($student && $student->date_of_birth && $student->date_of_birth->toDateString() === $birthDate) {
+            if (! $student->uid_kartu) {
+                return back()
+                    ->withErrors(['portal_login' => 'UID siswa belum diatur oleh admin.'])
+                    ->withInput($request->only('portal_email', 'birth_date', 'login_mode'));
+            }
+
+            $user = User::query()->firstOrNew(['email' => $student->email]);
+            if ($user->exists && in_array($user->role, ['admin', 'tata_usaha'], true) && $user->role !== 'siswa') {
+                return back()
+                    ->withErrors(['portal_login' => 'Email ini sudah dipakai akun admin atau tata usaha.'])
+                    ->withInput($request->only('portal_email', 'birth_date', 'login_mode'));
+            }
+
+            $user->name = $student->name;
+            $user->email = $student->email;
+            $user->role = 'siswa';
+            if (! $user->exists || empty($user->getRawOriginal('password'))) {
+                $user->password = Hash::make(Str::random(40));
+            }
+            $user->save();
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->route('portal.student.dashboard');
+        }
+
+        $teacher = Teacher::where('email', $email)->first();
+        if ($teacher && $teacher->date_of_birth && $teacher->date_of_birth->toDateString() === $birthDate) {
+            $user = User::query()->firstOrNew(['email' => $teacher->email]);
+            if ($user->exists && in_array($user->role, ['admin', 'tata_usaha'], true) && $user->role !== 'guru') {
+                return back()
+                    ->withErrors(['portal_login' => 'Email ini sudah dipakai akun admin atau tata usaha.'])
+                    ->withInput($request->only('portal_email', 'birth_date', 'login_mode'));
+            }
+
+            $user->name = $teacher->name;
+            $user->email = $teacher->email;
+            $user->role = 'guru';
+            if (! $user->exists || empty($user->getRawOriginal('password'))) {
+                $user->password = Hash::make(Str::random(40));
+            }
+            $user->save();
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->route('portal.teacher.attendance');
+        }
+
+        return back()->withErrors([
+            'portal_login' => 'Email atau tanggal lahir salah.',
+        ])->withInput($request->only('portal_email', 'birth_date', 'login_mode'));
+    }
 
     $request->validate([
         'username' => 'required|email',
@@ -56,7 +141,7 @@ Route::post('/login', function (Request $request) {
         if (! $recaptchaSecret) {
             return back()
                 ->withErrors(['captcha' => 'Konfigurasi captcha belum lengkap.'])
-                ->withInput($request->only('username'));
+                ->withInput($request->only('username', 'login_mode'));
         }
 
         $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -68,7 +153,7 @@ Route::post('/login', function (Request $request) {
         if (! $recaptcha->ok() || ! ($recaptcha->json('success') === true)) {
             return back()
                 ->withErrors(['captcha' => 'Verifikasi captcha gagal.'])
-                ->withInput($request->only('username'));
+                ->withInput($request->only('username', 'login_mode'));
         }
     }
 
@@ -90,18 +175,40 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    // Hanya izinkan admin / tata_usaha
     $roleMatch = $user && in_array($user->role, ['tata_usaha', 'admin']);
 
     if ($user && $passwordOk && $roleMatch) {
         Auth::login($user);
+        $request->session()->regenerate();
+
         return redirect()->route('dashboard');
     }
 
     return back()->withErrors([
         'login' => 'Email, password, atau akses ditolak.',
-    ])->withInput($request->only('username'));
+    ])->withInput($request->only('username', 'login_mode'));
 })->name('login.submit');
+
+Route::prefix('app')->name('portal.')->group(function () {
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [PortalController::class, 'logout'])->name('logout');
+        Route::get('/', [PortalController::class, 'home'])->name('home');
+
+        Route::middleware('role:siswa')->prefix('siswa')->name('student.')->group(function () {
+            Route::get('/dashboard', [PortalController::class, 'studentDashboard'])->name('dashboard');
+            Route::get('/jadwal', [PortalController::class, 'studentSchedule'])->name('schedule');
+            Route::get('/riwayat', [PortalController::class, 'studentHistory'])->name('history');
+            Route::get('/izin-sakit', [PortalController::class, 'studentLeave'])->name('leave');
+            Route::post('/izin-sakit', [PortalController::class, 'storeStudentLeave'])->name('leave.store');
+            Route::get('/profil', [PortalController::class, 'studentProfile'])->name('profile');
+        });
+
+        Route::middleware('role:guru')->prefix('guru')->name('teacher.')->group(function () {
+            Route::get('/absensi', [PortalController::class, 'teacherAttendance'])->name('attendance');
+            Route::post('/absensi', [PortalController::class, 'updateTeacherAttendance'])->name('attendance.update');
+        });
+    });
+});
 
 // Dashboard Routes (Protected by auth middleware)
 Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {

@@ -1,6 +1,6 @@
 # SI Absensi Texmaco
 
-Sistem informasi absensi berbasis **NFC** untuk lingkungan sekolah/vokasi Texmaco. Terdiri dari panel web (Laravel) untuk admin dan tata usaha, serta aplikasi mobile (Flutter) untuk siswa dan guru.
+Sistem informasi absensi berbasis **NFC** untuk lingkungan sekolah/vokasi Texmaco. Terdiri dari panel web (Laravel) untuk admin dan tata usaha, serta portal siswa/guru yang masuk melalui pintu login yang sama.
 
 ## Fitur Utama
 
@@ -16,13 +16,12 @@ Sistem informasi absensi berbasis **NFC** untuk lingkungan sekolah/vokasi Texmac
 - **Pengaturan sistem** — impor siswa, ekspor, pembersihan data
 - Login dengan **Google reCAPTCHA**
 
-### Aplikasi Mobile (Siswa & Guru)
+### Portal Siswa & Guru
 
-- Login siswa (username + password) dan guru (NIP + tanggal lahir)
-- **Mode NFC (HCE)** — emulasi kartu NFC menggunakan UID dari backend
+- Login siswa dan guru melalui halaman **/login** menggunakan **email + tanggal lahir**
 - Riwayat absensi dan ringkasan kehadiran bulanan
-- Pengajuan izin/sakit dari aplikasi
-- Guru: daftar siswa tidak hadir dan update status absensi
+- Pengajuan izin/sakit langsung dari browser handphone
+- Guru: daftar siswa hadir, tidak hadir, belum absen, dan update status absensi
 
 ### Integrasi Perangkat NFC
 
@@ -39,7 +38,7 @@ Sistem informasi absensi berbasis **NFC** untuk lingkungan sekolah/vokasi Texmac
 | Frontend web | Blade, Vite, Tailwind CSS |
 | API | Laravel Sanctum |
 | Laporan PDF | mPDF |
-| Mobile | Flutter 3.x |
+| Portal siswa/guru | Blade, Vite, Tailwind CSS |
 | Auth web | Session + reCAPTCHA |
 
 ## Struktur Proyek
@@ -52,8 +51,8 @@ si_absensi_texmaco/
 ├── resources/views/        # Tampilan Blade
 ├── routes/
 │   ├── web.php             # Route panel admin/TU
-│   └── api.php             # Route API mobile & NFC
-└── mobile/                 # Aplikasi Flutter (siswa & guru)
+│   └── api.php             # Route API NFC
+└── resources/views/portal/ # Portal handphone siswa & guru
 ```
 
 ## Persyaratan
@@ -62,8 +61,6 @@ si_absensi_texmaco/
 - Composer
 - Node.js & npm (untuk asset frontend)
 - MySQL 5.7+ / MariaDB
-- Flutter SDK >= 3.11 (untuk aplikasi mobile)
-
 ## Instalasi Backend
 
 1. **Clone repositori**
@@ -130,37 +127,7 @@ si_absensi_texmaco/
    php artisan serve
    ```
 
-   Panel web: `http://localhost:8000/login`
-
-## Instalasi Aplikasi Mobile
-
-Detail tambahan ada di [`mobile/README.md`](mobile/README.md).
-
-1. Masuk ke folder mobile:
-
-   ```bash
-   cd mobile
-   ```
-
-2. Salin dan sesuaikan environment:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   ```env
-   API_BASE_URL=http://10.0.2.2:8000/api
-   API_TIMEOUT_SECONDS=10
-   ```
-
-   > Gunakan IP LAN server Laravel jika menjalankan di perangkat fisik (bukan emulator Android).
-
-3. Instal dependensi dan jalankan:
-
-   ```bash
-   flutter pub get
-   flutter run
-   ```
+   Login semua role: `http://localhost:8000/login`
 
 ## Peran Pengguna (Role)
 
@@ -168,17 +135,16 @@ Detail tambahan ada di [`mobile/README.md`](mobile/README.md).
 |------|--------|
 | `admin` | Panel web penuh |
 | `tata_usaha` | Panel web penuh |
-| `guru` | Dashboard guru, persetujuan izin/sakit, monitoring (via web/mobile) |
-| `siswa` | Dashboard siswa, absensi, jadwal, pengajuan izin (via web/mobile) |
+| `guru` | Monitoring absensi siswa via portal handphone |
+| `siswa` | Dashboard, riwayat, izin/sakit, dan profil via portal handphone |
 
 Login panel web (`/login`) hanya untuk role **admin** dan **tata_usaha**.
 
 ## Alur Absensi NFC
 
 1. Admin TU mengisi **UID kartu** (`uid_kartu`) pada data siswa di panel web.
-2. Siswa login di aplikasi mobile; UID disimpan di perangkat.
-3. Siswa membuka **Mode NFC** — HP mengemulasikan kartu via HCE.
-4. Perangkat reader NFC mengirim tap ke API:
+2. Siswa login di portal handphone untuk melihat UID kartu dan status absensi.
+3. Perangkat reader NFC mengirim tap ke API:
 
    ```
    POST /api/mobile/attendance
@@ -186,29 +152,20 @@ Login panel web (`/login`) hanya untuk role **admin** dan **tata_usaha**.
    Body: { "uid_kartu": "...", "device_id": 1 }
    ```
 
-5. Sistem mencocokkan siswa, jadwal aktif, dan menyimpan status absensi (`hadir`, `izin`, `sakit`, `alpha`, `late`).
+4. Sistem mencocokkan siswa, jadwal aktif, dan menyimpan status absensi (`hadir`, `izin`, `sakit`, `alpha`, `late`).
 
 ## Alur Izin & Sakit
 
-1. Siswa mengajukan izin/sakit (web atau mobile).
-2. Status awal: `pending_teacher` → guru menyetujui/menolak.
-3. Jika disetujui guru: `pending_admin` → tata usaha menyetujui/menolak.
+1. Siswa mengajukan izin/sakit melalui portal handphone.
+2. Status awal pengajuan dari portal siswa: `pending_admin`.
+3. Tata usaha meninjau lalu menyetujui atau menolak pengajuan.
 4. Status akhir: `approved` atau `rejected` — data absensi diperbarui sesuai keputusan.
 
-## API Mobile (Ringkasan)
+## Endpoint NFC (Ringkasan)
 
 | Method | Endpoint | Keterangan |
 |--------|----------|------------|
-| POST | `/api/mobile/login/student` | Login siswa |
-| POST | `/api/mobile/login/teacher` | Login guru |
-| POST | `/api/mobile/register` | Registrasi perangkat |
 | POST | `/api/mobile/attendance` | Tap absensi NFC (butuh API key) |
-| GET | `/api/mobile/student/profile` | Profil siswa |
-| GET | `/api/mobile/student/summary` | Ringkasan kehadiran |
-| GET | `/api/mobile/student/absensi` | Riwayat absensi |
-| GET/POST | `/api/mobile/student/leave-requests` | Daftar / buat izin |
-| GET | `/api/mobile/teacher/absences` | Siswa tidak hadir |
-| POST | `/api/mobile/teacher/attendance` | Update absensi (guru) |
 | GET | `/api/monitoring/nfc-data` | Data monitoring NFC (butuh API key) |
 
 ## Perintah Berguna
