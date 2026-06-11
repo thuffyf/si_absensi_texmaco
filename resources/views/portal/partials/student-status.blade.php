@@ -73,4 +73,23 @@
             return $date->locale('id')->translatedFormat($format);
         }
     }
+
+    if (! function_exists('portalStorageUrl')) {
+        /**
+         * Menghasilkan URL yang benar untuk file di storage.
+         * Mendukung cPanel shared hosting yang punya folder storage_public
+         * di luar public_html (dengan symlink public/storage → ../storage_public).
+         * Set STORAGE_PUBLIC_PATH di .env ke path absolut storage_public.
+         */
+        function portalStorageUrl(?string $path): ?string
+        {
+            if (! $path) {
+                return null;
+            }
+
+            $disk = env('STORAGE_PUBLIC_PATH') ? 'public_web' : 'public';
+
+            return \Illuminate\Support\Facades\Storage::disk($disk)->url($path);
+        }
+    }
 @endphp

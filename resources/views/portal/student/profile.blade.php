@@ -9,7 +9,7 @@
 
     @php
         $initial  = strtoupper(substr(trim($student->name ?: 'S'), 0, 1));
-        $photoUrl = $student->photo_path ? asset('storage/' . $student->photo_path) : null;
+        $photoUrl = portalStorageUrl($student->photo_path);
     @endphp
 
     {{-- ===== Hero / Avatar ===== --}}

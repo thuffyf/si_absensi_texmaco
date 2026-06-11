@@ -5,9 +5,12 @@
 @section('page_subtitle', 'Data pribadi')
 
 @section('content')
+    {{-- Load helper functions --}}
+    @include('portal.partials.student-status')
+
     @php
         $initial  = strtoupper(substr(trim($teacher->name ?: 'G'), 0, 1));
-        $photoUrl = $teacher->photo_path ? asset('storage/' . $teacher->photo_path) : null;
+        $photoUrl = portalStorageUrl($teacher->photo_path);
     @endphp
 
     {{-- ===== Hero / Avatar ===== --}}

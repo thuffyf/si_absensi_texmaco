@@ -194,13 +194,14 @@ class PortalController extends Controller
         ]);
 
         $student = $this->currentStudent();
+        $disk    = $this->storageDisk();
 
         // Hapus foto lama kalau ada
         if ($student->photo_path) {
-            Storage::disk('public')->delete($student->photo_path);
+            Storage::disk($disk)->delete($student->photo_path);
         }
 
-        $path = $request->file('photo')->store('profile-photos/students', 'public');
+        $path = $request->file('photo')->store('profile-photos/students', $disk);
         $student->update(['photo_path' => $path]);
 
         return redirect()->route('portal.student.profile')
@@ -247,12 +248,13 @@ class PortalController extends Controller
         ]);
 
         $teacher = $this->currentTeacher();
+        $disk    = $this->storageDisk();
 
         if ($teacher->photo_path) {
-            Storage::disk('public')->delete($teacher->photo_path);
+            Storage::disk($disk)->delete($teacher->photo_path);
         }
 
-        $path = $request->file('photo')->store('profile-photos/teachers', 'public');
+        $path = $request->file('photo')->store('profile-photos/teachers', $disk);
         $teacher->update(['photo_path' => $path]);
 
         return redirect()->route('portal.teacher.profile')
@@ -529,5 +531,16 @@ class PortalController extends Controller
             'guru' => 'portal.teacher.attendance',
             default => 'dashboard',
         };
+    }
+
+    /**
+     * Pilih disk storage yang tepat.
+     * Jika STORAGE_PUBLIC_PATH diset di .env, pakai disk 'public_web'
+     * (yang menyimpan langsung ke path tersebut — cocok untuk cPanel shared hosting).
+     * Jika tidak, pakai disk 'public' standar Laravel.
+     */
+    private function storageDisk(): string
+    {
+        return env('STORAGE_PUBLIC_PATH') ? 'public_web' : 'public';
     }
 }
