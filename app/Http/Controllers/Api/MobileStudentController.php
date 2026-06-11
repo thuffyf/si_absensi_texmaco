@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\LeaveRequest;
 use App\Models\Student;
+use App\Support\PublicStorageUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -144,7 +145,7 @@ class MobileStudentController extends Controller
                 'response_note' => $leaveRequest->response_note,
                 'rejection_reason' => $leaveRequest->rejection_reason,
                 'photo' => $leaveRequest->photo,
-                'photo_url' => $leaveRequest->photo ? asset('storage/' . $leaveRequest->photo) : null,
+                'photo_url' => PublicStorageUrl::storageUrl($leaveRequest->photo),
             ]),
         ]);
     }
@@ -220,7 +221,7 @@ class MobileStudentController extends Controller
                 'status' => $leaveRequest->status,
                 'requested_at' => $leaveRequest->requested_at?->toDateTimeString(),
                 'photo' => $leaveRequest->photo,
-                'photo_url' => $leaveRequest->photo ? asset('storage/' . $leaveRequest->photo) : null,
+                'photo_url' => PublicStorageUrl::storageUrl($leaveRequest->photo),
             ],
         ], 201);
     }

@@ -87,9 +87,7 @@
                 return null;
             }
 
-            $disk = env('STORAGE_PUBLIC_PATH') ? 'public_web' : 'public';
-
-            return \Illuminate\Support\Facades\Storage::disk($disk)->url($path);
+            return \App\Support\PublicStorageUrl::storageUrl($path);
         }
     }
 @endphp

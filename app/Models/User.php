@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicStorageUrl;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -61,6 +62,6 @@ class User extends Authenticatable
         $photoPath = preg_replace('#^storage_public/#', '', $photoPath) ?? $photoPath;
         $photoPath = preg_replace('#^storage/#', '', $photoPath) ?? $photoPath;
 
-        return asset('storage_public/' . $photoPath);
+        return PublicStorageUrl::storageUrl($photoPath) ?? asset('storage/' . $photoPath);
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+$appUrl = trim((string) env('APP_URL', 'http://localhost'), " \t\n\r\0\x0B`'\"");
+$appUrl = rtrim($appUrl, '/');
+
 return [
 
     /*
@@ -39,7 +42,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => $appUrl . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -49,7 +52,7 @@ return [
         'public_web' => [
             'driver' => 'local',
             'root' => env('STORAGE_PUBLIC_PATH', storage_path('app/public')),
-            'url' => env('APP_URL').'/storage',
+            'url' => $appUrl . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
