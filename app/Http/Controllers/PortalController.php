@@ -209,6 +209,18 @@ class PortalController extends Controller
             ->with('success', 'Foto profil berhasil diperbarui.');
     }
 
+    public function deleteStudentPhoto(): RedirectResponse
+    {
+        $student = $this->currentStudent();
+        $this->removeProfilePhoto($student->photo_path);
+
+        $student->update(['photo_path' => null]);
+        Auth::user()?->forceFill(['photo' => null])->save();
+
+        return redirect()->route('portal.student.profile')
+            ->with('success', 'Foto profil berhasil dihapus.');
+    }
+
     public function updateStudentPassword(Request $request): RedirectResponse
     {
         $student = $this->currentStudent();
@@ -261,6 +273,18 @@ class PortalController extends Controller
 
         return redirect()->route('portal.teacher.profile')
             ->with('success', 'Foto profil berhasil diperbarui.');
+    }
+
+    public function deleteTeacherPhoto(): RedirectResponse
+    {
+        $teacher = $this->currentTeacher();
+        $this->removeProfilePhoto($teacher->photo_path);
+
+        $teacher->update(['photo_path' => null]);
+        Auth::user()?->forceFill(['photo' => null])->save();
+
+        return redirect()->route('portal.teacher.profile')
+            ->with('success', 'Foto profil berhasil dihapus.');
     }
 
     public function updateTeacherPassword(Request $request): RedirectResponse
@@ -544,5 +568,14 @@ class PortalController extends Controller
     private function storageDisk(): string
     {
         return env('STORAGE_PUBLIC_PATH') ? 'public_web' : 'public';
+    }
+
+    private function removeProfilePhoto(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        Storage::disk($this->storageDisk())->delete($path);
     }
 }

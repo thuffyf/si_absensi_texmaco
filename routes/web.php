@@ -203,6 +203,7 @@ Route::prefix('app')->name('portal.')->group(function () {
             Route::post('/izin-sakit', [PortalController::class, 'storeStudentLeave'])->name('leave.store');
             Route::get('/profil', [PortalController::class, 'studentProfile'])->name('profile');
             Route::post('/profil/foto', [PortalController::class, 'updateStudentPhoto'])->name('profile.photo');
+            Route::post('/profil/foto/hapus', [PortalController::class, 'deleteStudentPhoto'])->name('profile.photo.delete');
             Route::post('/profil/password', [PortalController::class, 'updateStudentPassword'])->name('profile.password');
         });
 
@@ -211,6 +212,7 @@ Route::prefix('app')->name('portal.')->group(function () {
             Route::post('/absensi', [PortalController::class, 'updateTeacherAttendance'])->name('attendance.update');
             Route::get('/profil', [PortalController::class, 'teacherProfile'])->name('profile');
             Route::post('/profil/foto', [PortalController::class, 'updateTeacherPhoto'])->name('profile.photo');
+            Route::post('/profil/foto/hapus', [PortalController::class, 'deleteTeacherPhoto'])->name('profile.photo.delete');
             Route::post('/profil/password', [PortalController::class, 'updateTeacherPassword'])->name('profile.password');
         });
     });

@@ -67,6 +67,12 @@
         <input id="photo-input" name="photo" type="file" accept=".jpg,.jpeg,.png,.webp" class="sr-only" />
     </form>
 
+    @if($photoUrl)
+        <form id="photo-delete-form" action="{{ route('portal.teacher.profile.photo.delete') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+    @endif
+
     {{-- Preview bar --}}
     <div id="photo-preview-bar" class="hidden mt-4 flex items-center gap-3 rounded-2xl bg-emerald-50 px-4 py-3 shadow-sm">
         <svg class="h-5 w-5 shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,6 +86,25 @@
             Batal
         </button>
     </div>
+
+    @if($photoUrl)
+        <div class="mt-4 rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
+            <div class="flex items-start gap-3">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-slate-900">Hapus Foto Profil</p>
+                    <p class="mt-1 text-xs text-slate-500">Avatar akan kembali ke inisial nama dan foto di header juga ikut terhapus.</p>
+                </div>
+                <button type="button" id="photo-delete-btn" class="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 active:scale-95">
+                    Hapus
+                </button>
+            </div>
+        </div>
+    @endif
 
     {{-- ===== Data Pribadi ===== --}}
     <div class="mt-4 space-y-2">
@@ -196,6 +221,8 @@
     const previewInit = document.getElementById('avatar-preview-initial');
     const saveBtn     = document.getElementById('photo-save-btn');
     const cancelBtn   = document.getElementById('photo-cancel-btn');
+    const deleteBtn   = document.getElementById('photo-delete-btn');
+    const deleteForm  = document.getElementById('photo-delete-form');
     let originalSrc   = previewImg ? previewImg.src : '';
 
     photoInput?.addEventListener('change', function () {
@@ -231,6 +258,12 @@
             }
         }
         previewBar?.classList.add('hidden');
+    });
+
+    deleteBtn?.addEventListener('click', function () {
+        if (confirm('Hapus foto profil sekarang?')) {
+            deleteForm?.submit();
+        }
     });
 
     /* ---- Toggle show/hide password ---- */
