@@ -148,7 +148,11 @@
                                 aria-expanded="false"
                                 aria-label="Buka menu profil"
                             >
-                                {{ strtoupper(substr(trim(auth()->user()->name ?: 'P'), 0, 1)) }}
+                                @if(auth()->user()?->photo)
+                                    <img src="{{ auth()->user()->photo_url }}" alt="{{ auth()->user()->name ?? 'Pengguna' }}" class="h-full w-full object-cover" />
+                                @else
+                                    <img src="{{ auth()->user()->photo_url }}" alt="{{ auth()->user()->name ?? 'Pengguna' }}" class="h-full w-full object-cover" />
+                                @endif
                             </button>
                             <div id="portal-profile-menu" class="profile-menu hidden" role="menu" aria-hidden="true" style="right:0;left:auto;min-width:10rem;">
                                 @if(auth()->user()->role === 'siswa')

@@ -48,20 +48,35 @@ class User extends Authenticatable
 
     public function getPhotoUrlAttribute(): string
     {
-        if (empty($this->photo)) {
+        $photo = $this->photo ?: $this->linkedProfilePhotoPath();
+
+        if (empty($photo)) {
             $name = urlencode((string) $this->name);
 
             return 'https://ui-avatars.com/api/?name=' . $name . '&background=eff6ff&color=0284c7';
         }
 
-        if (filter_var($this->photo, FILTER_VALIDATE_URL)) {
-            return $this->photo;
+        if (filter_var($photo, FILTER_VALIDATE_URL)) {
+            return $photo;
         }
 
-        $photoPath = ltrim($this->photo, '/');
+        $photoPath = ltrim($photo, '/');
         $photoPath = preg_replace('#^storage_public/#', '', $photoPath) ?? $photoPath;
         $photoPath = preg_replace('#^storage/#', '', $photoPath) ?? $photoPath;
 
         return PublicStorageUrl::storageUrl($photoPath) ?? asset('storage/' . $photoPath);
+    }
+
+    private function linkedProfilePhotoPath(): ?string
+    {
+        if (empty($this->email)) {
+            return null;
+        }
+
+        return match ($this->role) {
+            'siswa' => Student::query()->where('email', $this->email)->value('photo_path'),
+            'guru' => Teacher::query()->where('email', $this->email)->value('photo_path'),
+            default => null,
+        };
     }
 }

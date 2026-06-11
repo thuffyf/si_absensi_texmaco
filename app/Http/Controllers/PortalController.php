@@ -203,6 +203,7 @@ class PortalController extends Controller
 
         $path = $request->file('photo')->store('profile-photos/students', $disk);
         $student->update(['photo_path' => $path]);
+        Auth::user()?->forceFill(['photo' => $path])->save();
 
         return redirect()->route('portal.student.profile')
             ->with('success', 'Foto profil berhasil diperbarui.');
@@ -256,6 +257,7 @@ class PortalController extends Controller
 
         $path = $request->file('photo')->store('profile-photos/teachers', $disk);
         $teacher->update(['photo_path' => $path]);
+        Auth::user()?->forceFill(['photo' => $path])->save();
 
         return redirect()->route('portal.teacher.profile')
             ->with('success', 'Foto profil berhasil diperbarui.');
