@@ -12,7 +12,7 @@ class PublicStorageUrl
             return null;
         }
 
-        return self::appBaseUrl() . '/storage/' . $normalizedPath;
+        return self::appBaseUrl() . '/' . self::publicDirectory() . '/' . $normalizedPath;
     }
 
     public static function normalizePath(?string $path): ?string
@@ -42,5 +42,20 @@ class PublicStorageUrl
         $configuredUrl = trim((string) $configuredUrl, " \t\n\r\0\x0B`'\"");
 
         return rtrim($configuredUrl, '/');
+    }
+
+    public static function publicDirectory(): string
+    {
+        $storagePublicPath = env('STORAGE_PUBLIC_PATH');
+
+        if (! $storagePublicPath) {
+            return 'storage';
+        }
+
+        $normalizedStoragePath = str_replace('\\', '/', trim((string) $storagePublicPath));
+        $normalizedStoragePath = rtrim($normalizedStoragePath, '/');
+        $directoryName = basename($normalizedStoragePath);
+
+        return $directoryName !== '' ? $directoryName : 'storage';
     }
 }

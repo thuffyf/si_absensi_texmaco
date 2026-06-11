@@ -1,7 +1,10 @@
 <?php
 
+use App\Support\PublicStorageUrl;
+
 $appUrl = trim((string) env('APP_URL', 'http://localhost'), " \t\n\r\0\x0B`'\"");
 $appUrl = rtrim($appUrl, '/');
+$publicStorageUrl = $appUrl . '/' . PublicStorageUrl::publicDirectory();
 
 return [
 
@@ -53,7 +56,7 @@ return [
         'public_web' => [
             'driver' => 'local',
             'root' => env('STORAGE_PUBLIC_PATH', storage_path('app/public')),
-            'url' => $appUrl . '/storage',
+            'url' => $publicStorageUrl,
             'visibility' => 'public',
             'throw' => false,
         ],
