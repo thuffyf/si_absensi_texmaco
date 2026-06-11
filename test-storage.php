@@ -9,10 +9,10 @@ $app = require_once __DIR__ . '/bootstrap/app.php';
 
 echo "STORAGE_PUBLIC_PATH dari env: " . env('STORAGE_PUBLIC_PATH', 'tidak diset') . "\n";
 
-// Test apakah folder storage_public ada
-$storagePath = '/home/sitexamy/storage_public';
-echo "Path storage_public exist: " . (is_dir($storagePath) ? 'YES' : 'NO') . "\n";
-echo "Path storage_public writable: " . (is_writable($storagePath) ? 'YES' : 'NO') . "\n";
+// Test path target upload yang aktif
+$storagePath = env('STORAGE_PUBLIC_PATH', storage_path('app/public'));
+echo "Path target exist: " . (is_dir($storagePath) ? 'YES' : 'NO') . "\n";
+echo "Path target writable: " . (is_writable($storagePath) ? 'YES' : 'NO') . "\n";
 
 // Test disk config
 $disk = env('STORAGE_PUBLIC_PATH') ? 'public_web' : 'public';

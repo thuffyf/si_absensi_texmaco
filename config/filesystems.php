@@ -47,8 +47,9 @@ return [
             'throw' => false,
         ],
 
-        // Disk untuk hosting cPanel dimana symlink storage → ../storage_public
-        // Menyimpan file langsung ke folder storage_public di root hosting
+        // Disk untuk hosting cPanel/shared hosting yang perlu menyimpan file
+        // langsung ke folder public storage yang bisa diakses via /storage
+        // Contoh: /home/username/public_html/storage
         'public_web' => [
             'driver' => 'local',
             'root' => env('STORAGE_PUBLIC_PATH', storage_path('app/public')),
