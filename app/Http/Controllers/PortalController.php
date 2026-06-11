@@ -209,13 +209,17 @@ class PortalController extends Controller
             ->with('success', 'Foto profil berhasil diperbarui.');
     }
 
-    public function deleteStudentPhoto(): RedirectResponse
+    public function deleteStudentPhoto()
     {
         $student = $this->currentStudent();
         $this->removeProfilePhoto($student->photo_path);
 
         $student->update(['photo_path' => null]);
         Auth::user()?->forceFill(['photo' => null])->save();
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->route('portal.student.profile')
             ->with('success', 'Foto profil berhasil dihapus.');
@@ -275,13 +279,17 @@ class PortalController extends Controller
             ->with('success', 'Foto profil berhasil diperbarui.');
     }
 
-    public function deleteTeacherPhoto(): RedirectResponse
+    public function deleteTeacherPhoto()
     {
         $teacher = $this->currentTeacher();
         $this->removeProfilePhoto($teacher->photo_path);
 
         $teacher->update(['photo_path' => null]);
         Auth::user()?->forceFill(['photo' => null])->save();
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->route('portal.teacher.profile')
             ->with('success', 'Foto profil berhasil dihapus.');

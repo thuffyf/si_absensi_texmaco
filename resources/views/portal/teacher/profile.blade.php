@@ -21,25 +21,35 @@
         <div class="relative flex flex-col items-center text-center">
             {{-- Avatar dengan tombol ganti foto --}}
             <div class="relative">
-                <label for="photo-input" class="group block cursor-pointer">
-                    @if($photoUrl)
-                        <img id="avatar-preview" src="{{ $photoUrl }}" alt="{{ $teacher->name }}"
-                            class="h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/30" />
-                    @else
-                        <div id="avatar-preview-initial" class="flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-3xl font-bold shadow-lg backdrop-blur ring-4 ring-white/20">
-                            {{ $initial }}
-                        </div>
-                        <img id="avatar-preview" src="" alt="" class="hidden h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/30" />
-                    @endif
-                    <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition group-hover:bg-black/40">
-                        <svg class="h-7 w-7 text-white opacity-0 transition group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
+                @if($photoUrl)
+                    <img id="avatar-preview" src="{{ $photoUrl }}" alt="{{ $teacher->name }}"
+                        class="h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/30" />
+                    <div id="avatar-preview-initial" class="hidden flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-3xl font-bold shadow-lg backdrop-blur ring-4 ring-white/20">
+                        {{ $initial }}
                     </div>
-                </label>
+                @else
+                    <div id="avatar-preview-initial" class="flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-3xl font-bold shadow-lg backdrop-blur ring-4 ring-white/20">
+                        {{ $initial }}
+                    </div>
+                    <img id="avatar-preview" src="" alt="" class="hidden h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/30" />
+                @endif
 
-                <span class="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 shadow-lg ring-4 ring-emerald-600">
+                <div class="absolute bottom-0 right-0 flex gap-2">
+                    <button type="button" id="change-photo-btn" class="rounded-full bg-emerald-500 p-2 text-white shadow-sm transition hover:bg-emerald-600" title="Ubah Foto">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </button>
+                    @if($photoUrl)
+                        <button type="button" id="delete-photo-btn" class="rounded-full bg-rose-500 p-2 text-white shadow-sm transition hover:bg-rose-600" title="Hapus Foto">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    @endif
+                </div>
+
+                <span class="absolute bottom-0 left-0 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 shadow-lg ring-4 ring-emerald-600">
                     <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                     </svg>
@@ -67,12 +77,6 @@
         <input id="photo-input" name="photo" type="file" accept=".jpg,.jpeg,.png,.webp" class="sr-only" />
     </form>
 
-    @if($photoUrl)
-        <form id="photo-delete-form" action="{{ route('portal.teacher.profile.photo.delete') }}" method="POST" class="hidden">
-            @csrf
-        </form>
-    @endif
-
     {{-- Preview bar --}}
     <div id="photo-preview-bar" class="hidden mt-4 flex items-center gap-3 rounded-2xl bg-emerald-50 px-4 py-3 shadow-sm">
         <svg class="h-5 w-5 shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,25 +90,6 @@
             Batal
         </button>
     </div>
-
-    @if($photoUrl)
-        <div class="mt-4 rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
-            <div class="flex items-start gap-3">
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                </span>
-                <div class="min-w-0 flex-1">
-                    <p class="text-sm font-semibold text-slate-900">Hapus Foto Profil</p>
-                    <p class="mt-1 text-xs text-slate-500">Avatar akan kembali ke inisial nama dan foto di header juga ikut terhapus.</p>
-                </div>
-                <button type="button" id="photo-delete-btn" class="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 active:scale-95">
-                    Hapus
-                </button>
-            </div>
-        </div>
-    @endif
 
     {{-- ===== Data Pribadi ===== --}}
     <div class="mt-4 space-y-2">
@@ -219,11 +204,15 @@
     const previewBar  = document.getElementById('photo-preview-bar');
     const previewImg  = document.getElementById('avatar-preview');
     const previewInit = document.getElementById('avatar-preview-initial');
+    const changeBtn   = document.getElementById('change-photo-btn');
     const saveBtn     = document.getElementById('photo-save-btn');
     const cancelBtn   = document.getElementById('photo-cancel-btn');
     const deleteBtn   = document.getElementById('photo-delete-btn');
-    const deleteForm  = document.getElementById('photo-delete-form');
     let originalSrc   = previewImg ? previewImg.src : '';
+
+    changeBtn?.addEventListener('click', function () {
+        photoInput?.click();
+    });
 
     photoInput?.addEventListener('change', function () {
         const file = photoInput.files?.[0];
@@ -262,7 +251,33 @@
 
     deleteBtn?.addEventListener('click', function () {
         if (confirm('Hapus foto profil sekarang?')) {
-            deleteForm?.submit();
+            fetch('{{ route('portal.teacher.profile.photo.delete') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async function (response) {
+                if (!response.ok) {
+                    throw new Error('Request gagal');
+                }
+
+                return await response.json();
+            })
+            .then(function (data) {
+                if (data && data.success) {
+                    window.location.reload();
+                    return;
+                }
+
+                alert('Gagal menghapus foto profil.');
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menghapus foto.');
+            });
         }
     });
 
