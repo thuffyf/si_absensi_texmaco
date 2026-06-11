@@ -19,42 +19,54 @@
         <div class="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white/5"></div>
         
         <div class="relative flex flex-col items-center text-center">
-            {{-- Avatar dengan tombol ganti foto --}}
             <div class="relative">
                 @if($photoUrl)
                     <img id="avatar-preview" src="{{ $photoUrl }}" alt="{{ $teacher->name }}"
-                        class="h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/30" />
-                    <div id="avatar-preview-initial" class="hidden flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-3xl font-bold shadow-lg backdrop-blur ring-4 ring-white/20">
+                        class="h-28 w-28 rounded-full object-cover shadow-xl ring-4 ring-white/40" />
+                    <div id="avatar-preview-initial" class="hidden h-28 w-28 items-center justify-center rounded-full bg-white/20 text-4xl font-bold shadow-xl backdrop-blur ring-4 ring-white/30">
                         {{ $initial }}
                     </div>
                 @else
-                    <div id="avatar-preview-initial" class="flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-3xl font-bold shadow-lg backdrop-blur ring-4 ring-white/20">
+                    <div id="avatar-preview-initial" class="flex h-28 w-28 items-center justify-center rounded-full bg-white/20 text-4xl font-bold shadow-xl backdrop-blur ring-4 ring-white/30">
                         {{ $initial }}
                     </div>
-                    <img id="avatar-preview" src="" alt="" class="hidden h-24 w-24 rounded-full object-cover shadow-lg ring-4 ring-white/30" />
+                    <img id="avatar-preview" src="" alt="" class="hidden h-28 w-28 rounded-full object-cover shadow-xl ring-4 ring-white/40" />
                 @endif
 
-                <div class="absolute bottom-0 right-0 flex gap-2">
-                    <button type="button" id="change-photo-btn" class="rounded-full bg-emerald-500 p-2 text-white shadow-sm transition hover:bg-emerald-600" title="Ubah Foto">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                <button type="button" id="change-photo-btn" class="group absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/0 transition hover:bg-slate-900/30 focus:outline-none focus:ring-2 focus:ring-white/60" title="Ubah Foto">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 opacity-0 backdrop-blur transition group-hover:opacity-100 group-focus-visible:opacity-100">
+                        <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                    </button>
-                    @if($photoUrl)
-                        <button type="button" id="delete-photo-btn" class="rounded-full bg-rose-500 p-2 text-white shadow-sm transition hover:bg-rose-600" title="Hapus Foto">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                        </button>
-                    @endif
-                </div>
+                    </span>
+                </button>
 
-                <span class="absolute bottom-0 left-0 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 shadow-lg ring-4 ring-emerald-600">
+                <span class="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-400 shadow-lg ring-4 ring-emerald-600">
                     <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                     </svg>
                 </span>
             </div>
+
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+                <button type="button" id="change-photo-action" class="inline-flex items-center gap-2 rounded-full bg-white/18 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/25">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Ubah Foto
+                </button>
+                @if($photoUrl)
+                    <button type="button" id="delete-photo-btn" class="inline-flex items-center gap-2 rounded-full bg-rose-500/90 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        Hapus Foto
+                    </button>
+                @endif
+            </div>
+
+            <p class="mt-2 text-xs text-emerald-100/90">Ketuk avatar atau tombol di bawah untuk mengganti foto profil.</p>
 
             <h2 class="mt-4 text-xl font-bold">{{ $teacher->name }}</h2>
             @if($teacher->nip)
@@ -205,12 +217,17 @@
     const previewImg  = document.getElementById('avatar-preview');
     const previewInit = document.getElementById('avatar-preview-initial');
     const changeBtn   = document.getElementById('change-photo-btn');
+    const changeAction = document.getElementById('change-photo-action');
     const saveBtn     = document.getElementById('photo-save-btn');
     const cancelBtn   = document.getElementById('photo-cancel-btn');
     const deleteBtn   = document.getElementById('photo-delete-btn');
     let originalSrc   = previewImg ? previewImg.src : '';
 
     changeBtn?.addEventListener('click', function () {
+        photoInput?.click();
+    });
+
+    changeAction?.addEventListener('click', function () {
         photoInput?.click();
     });
 
