@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Login - Sistem Absensi NFC Texmaco</title>
     @include('partials.favicon')
     @vite(['resources/css/app.css'])
@@ -24,12 +27,24 @@
                         <img src="{{ asset('images/Texmaco Teks.jpeg') }}" alt="TEXMACO" class="mx-auto h-20 object-contain" />
                     </div>
 
-                    <form action="{{ route('login.submit') }}" method="POST" class="space-y-5">
+                    <form action="{{ route('login.submit') }}" method="POST" class="space-y-5" id="loginForm">
                         @csrf
 
                         @if ($errors->has('login'))
                             <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                                 {{ $errors->first('login') }}
+                            </div>
+                        @endif
+
+                        @if ($errors->has('captcha'))
+                            <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                {{ $errors->first('captcha') }}
+                            </div>
+                        @endif
+
+                        @if (session('error'))
+                            <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                {{ session('error') }}
                             </div>
                         @endif
 
@@ -83,6 +98,14 @@
     @endunless
 
     <script>
+        // Saat halaman login dibuka dari browser back-forward cache setelah logout,
+        // reload supaya hidden CSRF token mengikuti session terbaru.
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -113,6 +136,50 @@
         });
 
         updatePasswordToggle();
+
+        // Auto-refresh CSRF token untuk mencegah error 419
+        // Refresh token setiap 30 menit (setengah dari session lifetime 2 jam)
+        setInterval(function() {
+            fetch('{{ route("login") }}', {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newToken = doc.querySelector('input[name="_token"]');
+                
+                if (newToken) {
+                    const currentToken = document.querySelector('input[name="_token"]');
+                    if (currentToken) {
+                        currentToken.value = newToken.value;
+                        console.log('CSRF token refreshed');
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Failed to refresh CSRF token:', err);
+            });
+        }, 30 * 60 * 1000); // 30 menit
+
+        // Handle form submit untuk menangkap error 419
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', function(e) {
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                
+                // Re-enable setelah 10 detik (fallback jika submit gagal)
+                setTimeout(function() {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'MASUK';
+                }, 10000);
+            }
+        });
     </script>
 </body>
 </html>

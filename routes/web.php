@@ -47,12 +47,19 @@ Route::get('/login', function (Request $request) {
         });
     }
 
+    // Pastikan halaman login selalu memakai CSRF token terbaru dan tidak dilayani
+    // dari cache browser setelah logout / pindah akun.
+    $request->session()->regenerateToken();
     $recaptchaBypass = RecaptchaBypass::enabled($request);
 
-    return view('auth.login', [
-        'recaptchaSiteKey' => $recaptchaBypass ? null : config('services.recaptcha.site_key'),
-        'recaptchaBypass' => $recaptchaBypass,
-    ]);
+    return response()
+        ->view('auth.login', [
+            'recaptchaSiteKey' => $recaptchaBypass ? null : config('services.recaptcha.site_key'),
+            'recaptchaBypass' => $recaptchaBypass,
+        ])
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
 })->name('login');
 
 Route::post('/login', function (Request $request) {
