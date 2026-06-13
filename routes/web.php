@@ -72,6 +72,7 @@ Route::post('/login', function (Request $request) {
     ], [
         'username.required' => 'Email atau NIP wajib diisi.',
         'password.required' => 'Password wajib diisi.',
+        'g-recaptcha-response.required' => 'Silakan verifikasi captcha terlebih dahulu.',
     ]);
 
     if (! $recaptchaBypass) {

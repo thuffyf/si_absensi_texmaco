@@ -36,9 +36,13 @@
                             </div>
                         @endif
 
-                        @if ($errors->has('captcha'))
+                        @php
+                            $captchaError = $errors->first('captcha') ?: $errors->first('g-recaptcha-response');
+                        @endphp
+
+                        @if ($captchaError)
                             <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                {{ $errors->first('captcha') }}
+                                {{ $captchaError }}
                             </div>
                         @endif
 
@@ -66,9 +70,9 @@
                             </div>
                         </div>
 
-                        @if ($errors->has('captcha'))
+                        @if ($captchaError)
                             <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                {{ $errors->first('captcha') }}
+                                {{ $captchaError }}
                             </div>
                         @endif
 

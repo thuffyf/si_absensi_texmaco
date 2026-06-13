@@ -1,0 +1,15 @@
+HTTP/1.1 302 Found
+Date: Sat, 13 Jun 2026 06:13:38 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: sitexa_session=eyJpdiI6Ijk5bEthdjZiUjNMTXg4WSsyNWR6YlE9PSIsInZhbHVlIjoiM3R6MjEzZ1V6dTZPSFErR004WG85bW54RzV6eWQwV2RyUVMxR0srZSszNkVrcnI1OVIxSmVyNFJRNFZBNUdqWm8ydzlUMUNmVThFQytjQUFNVitjaVRMUHJJYkZ2Q1dCK243LzBHeUZRNTBXOU5MYkZWTHdlM2ZxNVVidVZnQWsiLCJtYWMiOiJiZTU1NmQ2MjY3ZjNhMTIzYmUxOTM1NTA3NmZkNjQ1NTg1MjcwODI3Y2ZlZGU2YTRkMTgxZGQ4YWFiYzMzY2ZhIiwidGFnIjoiIn0%3D; expires=Sat, 13 Jun 2026 08:13:38 GMT; Max-Age=7200; path=/; domain=sitexa.my.id; secure; httponly; samesite=lax
+Location: https://sitexa.my.id/login
+Early-Data: 1
+Server: DomaiNesia
+X-Mod-Pagespeed: DN-PageSpeed
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Cache-Zone: dynamic
+Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+alt-svc: h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400, h3=":443"; ma=86400
+
