@@ -82,11 +82,22 @@ Route::post('/login', function (Request $request) {
                 ->withInput($request->only('username'));
         }
 
-        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => $recaptchaSecret,
-            'response' => $request->input('g-recaptcha-response'),
-            'remoteip' => $request->ip(),
-        ]);
+        try {
+            $recaptcha = Http::asForm()
+                ->connectTimeout(5)
+                ->timeout(10)
+                ->post('https://www.google.com/recaptcha/api/siteverify', [
+                    'secret' => $recaptchaSecret,
+                    'response' => $request->input('g-recaptcha-response'),
+                    'remoteip' => $request->ip(),
+                ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()
+                ->withErrors(['captcha' => 'Layanan captcha sedang tidak dapat dihubungi. Silakan coba lagi atau gunakan host lokal Laragon.'])
+                ->withInput($request->only('username'));
+        }
 
         if (! $recaptcha->ok() || ! ($recaptcha->json('success') === true)) {
             return back()
