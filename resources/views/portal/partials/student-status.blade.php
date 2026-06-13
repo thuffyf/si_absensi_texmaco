@@ -77,10 +77,7 @@
     if (! function_exists('portalStorageUrl')) {
         /**
          * Menghasilkan URL yang benar untuk file di storage.
-         * Mendukung shared hosting yang menyimpan file langsung ke folder
-         * storage publik yang bisa diakses dari URL /storage.
-         * Set STORAGE_PUBLIC_PATH di .env ke path absolut folder tersebut.
-         * Contoh: /home/username/public_html/storage
+         * Mendukung cPanel hosting dengan folder storage_public di public_html.
          */
         function portalStorageUrl(?string $path): ?string
         {

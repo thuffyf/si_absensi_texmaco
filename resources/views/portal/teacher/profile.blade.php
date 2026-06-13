@@ -22,7 +22,9 @@
             <div class="relative">
                 @if($photoUrl)
                     <img id="avatar-preview" src="{{ $photoUrl }}" alt="{{ $teacher->name }}"
-                        class="h-28 w-28 rounded-full object-cover shadow-xl ring-4 ring-white/40" />
+                        class="h-28 w-28 rounded-full object-cover object-center shadow-xl ring-4 ring-white/40"
+                        style="min-width: 7rem; min-height: 7rem; max-width: 7rem; max-height: 7rem;"
+                        onerror="console.error('Failed to load photo:', this.src); this.style.display='none'; document.getElementById('avatar-preview-initial')?.classList.remove('hidden');" />
                     <div id="avatar-preview-initial" class="hidden h-28 w-28 items-center justify-center rounded-full bg-white/20 text-4xl font-bold shadow-xl backdrop-blur ring-4 ring-white/30">
                         {{ $initial }}
                     </div>
@@ -30,7 +32,8 @@
                     <div id="avatar-preview-initial" class="flex h-28 w-28 items-center justify-center rounded-full bg-white/20 text-4xl font-bold shadow-xl backdrop-blur ring-4 ring-white/30">
                         {{ $initial }}
                     </div>
-                    <img id="avatar-preview" src="" alt="" class="hidden h-28 w-28 rounded-full object-cover shadow-xl ring-4 ring-white/40" />
+                    <img id="avatar-preview" src="" alt="" class="hidden h-28 w-28 rounded-full object-cover object-center shadow-xl ring-4 ring-white/40"
+                        style="min-width: 7rem; min-height: 7rem; max-width: 7rem; max-height: 7rem;" />
                 @endif
 
                 <button type="button" id="change-photo-btn" class="group absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/0 transition hover:bg-slate-900/30 focus:outline-none focus:ring-2 focus:ring-white/60" title="Ubah Foto">

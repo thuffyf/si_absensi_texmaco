@@ -570,8 +570,7 @@ class PortalController extends Controller
     /**
      * Pilih disk storage yang tepat.
      * Jika STORAGE_PUBLIC_PATH diset di .env, pakai disk 'public_web'
-     * (yang menyimpan langsung ke path tersebut — cocok untuk cPanel shared hosting).
-     * Jika tidak, pakai disk 'public' standar Laravel.
+     * yang akan menyimpan langsung ke path tersebut.
      */
     private function storageDisk(): string
     {
