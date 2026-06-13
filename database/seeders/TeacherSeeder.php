@@ -3,19 +3,38 @@
 namespace Database\Seeders;
 
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class TeacherSeeder extends Seeder
 {
     public function run(): void
     {
+        $normalizeWhitespace = function (?string $value): ?string {
+            if ($value === null) {
+                return null;
+            }
+
+            $value = preg_replace('/\s+/', ' ', trim($value));
+
+            return $value === '' ? null : $value;
+        };
+
+        $normalizeNip = function (?string $nip) use ($normalizeWhitespace): ?string {
+            $nip = $normalizeWhitespace($nip);
+
+            return $nip ? strtoupper($nip) : null;
+        };
+
         $parseTanggalLahir = function (?string $ttl): ?string {
             if (empty($ttl)) {
                 return null;
             }
 
-            $ttl = trim($ttl);
+            $ttl = preg_replace('/\s*,\s*/', ', ', trim($ttl));
+            $ttl = preg_replace('/\s+/', ' ', $ttl);
 
             $bulanMap = [
                 'JANUARI' => '01',
@@ -318,7 +337,10 @@ class TeacherSeeder extends Seeder
         ];
 
         foreach ($teachers as $teacher) {
-            $teacher['nip'] = trim((string) $teacher['nip']);
+            $teacher['nip'] = $normalizeNip($teacher['nip'] ?? null);
+            $teacher['name'] = $normalizeWhitespace($teacher['name'] ?? null);
+            $teacher['subject'] = $normalizeWhitespace($teacher['subject'] ?? null);
+            $teacher['role'] = $normalizeWhitespace($teacher['role'] ?? null);
             $teacher['date_of_birth'] = $parseTanggalLahir($teacher['ttl'] ?? null);
             unset($teacher['ttl']);
 
@@ -336,10 +358,26 @@ class TeacherSeeder extends Seeder
             $teacher['phone'] = $teacher['phone'] ?? null;
             $teacher['status'] = $teacher['status'] ?? 'aktif';
 
-            Teacher::updateOrCreate(
+            $teacherModel = Teacher::updateOrCreate(
                 ['nip' => $teacher['nip']],
                 $teacher
             );
+
+            if (! empty($teacherModel->email)) {
+                $existingUser = User::query()->where('email', $teacherModel->email)->first();
+
+                // Jangan menimpa akun admin/TU jika ada email yang sama.
+                if (! $existingUser || ! in_array($existingUser->role, ['admin', 'tata_usaha'], true)) {
+                    User::updateOrCreate(
+                        ['email' => $teacherModel->email],
+                        [
+                            'name' => $teacherModel->name,
+                            'role' => 'guru',
+                            'password' => $teacherModel->date_of_birth?->toDateString() ?? Str::random(40),
+                        ]
+                    );
+                }
+            }
         }
     }
 }
