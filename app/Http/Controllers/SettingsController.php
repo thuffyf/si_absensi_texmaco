@@ -341,4 +341,49 @@ class SettingsController extends Controller
 
         return in_array($value, $allowed, true) ? $value : $default;
     }
+
+    /**
+     * Normalisasi nama kelas di tabel students dan schedules
+     * agar konsisten (X TEI, XI TEI, XII TEI)
+     */
+    public function normalizeClassNames(Request $request)
+    {
+        $totalUpdated = 0;
+
+        foreach (['students', 'schedules'] as $table) {
+            if (!Schema::hasTable($table) || !Schema::hasColumn($table, 'class_name')) {
+                continue;
+            }
+
+            // XII dulu (agar tidak tertangkap sebagai XI)
+            $count = DB::table($table)
+                ->where('class_name', 'like', 'XII%')
+                ->where('class_name', '!=', 'XII TEI')
+                ->update(['class_name' => 'XII TEI']);
+            $totalUpdated += $count;
+
+            // XI
+            $count = DB::table($table)
+                ->where('class_name', 'like', 'XI%')
+                ->where('class_name', 'not like', 'XII%')
+                ->where('class_name', '!=', 'XI TEI')
+                ->update(['class_name' => 'XI TEI']);
+            $totalUpdated += $count;
+
+            // X
+            $count = DB::table($table)
+                ->where('class_name', 'like', 'X%')
+                ->where('class_name', 'not like', 'XI%')
+                ->where('class_name', 'not like', 'XII%')
+                ->where('class_name', '!=', 'X TEI')
+                ->update(['class_name' => 'X TEI']);
+            $totalUpdated += $count;
+        }
+
+        if ($totalUpdated > 0) {
+            return back()->with('success', "Berhasil menormalisasi {$totalUpdated} nama kelas menjadi format standar (X TEI, XI TEI, XII TEI).");
+        }
+
+        return back()->with('info', 'Semua nama kelas sudah dalam format standar.');
+    }
 }

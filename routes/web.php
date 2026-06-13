@@ -432,6 +432,7 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
         ->name('settings.reset-defaults');
     Route::post('/settings/export', [SettingsController::class, 'export'])->name('settings.export');
     Route::post('/settings/cleanup', [SettingsController::class, 'cleanup'])->name('settings.cleanup');
+    Route::post('/settings/normalize-classes', [SettingsController::class, 'normalizeClassNames'])->name('settings.normalize-classes');
     Route::post('/settings/reset-data', [SettingsController::class, 'resetData'])->name('settings.reset-data');
     Route::post('/settings/import-students', [SettingsController::class, 'importStudents'])
         ->name('settings.import-students');

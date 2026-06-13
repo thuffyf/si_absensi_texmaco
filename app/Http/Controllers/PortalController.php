@@ -54,8 +54,16 @@ class PortalController extends Controller
             ->limit(3)
             ->get();
 
+        // Normalisasi nama kelas siswa untuk pencocokan
+        $normalizedClassName = $this->normalizeClassName($student->class_name);
+
         $todaySchedules = Schedule::query()
-            ->where('class_name', $student->class_name)
+            ->where(function ($query) use ($student, $normalizedClassName) {
+                $query->where('class_name', $student->class_name);
+                if ($normalizedClassName !== $student->class_name) {
+                    $query->orWhere('class_name', $normalizedClassName);
+                }
+            })
             ->where('day_of_week', $todayName)
             ->with('teacher')
             ->orderBy('start_time')
@@ -212,13 +220,17 @@ class PortalController extends Controller
     public function deleteStudentPhoto()
     {
         $student = $this->currentStudent();
-        $this->removeProfilePhoto($student->photo_path);
+        $disk = $this->storageDisk();
 
-        $student->update(['photo_path' => null]);
+        if ($student->photo_path) {
+            Storage::disk($disk)->delete($student->photo_path);
+            $student->update(['photo_path' => null]);
+        }
+
         Auth::user()?->forceFill(['photo' => null])->save();
 
         if (request()->expectsJson()) {
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, 'message' => 'Foto profil berhasil dihapus.']);
         }
 
         return redirect()->route('portal.student.profile')
@@ -245,6 +257,8 @@ class PortalController extends Controller
         return redirect()->route('portal.student.profile')
             ->with('success', 'Password berhasil diperbarui.');
     }
+
+
 
     public function teacherProfile(): View
     {
@@ -282,13 +296,17 @@ class PortalController extends Controller
     public function deleteTeacherPhoto()
     {
         $teacher = $this->currentTeacher();
-        $this->removeProfilePhoto($teacher->photo_path);
+        $disk = $this->storageDisk();
 
-        $teacher->update(['photo_path' => null]);
+        if ($teacher->photo_path) {
+            Storage::disk($disk)->delete($teacher->photo_path);
+            $teacher->update(['photo_path' => null]);
+        }
+
         Auth::user()?->forceFill(['photo' => null])->save();
 
         if (request()->expectsJson()) {
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, 'message' => 'Foto profil berhasil dihapus.']);
         }
 
         return redirect()->route('portal.teacher.profile')
@@ -313,12 +331,25 @@ class PortalController extends Controller
             ->with('success', 'Password berhasil diperbarui.');
     }
 
+
+
     public function studentSchedule(): View
     {
         $student = $this->currentStudent();
 
+        // Normalisasi nama kelas siswa untuk pencocokan
+        $normalizedClassName = $this->normalizeClassName($student->class_name);
+
         $schedules = Schedule::query()
-            ->where('class_name', $student->class_name)
+            ->where(function ($query) use ($student, $normalizedClassName) {
+                // Coba exact match dulu
+                $query->where('class_name', $student->class_name);
+                
+                // Jika class_name siswa berbeda dengan yang sudah dinormalisasi, coba juga yang dinormalisasi
+                if ($normalizedClassName !== $student->class_name) {
+                    $query->orWhere('class_name', $normalizedClassName);
+                }
+            })
             ->with('teacher')
             ->orderBy('day_of_week')
             ->orderBy('start_time')
@@ -556,6 +587,37 @@ class PortalController extends Controller
             6 => 'Sabtu',
             default => 'Minggu',
         };
+    }
+
+    /**
+     * Normalisasi nama kelas ke format standar (X TEI, XI TEI, XII TEI)
+     * Untuk mengatasi inkonsistensi penamaan antara data siswa dan jadwal.
+     * 
+     * Contoh:
+     * - "X" atau "X-TEI" atau "X IPA" → "X TEI"
+     * - "XI" atau "XI-TEI" → "XI TEI"
+     * - "XII" atau "XII-TEI" → "XII TEI"
+     */
+    private function normalizeClassName(string $className): string
+    {
+        $normalized = strtoupper(trim($className));
+        
+        // Cek tingkat kelas berdasarkan angka Romawi di awal
+        // Urutan penting: XII dulu, lalu XI, lalu X
+        if (preg_match('/^XII\b/i', $normalized)) {
+            return 'XII TEI';
+        }
+        
+        if (preg_match('/^XI\b/i', $normalized)) {
+            return 'XI TEI';
+        }
+        
+        if (preg_match('/^X\b/i', $normalized)) {
+            return 'X TEI';
+        }
+        
+        // Jika tidak cocok dengan pola di atas, kembalikan apa adanya
+        return $className;
     }
 
     private function portalRouteForRole(?string $role): string

@@ -283,7 +283,11 @@
                 <button type="submit" formaction="{{ route('settings.cleanup') }}" formmethod="POST" class="btn-secondary w-full text-left">
                     🗑️ Hapus Data Lama (> 1 tahun)
                 </button>
-                <div class="rounded-xl border border-red-200 p-4">
+                <button type="submit" formaction="{{ route('settings.normalize-classes') }}" formmethod="POST" class="btn-secondary w-full text-left" onclick="return confirm('Normalisasi semua nama kelas ke format standar (X TEI, XI TEI, XII TEI)?');">
+                    🔄 Normalisasi Nama Kelas
+                </button>
+                <p class="text-xs text-gray-400 mt-1 ml-1">Standardisasi nama kelas di tabel siswa dan jadwal agar konsisten</p>
+                <div class="rounded-xl border border-red-200 p-4 mt-4">
                     <label class="text-sm font-semibold text-red-600 mb-2 block">Konfirmasi Reset Data</label>
                     <input type="text" name="confirm_reset" class="input-field" placeholder="Ketik RESET" />
                     <button type="submit" formaction="{{ route('settings.reset-data') }}" formmethod="POST" class="btn-danger w-full text-left mt-3" onclick="return confirm('Reset data utama? Tindakan ini tidak bisa dibatalkan.');">
