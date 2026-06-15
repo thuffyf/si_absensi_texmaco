@@ -1,0 +1,12 @@
+# Enable PHP error logging untuk NFC API
+php_flag display_errors off
+php_flag log_errors on
+php_value error_log nfc_api_error.log
+
+# Allow access to this API
+<IfModule mod_rewrite.c>
+    RewriteEngine Off
+</IfModule>
+
+# Set correct content type
+AddType text/plain .php

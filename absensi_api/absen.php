@@ -1,15 +1,61 @@
 <?php
+// Enable error logging untuk debugging
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/nfc_api_error.log');
+
+// Catch all errors
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    error_log("NFC API Error [$errno]: $errstr in $errfile on line $errline");
+    echo "PHP_ERROR";
+    exit;
+});
+
 header('Content-Type: text/plain');
 
-// Koneksi database
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "si_absensi_texmaco";
+// Load database config dari Laravel .env
+// Coba baca dari parent directory (.env Laravel)
+$env_file = __DIR__ . '/../.env';
+$db_config = [
+    'host' => 'localhost',
+    'user' => 'root',
+    'pass' => '',
+    'name' => 'si_absensi_texmaco'
+];
 
-$conn = new mysqli($host, $user, $pass, $db);
+if (file_exists($env_file)) {
+    $env_content = file_get_contents($env_file);
+    $env_lines = explode("\n", $env_content);
+    
+    foreach ($env_lines as $line) {
+        $line = trim($line);
+        
+        if (empty($line) || strpos($line, '#') === 0) {
+            continue;
+        }
+        
+        if (strpos($line, 'DB_HOST=') === 0) {
+            $db_config['host'] = trim(str_replace('DB_HOST=', '', $line));
+        } elseif (strpos($line, 'DB_USERNAME=') === 0) {
+            $db_config['user'] = trim(str_replace('DB_USERNAME=', '', $line));
+        } elseif (strpos($line, 'DB_PASSWORD=') === 0) {
+            $db_config['pass'] = trim(str_replace('DB_PASSWORD=', '', $line));
+        } elseif (strpos($line, 'DB_DATABASE=') === 0) {
+            $db_config['name'] = trim(str_replace('DB_DATABASE=', '', $line));
+        }
+    }
+}
+
+// Koneksi database
+$conn = new mysqli(
+    $db_config['host'], 
+    $db_config['user'], 
+    $db_config['pass'], 
+    $db_config['name']
+);
 
 if ($conn->connect_error) {
+    // Log error untuk debugging
+    error_log("NFC API DB Connection Error: " . $conn->connect_error);
     echo "DB_ERROR";
     exit;
 }
@@ -86,6 +132,16 @@ if ($conn->query($insert)) {
     
     echo "BERHASIL";
 } else {
+    // Log error untuk debugging
+    $error_msg = $conn->error;
+    error_log("NFC API Insert Error: " . $error_msg . " | SQL: " . $insert);
+    
+    // Coba log error ke scan_attempts juga
+    $waktu_log = date('Y-m-d H:i:s');
+    $error_clean = $conn->real_escape_string($error_msg);
+    $log_sql = "INSERT INTO scan_attempts (uid_kartu, device_id, status, response_message, scanned_at, created_at, updated_at) VALUES ('$uid_clean', $valid_device_id, 'error', 'ERROR: $error_clean', '$waktu_log', NOW(), NOW())";
+    $conn->query($log_sql);
+    
     echo "GAGAL_SIMPAN";
 }
 
