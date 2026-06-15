@@ -51,7 +51,7 @@
     </div>
 
     <!-- Modal Tambah Guru -->
-    <div id="add-teacher-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div id="add-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
         <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Tambah Guru Baru</h3>
@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden min-w-0">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="border-b border-slate-200 bg-slate-50">

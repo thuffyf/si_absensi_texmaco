@@ -209,6 +209,14 @@ Route::post('/login', function (Request $request) {
     ])->withInput($request->only('username'));
 })->name('login.submit');
 
+// Password reset routes (request link, send email, show reset form, perform reset)
+use App\Http\Controllers\Auth\PasswordResetController;
+
+Route::get('/password/reset', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
+
 Route::prefix('app')->name('portal.')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [PortalController::class, 'logout'])->name('logout');

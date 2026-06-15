@@ -189,7 +189,7 @@
     </section>
 
     <!-- Modal Tambah Jadwal -->
-    <div id="add-schedule-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
         <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Tambah Jadwal Baru</h3>

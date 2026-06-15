@@ -62,7 +62,7 @@
     </div>
 
     <!-- Modal Tambah Siswa -->
-    <div id="add-student-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
         <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Tambah Siswa Baru</h3>
@@ -105,18 +105,18 @@
         </div>
     </div>
 
-    <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden min-w-0">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="border-b border-slate-200 bg-slate-50">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Foto & Nama</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">NIS</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Kelas</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Jurusan</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">NFC</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">UID</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">Foto & Nama</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">NIS</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">Kelas</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">Jurusan</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">NFC</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-normal break-words">UID</th>
                         <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
@@ -136,7 +136,7 @@
 
                     @forelse($students as $student)
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-4 py-3 whitespace-nowrap">
+                            <td class="px-4 py-3 whitespace-normal break-words">
                                 <div class="flex items-center gap-3">
                                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 font-semibold text-sky-600">
                                         {{ strtoupper(substr($student->name, 0, 1)) }}
@@ -147,20 +147,20 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $student->nis }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $student->class_name }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $student->major ?? '-' }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
+                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-normal break-words">{{ $student->nis }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-normal break-words">{{ $student->class_name }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-700 whitespace-normal break-words">{{ $student->major ?? '-' }}</td>
+                            <td class="px-4 py-3 whitespace-normal break-words">
                                 <span class="{{ $statusClasses[$student->status] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
                                     {{ ucfirst(str_replace('_', ' ', $student->status)) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
+                            <td class="px-4 py-3 whitespace-normal break-words">
                                 <span class="{{ $nfcClasses[$student->nfc_type] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
                                     {{ ucfirst(str_replace('_', ' ', $student->nfc_type)) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $student->uid_kartu ?? '-' }}</td>
+                            <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-normal break-words">{{ $student->uid_kartu ?? '-' }}</td>
                             <td class="px-4 py-3 text-right whitespace-nowrap">
                                 <div class="flex justify-end gap-2">
                                     <a class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2" href="{{ route('students.edit', $student) }}">Edit</a>

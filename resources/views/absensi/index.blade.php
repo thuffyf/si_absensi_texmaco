@@ -122,7 +122,7 @@
                                 </div>
 
                                 <!-- Edit Modal -->
-                                <div id="edit-modal-{{ $record->id }}" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm">
+                                <div id="edit-modal-{{ $record->id }}" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm">
                                     <div class="flex min-h-screen items-center justify-center p-4">
                                         <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl whitespace-normal text-left">
                                             <div class="mb-6 flex items-center justify-between">
@@ -157,7 +157,7 @@
                                 </div>
 
                                 <!-- Delete Modal -->
-                                <div id="delete-modal-{{ $record->id }}" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm">
+                                <div id="delete-modal-{{ $record->id }}" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm">
                                     <div class="flex min-h-screen items-center justify-center p-4">
                                         <div class="w-full max-w-sm rounded-3xl bg-white p-6 shadow-xl whitespace-normal text-left">
                                             <div class="mb-6 flex flex-col items-center justify-center text-center">

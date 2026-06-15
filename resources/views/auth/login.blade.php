@@ -16,7 +16,7 @@
             <!-- Left panel -->
             <div class="flex flex-col justify-center items-center px-6 py-10">
                 <div class="space-y-6 text-center">
-                    <img src="{{ asset('images/Logo Texmaco.jpg') }}" alt="SMK Purwasari Texmaco" class="h-64 object-contain mx-auto opacity-90" />
+                                <img src="{{ asset('images/Logo Texmaco-transparent.png') }}" alt="SMK Purwasari Texmaco" class="h-64 object-contain mx-auto bg-transparent" style="background-color: transparent;" />
                 </div>
             </div>
 
@@ -87,6 +87,17 @@
                                 @endif
                             </div>
                         @endunless
+
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="inline-flex items-center text-sm">
+                                <input type="checkbox" name="remember" id="remember" class="form-checkbox h-4 w-4 text-sky-600 rounded" {{ old('remember') ? 'checked' : '' }} />
+                                <span class="ml-2">Ingat saya</span>
+                            </label>
+
+                            @if (Route::has('password.request'))
+                                <a id="forgotPasswordLink" href="{{ route('password.request') }}" class="text-sm text-sky-600 hover:underline">Lupa password?</a>
+                            @endif
+                        </div>
 
                         <button type="submit" class="w-full rounded-2xl bg-slate-900 px-4 py-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
                             MASUK
@@ -184,6 +195,42 @@
                 }, 10000);
             }
         });
+
+        // Lupa password: jika field username berisi email, kirim permintaan reset otomatis
+        const forgotLink = document.getElementById('forgotPasswordLink');
+        if (forgotLink) {
+            forgotLink.addEventListener('click', function(e) {
+                const usernameVal = document.getElementById('username')?.value || '';
+                const looksLikeEmail = usernameVal.includes('@');
+
+                if (looksLikeEmail) {
+                    e.preventDefault();
+                    const tokenInput = document.querySelector('input[name="_token"]');
+                    const token = tokenInput ? tokenInput.value : '';
+
+                    fetch('{{ route('password.email') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ email: usernameVal })
+                    })
+                    .then(res => res.json().catch(() => ({})))
+                    .then(data => {
+                        // Jika response redirect/html, beri tahu user untuk cek email
+                        alert('Jika email terdaftar, link reset telah dikirim. Silakan cek inbox (termasuk folder spam).');
+                    })
+                    .catch(err => {
+                        console.error('Reset request failed', err);
+                        // fallback: buka halaman form manual
+                        window.location.href = forgotLink.href;
+                    });
+                }
+                // jika bukan email, biarkan link menuju form input email
+            });
+        }
     </script>
 </body>
 </html>

@@ -79,9 +79,9 @@
 </div>
 
 <!-- Tap-in Message Modal -->
-<div id="tapin-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeTapInModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
+<div id="tapin-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onclick="closeTapInModal()"></div>
+    <div class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
         <div class="relative w-full max-w-md rounded-2xl bg-white shadow-xl p-6">
             <button onclick="closeTapInModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,9 +102,9 @@
 </div>
 
 <!-- Izin/Sakit Modal -->
-<div id="izin-sakit-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
+<div id="izin-sakit-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
         <div class="relative w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-4">

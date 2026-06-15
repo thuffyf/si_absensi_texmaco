@@ -129,7 +129,7 @@
 </div>
 
 <!-- Modal Detail Izin/Sakit -->
-<div id="detail-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeDetailModal(event)">
+<div id="detail-modal" class="fixed inset-0 z-[9999] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeDetailModal(event)">
     <div class="relative w-full max-w-2xl rounded-2xl bg-white shadow-xl" onclick="event.stopPropagation()">
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-slate-200 p-6">

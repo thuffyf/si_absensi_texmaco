@@ -164,12 +164,12 @@
 </div>
 
 <!-- Modal for Izin/Sakit Request -->
-<div id="izin-sakit-modal" class="fixed inset-0 z-50 hidden">
+<div id="izin-sakit-modal" class="fixed inset-0 z-[9999] hidden">
     <!-- Backdrop with blur -->
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
     
     <!-- Modal Content -->
-    <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
         <div class="relative w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-4">

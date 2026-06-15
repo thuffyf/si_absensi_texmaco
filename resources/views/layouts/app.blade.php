@@ -181,7 +181,7 @@
         <div
             id="main-shell"
             @class([
-                'flex min-h-screen flex-1 flex-col transition-[margin] duration-200 ease-out lg:ml-64',
+                'flex min-h-screen flex-1 flex-col transition-[margin] duration-200 ease-out lg:ml-64 overflow-y-auto overflow-x-hidden',
                 'lg:h-full lg:min-h-0 lg:overflow-hidden' => request()->routeIs('dashboard'),
             ])
         >
@@ -298,7 +298,7 @@
                     'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden lg:py-3 lg:pb-4' => request()->routeIs('dashboard'),
                 ])
             >
-                <div id="content-area" class="{{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }}">
+                <div id="content-area" class="flex-1 min-h-screen overflow-y-auto {{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }}">
                     @yield('content')
                 </div>
             </main>
