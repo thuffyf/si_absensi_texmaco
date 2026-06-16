@@ -133,6 +133,21 @@ class MonitoringController extends Controller
                 ->count();
 
             $device->scan_today = $unregisteredCount + $attendanceCount;
+
+            // Tentukan status berdasarkan last_seen_at
+            $now = Carbon::now();
+            $lastSeen = $device->last_seen_at;
+
+            if ($lastSeen && $now->diffInMinutes($lastSeen) <= 5) {
+                // Perangkat terlihat dalam 5 menit terakhir = online
+                $device->status = 'online';
+            } elseif ($lastSeen && $now->diffInMinutes($lastSeen) <= 15) {
+                // Perangkat terlihat 5-15 menit lalu = idle
+                $device->status = 'idle';
+            } else {
+                // Perangkat tidak terlihat lebih dari 15 menit = offline
+                $device->status = 'offline';
+            }
         }
 
         $devices = $includeDevicesAsModels

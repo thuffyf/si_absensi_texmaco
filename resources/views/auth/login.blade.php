@@ -79,6 +79,17 @@
                             </div>
                         </div>
 
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="inline-flex items-center text-sm">
+                                <input type="checkbox" name="remember" id="remember" class="form-checkbox h-4 w-4 text-sky-600 rounded" {{ old('remember') ? 'checked' : '' }} />
+                                <span class="ml-2">Ingat saya</span>
+                            </label>
+
+                            @if (Route::has('password.request'))
+                                <a id="forgotPasswordLink" href="{{ route('password.request') }}" class="text-sm text-sky-600 hover:underline">Lupa password?</a>
+                            @endif
+                        </div>
+
                         @if ($captchaError)
                             <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                                 {{ $captchaError }}
@@ -96,17 +107,6 @@
                                 @endif
                             </div>
                         @endunless
-
-                        <div class="flex items-center justify-between gap-4">
-                            <label class="inline-flex items-center text-sm">
-                                <input type="checkbox" name="remember" id="remember" class="form-checkbox h-4 w-4 text-sky-600 rounded" {{ old('remember') ? 'checked' : '' }} />
-                                <span class="ml-2">Ingat saya</span>
-                            </label>
-
-                            @if (Route::has('password.request'))
-                                <a id="forgotPasswordLink" href="{{ route('password.request') }}" class="text-sm text-sky-600 hover:underline">Lupa password?</a>
-                            @endif
-                        </div>
 
                         <button type="submit" class="w-full rounded-2xl bg-slate-900 px-4 py-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
                             MASUK

@@ -260,7 +260,18 @@ class DashboardController extends Controller
             : 'Belum ada data tap in minggu ini.';
 
         $totalDevices = NfcDevice::count();
-        $onlineDevices = NfcDevice::query()->where('status', 'online')->count();
+        
+        // Hitung online devices berdasarkan last_seen_at
+        $now = Carbon::now();
+        $onlineDevices = 0;
+        $devices = NfcDevice::all();
+        
+        foreach ($devices as $device) {
+            $lastSeen = $device->last_seen_at;
+            if ($lastSeen && $now->diffInMinutes($lastSeen) <= 5) {
+                $onlineDevices++;
+            }
+        }
 
         return view('dashboard.index', compact(
             'targetClass',

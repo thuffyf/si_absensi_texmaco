@@ -68,53 +68,8 @@
 
         <div class="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="flex flex-wrap gap-2">
-                <form method="GET" action="{{ route('schedules.index') }}" class="flex flex-wrap gap-2">
-                    <input type="text" name="subject" value="{{ request('subject') }}" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" />
-                    @php
-                        $selectedDay = request('day_of_week');
-                        $selectedDayLabel = 'Pilih hari';
-                        if ($selectedDay === 'all') {
-                            $selectedDayLabel = 'Semua hari';
-                        } elseif (!empty($selectedDay)) {
-                            $selectedDayLabel = $selectedDay;
-                        }
-                    @endphp
-                    <!-- Custom dropdown agar opsi selalu membuka ke bawah -->
-                    <div class="relative" id="day-of-week-dropdown">
-                        <input type="hidden" name="day_of_week" id="day_of_week_input" value="{{ $selectedDay }}" />
-                        <button
-                            type="button"
-                            id="day_of_week_button"
-                            class="flex items-center justify-between gap-3 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                            aria-haspopup="listbox"
-                            aria-expanded="false"
-                        >
-                            <span id="day_of_week_label" class="whitespace-nowrap">{{ $selectedDayLabel }}</span>
-                            <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <div
-                            id="day_of_week_menu"
-                            class="absolute left-0 top-full z-50 mt-2 hidden w-full min-w-[12rem] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg"
-                            role="listbox"
-                        >
-                            <button type="button" class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" data-value="">Pilih hari</button>
-                            <button type="button" class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" data-value="all">Semua hari</button>
-                            <div class="max-h-60 overflow-y-auto py-1">
-                                @foreach($dayOptions as $dayName)
-                                    <button type="button" class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" data-value="{{ $dayName }}">{{ $dayName }}</button>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    <select name="class_name" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
-                        <option value="" disabled @selected(!request()->filled('class_name'))>Pilih kelas</option>
-                        <option value="all" @selected(request('class_name') === 'all')>Semua kelas</option>
-                        @foreach($classOptions as $className)
-                            <option value="{{ $className }}" @selected(request('class_name') === $className)>{{ $className }}</option>
-                        @endforeach
-                    </select>
+                <form method="GET" action="{{ route('schedules.index') }}" class="flex gap-2">
+                    <input type="text" name="subject" value="{{ request('subject') }}" class="w-64 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" />
                     <button type="submit" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                         Cari
                     </button>
@@ -123,7 +78,7 @@
                     </a>
                 </form>
             </div>
-            <button onclick="document.getElementById('add-schedule-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+            <button onclick="document.getElementById('add-schedule-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 whitespace-nowrap">
                 <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>

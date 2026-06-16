@@ -39,3 +39,6 @@ Route::prefix('mobile')->group(function () {
 
 // NFC Monitoring API
 Route::get('/monitoring/nfc-data', [App\Http\Controllers\MonitoringController::class, 'nfcData'])->middleware('nfc.api.key');
+
+// Notification API
+Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'getNotifications'])->middleware('auth');

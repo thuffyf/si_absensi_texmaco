@@ -4,12 +4,109 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\LeaveRequest;
+use App\Models\Student;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
+    public function getNotifications(): JsonResponse
+    {
+        $user = Auth::user();
+        $notifications = [];
+
+        if (!$user) {
+            return response()->json(['notifications' => []]);
+        }
+
+        $now = Carbon::now('Asia/Jakarta');
+
+        // Student notifications
+        if ($user->role === 'siswa') {
+            $student = Student::where('email', $user->email)->first();
+            
+            if ($student) {
+                // Attendance reminder: 10 minutes before 9 AM
+                if ($now->hour === 8 && $now->minute >= 50 && $now->minute <= 59) {
+                    $today = Carbon::today()->toDateString();
+                    $hasAttendance = Attendance::where('student_id', $student->id)
+                        ->where('attendance_date', $today)
+                        ->where('attendance_time', '!=', '00:00:00')
+                        ->exists();
+                    
+                    if (!$hasAttendance) {
+                        $notifications[] = [
+                            'id' => 'attendance_reminder_' . $now->format('Hi'),
+                            'type' => 'warning',
+                            'title' => 'Pengingat Absen',
+                            'message' => 'Absen akan ditutup dalam 10 menit. Silakan tap-in segera!',
+                        ];
+                    }
+                }
+
+                // Leave request responses
+                $recentResponses = LeaveRequest::where('student_id', $student->id)
+                    ->whereNotNull('responded_at')
+                    ->where('responded_at', '>=', Carbon::now()->subMinutes(30))
+                    ->whereIn('status', ['approved', 'rejected'])
+                    ->get();
+
+                foreach ($recentResponses as $request) {
+                    $notifications[] = [
+                        'id' => 'leave_response_' . $request->id,
+                        'type' => $request->status === 'approved' ? 'success' : 'error',
+                        'title' => 'Permintaan ' . ucfirst($request->type),
+                        'message' => $request->status === 'approved' 
+                            ? 'Permintaan Anda disetujui.' 
+                            : 'Permintaan Anda ditolak: ' . ($request->rejection_reason ?? 'Alasan tidak disebutkan'),
+                    ];
+                }
+            }
+        }
+
+        // Teacher notifications
+        if ($user->role === 'guru') {
+            // New leave requests from students
+            $newRequests = LeaveRequest::with('student')
+                ->where('status', 'pending_teacher')
+                ->where('requested_at', '>=', Carbon::now()->subMinutes(30))
+                ->orderByDesc('requested_at')
+                ->get();
+
+            foreach ($newRequests as $request) {
+                $notifications[] = [
+                    'id' => 'new_request_' . $request->id,
+                    'type' => 'info',
+                    'title' => 'Permintaan Baru',
+                    'message' => "{$request->student->name} mengajukan {$request->type}.",
+                ];
+            }
+        }
+
+        // Admin notifications
+        if (in_array($user->role, ['admin', 'tata_usaha'])) {
+            // Leave requests from teachers (pending_admin)
+            $newRequests = LeaveRequest::with('student')
+                ->where('status', 'pending_admin')
+                ->where('requested_at', '>=', Carbon::now()->subMinutes(30))
+                ->orderByDesc('requested_at')
+                ->get();
+
+            foreach ($newRequests as $request) {
+                $notifications[] = [
+                    'id' => 'admin_request_' . $request->id,
+                    'type' => 'info',
+                    'title' => 'Permintaan Baru',
+                    'message' => "{$request->student->name} mengajukan {$request->type} (dari Guru).",
+                ];
+            }
+        }
+
+        return response()->json(['notifications' => $notifications]);
+    }
     public function teacherApprovals()
     {
         $requests = LeaveRequest::query()
