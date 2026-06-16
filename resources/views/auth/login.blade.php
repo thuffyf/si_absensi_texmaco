@@ -130,6 +130,36 @@
             }
         });
 
+        // Remember Me - Save and Auto-fill Username
+        const usernameInput = document.getElementById('username');
+        const rememberCheckbox = document.getElementById('remember');
+        const loginForm = document.getElementById('loginForm');
+
+        // Load saved username on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedUsername = localStorage.getItem('remembered_username');
+            if (savedUsername) {
+                usernameInput.value = savedUsername;
+                rememberCheckbox.checked = true;
+            }
+        });
+
+        // Save username when form is submitted
+        loginForm.addEventListener('submit', function() {
+            if (rememberCheckbox.checked) {
+                localStorage.setItem('remembered_username', usernameInput.value);
+            } else {
+                localStorage.removeItem('remembered_username');
+            }
+        });
+
+        // Clear saved username when checkbox is unchecked
+        rememberCheckbox.addEventListener('change', function() {
+            if (!this.checked) {
+                localStorage.removeItem('remembered_username');
+            }
+        });
+
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -190,7 +220,6 @@
         }, 30 * 60 * 1000); // 30 menit
 
         // Handle form submit untuk menangkap error 419
-        const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', function(e) {
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             if (submitBtn) {
@@ -203,7 +232,7 @@
                     submitBtn.textContent = 'MASUK';
                 }, 10000);
             }
-        });
+        }, { once: false }); // Allow multiple submits
 
         // Lupa password: jika field username berisi email, kirim permintaan reset otomatis
         const forgotLink = document.getElementById('forgotPasswordLink');
