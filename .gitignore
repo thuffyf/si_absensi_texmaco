@@ -20,3 +20,7 @@ yarn-error.log
 /.idea
 /.vscode
 firmware/sitexa_nfc_absensi/sitexa_nfc_absensi.txt
+ENV_PRODUCTION_UPDATE.txt
+QUICK_DEPLOY_GUIDE.txt
+IMPLEMENTASI_FORGOT_PASSWORD_FINAL.md
+TROUBLESHOOTING_EMAIL.md
