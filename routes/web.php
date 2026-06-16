@@ -216,6 +216,7 @@ Route::get('/password/reset', [PasswordResetController::class, 'showLinkRequestF
 Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::get('/password/contact-admin', [PasswordResetController::class, 'showContactAdminForm'])->name('password.contact-admin');
 
 Route::prefix('app')->name('portal.')->group(function () {
     Route::middleware('auth')->group(function () {
