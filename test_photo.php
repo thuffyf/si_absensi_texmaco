@@ -4,14 +4,23 @@
  * URL: https://sitexa.my.id/test_photo.php
  */
 
-// Load Laravel
-require __DIR__.'/vendor/autoload.php';
-$app = require_once __DIR__.'/bootstrap/app.php';
-$kernel = $app->make('Illuminate\Contracts\Http\Kernel');
-$request = Illuminate\Http\Request::capture();
-$kernel->bootstrap();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 header('Content-Type: text/html; charset=utf-8');
+
+try {
+    // Load Laravel
+    require __DIR__.'/vendor/autoload.php';
+    $app = require_once __DIR__.'/bootstrap/app.php';
+    $kernel = $app->make('Illuminate\Contracts\Http\Kernel');
+    $request = Illuminate\Http\Request::capture();
+    $kernel->bootstrap();
+    $laravelLoaded = true;
+} catch (Exception $e) {
+    $laravelLoaded = false;
+    $laravelError = $e->getMessage();
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,15 +33,22 @@ header('Content-Type: text/html; charset=utf-8');
         .error { color: red; }
         .warning { color: orange; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; word-break: break-word; }
         th { background: #f9f9f9; font-weight: bold; }
         img { max-width: 100px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px; }
-        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
     </style>
 </head>
 <body>
     <h1>🔍 Photo URL Debug</h1>
     
+    <?php if (!$laravelLoaded): ?>
+        <div class="section">
+            <h2 class="error">❌ Laravel Failed to Load</h2>
+            <p class="error"><?= htmlspecialchars($laravelError) ?></p>
+        </div>
+    <?php else: ?>
     <div class="section">
         <h2>1. Environment</h2>
         <table>
@@ -198,6 +214,8 @@ header('Content-Type: text/html; charset=utf-8');
         echo '</table>';
         ?>
     </div>
+
+    <?php endif; ?>
 
 </body>
 </html>
