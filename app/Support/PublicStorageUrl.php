@@ -46,16 +46,13 @@ class PublicStorageUrl
 
     public static function publicDirectory(): string
     {
-        $storagePublicPath = env('STORAGE_PUBLIC_PATH');
+        // Use config instead of env for cache compatibility
+        $storagePublicDirectory = config('filesystems.storage_public_directory');
 
-        if (! $storagePublicPath) {
+        if (!$storagePublicDirectory || $storagePublicDirectory === '') {
             return 'storage';
         }
 
-        $normalizedStoragePath = str_replace('\\', '/', trim((string) $storagePublicPath));
-        $normalizedStoragePath = rtrim($normalizedStoragePath, '/');
-        $directoryName = basename($normalizedStoragePath);
-
-        return $directoryName !== '' ? $directoryName : 'storage';
+        return $storagePublicDirectory;
     }
 }

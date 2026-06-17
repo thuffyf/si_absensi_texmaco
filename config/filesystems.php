@@ -2,11 +2,35 @@
 
 use App\Support\PublicStorageUrl;
 
-$appUrl = trim((string) env('APP_URL', 'http://localhost'), " \t\n\r\0\x0B`'\"");
-$appUrl = rtrim($appUrl, '/');
-$publicStorageUrl = $appUrl . '/' . PublicStorageUrl::publicDirectory();
-
 return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Storage Public Path
+    |--------------------------------------------------------------------------
+    |
+    | Path absolut ke direktori storage public di hosting.
+    | Kosongkan untuk development (akan gunakan storage/app/public default).
+    | Contoh production: /home/username/public_html/storage_public
+    |
+    */
+
+    'storage_public_path' => env('STORAGE_PUBLIC_PATH', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Storage Public URL Directory Name
+    |--------------------------------------------------------------------------
+    |
+    | Nama direktori yang digunakan di URL untuk akses file storage.
+    | Jika STORAGE_PUBLIC_PATH diset, akan otomatis ambil basename.
+    | Default: 'storage'
+    |
+    */
+
+    'storage_public_directory' => env('STORAGE_PUBLIC_PATH') 
+        ? basename(rtrim(str_replace('\\', '/', env('STORAGE_PUBLIC_PATH')), '/'))
+        : 'storage',
 
     /*
     |--------------------------------------------------------------------------
@@ -45,7 +69,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => $appUrl . '/storage',
+            'url' => config('app.url') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -55,8 +79,8 @@ return [
         // Contoh: /home/username/public_html/storage
         'public_web' => [
             'driver' => 'local',
-            'root' => env('STORAGE_PUBLIC_PATH', storage_path('app/public')),
-            'url' => $publicStorageUrl,
+            'root' => config('filesystems.storage_public_path') ?: storage_path('app/public'),
+            'url' => config('app.url') . '/' . config('filesystems.storage_public_directory'),
             'visibility' => 'public',
             'throw' => false,
         ],
