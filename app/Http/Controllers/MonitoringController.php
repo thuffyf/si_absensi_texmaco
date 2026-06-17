@@ -47,31 +47,31 @@ class MonitoringController extends Controller
         $today = $now->toDateString();
 
         // Count totals for today from database (these are the source of truth)
-        // Total Scans = hanya yang status HADIR saja
-        $totalAttendanceToday = Attendance::query()
+        // Total Scans = hanya yang status HADIR yang berhasil (ada attendance_time)
+        $totalScans = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->where('status', 'hadir')
             ->whereNotNull('attendance_time')
             ->where('attendance_time', '!=', '00:00:00')
             ->count();
 
+        // Success count = semua yang status hadir (termasuk yang belum isi time)
         $successCount = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->where('status', 'hadir')
             ->count();
 
+        // Failed count = izin + sakit + alpa
         $failedCount = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->whereIn('status', ['alpa', 'izin', 'sakit'])
             ->count();
 
+        // Unknown count = kartu tidak terdaftar
         $unknownCount = ScanAttempt::query()
             ->whereDate('scanned_at', $today)
             ->where('status', 'unregistered')
             ->count();
-
-        // Total scan hanya menghitung status hadir
-        $totalScans = $totalAttendanceToday;
 
         // Get the latest attendance events for display (limited for performance)
         $attendances = Attendance::query()
@@ -147,18 +147,15 @@ class MonitoringController extends Controller
         // Use the total counts from database queries (not from limited collections)
         $devicesList = NfcDevice::orderBy('name')->get();
         foreach ($devicesList as $device) {
-            $unregisteredCount = ScanAttempt::where('device_id', $device->id)
-                ->whereDate('scanned_at', $today)
-                ->where('status', 'unregistered')
-                ->count();
-
+            // Scan hari ini per device = hanya yang status HADIR dengan valid time
             $attendanceCount = Attendance::where('device_id', $device->id)
                 ->whereDate('attendance_date', $today)
+                ->where('status', 'hadir')
                 ->whereNotNull('attendance_time')
                 ->where('attendance_time', '!=', '00:00:00')
                 ->count();
 
-            $device->scan_today = $unregisteredCount + $attendanceCount;
+            $device->scan_today = $attendanceCount;
 
             // Tentukan status berdasarkan last_seen_at
             $now = Carbon::now();
