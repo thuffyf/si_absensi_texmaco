@@ -79,6 +79,17 @@
                             </div>
                         </div>
 
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="inline-flex items-center text-sm">
+                                <input type="checkbox" name="remember" id="remember" class="form-checkbox h-4 w-4 text-sky-600 rounded" {{ old('remember') ? 'checked' : '' }} />
+                                <span class="ml-2">Ingat saya</span>
+                            </label>
+
+                            @if (Route::has('password.request'))
+                                <a id="forgotPasswordLink" href="{{ route('password.request') }}" class="text-sm text-sky-600 hover:underline">Lupa password?</a>
+                            @endif
+                        </div>
+
                         @if ($captchaError)
                             <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                                 {{ $captchaError }}
@@ -96,17 +107,6 @@
                                 @endif
                             </div>
                         @endunless
-
-                        <div class="flex items-center justify-between gap-4">
-                            <label class="inline-flex items-center text-sm">
-                                <input type="checkbox" name="remember" id="remember" class="form-checkbox h-4 w-4 text-sky-600 rounded" {{ old('remember') ? 'checked' : '' }} />
-                                <span class="ml-2">Ingat saya</span>
-                            </label>
-
-                            @if (Route::has('password.request'))
-                                <a id="forgotPasswordLink" href="{{ route('password.request') }}" class="text-sm text-sky-600 hover:underline">Lupa password?</a>
-                            @endif
-                        </div>
 
                         <button type="submit" class="w-full rounded-2xl bg-slate-900 px-4 py-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
                             MASUK
@@ -127,6 +127,36 @@
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 window.location.reload();
+            }
+        });
+
+        // Remember Me - Save and Auto-fill Username
+        const usernameInput = document.getElementById('username');
+        const rememberCheckbox = document.getElementById('remember');
+        const loginForm = document.getElementById('loginForm');
+
+        // Load saved username on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedUsername = localStorage.getItem('remembered_username');
+            if (savedUsername) {
+                usernameInput.value = savedUsername;
+                rememberCheckbox.checked = true;
+            }
+        });
+
+        // Save username when form is submitted
+        loginForm.addEventListener('submit', function() {
+            if (rememberCheckbox.checked) {
+                localStorage.setItem('remembered_username', usernameInput.value);
+            } else {
+                localStorage.removeItem('remembered_username');
+            }
+        });
+
+        // Clear saved username when checkbox is unchecked
+        rememberCheckbox.addEventListener('change', function() {
+            if (!this.checked) {
+                localStorage.removeItem('remembered_username');
             }
         });
 
@@ -190,7 +220,6 @@
         }, 30 * 60 * 1000); // 30 menit
 
         // Handle form submit untuk menangkap error 419
-        const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', function(e) {
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             if (submitBtn) {
@@ -203,7 +232,7 @@
                     submitBtn.textContent = 'MASUK';
                 }, 10000);
             }
-        });
+        }, { once: false }); // Allow multiple submits
 
         // Lupa password: jika field username berisi email, kirim permintaan reset otomatis
         const forgotLink = document.getElementById('forgotPasswordLink');

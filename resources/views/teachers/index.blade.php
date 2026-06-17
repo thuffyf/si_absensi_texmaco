@@ -26,33 +26,24 @@
         <div class="flex flex-wrap gap-2">
             <form method="GET" action="{{ route('teachers.index') }}" class="flex gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari guru..." />
-                <input type="text" name="subject" value="{{ request('subject') }}" class="w-48 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
-                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <option value="">Semua Status</option>
-                    <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
-                    <option value="cuti" @selected(request('status') === 'cuti')>Cuti</option>
-                    <option value="non_aktif" @selected(request('status') === 'non_aktif')>Non aktif</option>
-                </select>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
                     Cari
                 </button>
                 <a href="{{ route('teachers.index') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
             </form>
         </div>
-        <button onclick="document.getElementById('add-teacher-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+        <button onclick="document.getElementById('add-teacher-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 whitespace-nowrap">
             <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             Tambah Guru
         </button>
     </div>
+</div>
 
-    <!-- Modal Tambah Guru -->
-    <div id="add-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+<!-- Modal Tambah Guru -->
+<div id="add-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Tambah Guru Baru</h3>
                 <button onclick="document.getElementById('add-teacher-modal').classList.add('hidden')" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
@@ -70,18 +61,13 @@
                 <input name="role" value="{{ old('role') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
                 <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
                 <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
-                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
-                    <option value="cuti" @selected(old('status') === 'cuti')>Cuti</option>
-                    <option value="non_aktif" @selected(old('status') === 'non_aktif')>Non aktif</option>
-                </select>
                 <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
                 <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Guru</button>
             </form>
         </div>
     </div>
 
-    <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden min-w-0">
+    <div class="mt-6 flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden min-w-0">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="border-b border-slate-200 bg-slate-50">
@@ -128,7 +114,7 @@
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2" href="{{ route('teachers.edit', $teacher) }}">Edit</a>
+                                    <button onclick="openEditModal({{ $teacher->id }}, '{{ $teacher->nip }}', '{{ $teacher->name }}', '{{ $teacher->email ?? '' }}', '{{ $teacher->subject ?? '' }}', '{{ $teacher->role ?? '' }}', '{{ $teacher->phone ?? '' }}', '{{ $teacher->date_of_birth?->toDateString() ?? '' }}', '{{ $teacher->status }}')" class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Edit</button>
                                     <form method="POST" action="{{ route('teachers.destroy', $teacher) }}" onsubmit="return confirm('Hapus guru ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -151,4 +137,57 @@
         {{ $teachers->links() }}
     </div>
 </div>
+
+<!-- Modal Edit Guru -->
+<div id="edit-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+        <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-slate-900">Edit Guru</h3>
+            <button onclick="closeEditModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <form method="POST" id="edit-teacher-form" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id" id="edit-teacher-id">
+            <input name="nip" id="edit-nip" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
+            <input name="name" id="edit-name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
+            <input name="email" id="edit-email" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
+            <input name="subject" id="edit-subject" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
+            <input name="role" id="edit-role" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
+            <input name="phone" id="edit-phone" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+            <input name="date_of_birth" type="date" id="edit-date_of_birth" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+            <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+            <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(id, nip, name, email, subject, role, phone, dateOfBirth, status) {
+    document.getElementById('edit-teacher-id').value = id;
+    document.getElementById('edit-nip').value = nip;
+    document.getElementById('edit-name').value = name;
+    document.getElementById('edit-email').value = email;
+    document.getElementById('edit-subject').value = subject;
+    document.getElementById('edit-role').value = role;
+    document.getElementById('edit-phone').value = phone;
+    document.getElementById('edit-date_of_birth').value = dateOfBirth;
+    document.getElementById('edit-status').value = status;
+    
+    const form = document.getElementById('edit-teacher-form');
+    form.action = '/teachers/' + id;
+    
+    document.getElementById('edit-teacher-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+    document.getElementById('edit-teacher-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+</script>
 @endsection

@@ -20,7 +20,7 @@
                 <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900 lg:text-xl">Statistik Kehadiran</h2>
-                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Jumlah siswa tap in per hari kerja</p>
+                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Rekap kehadiran siswa harian</p>
                     </div>
                     <div class="flex shrink-0 flex-wrap items-center gap-2">
                         <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
@@ -117,20 +117,9 @@
             <!-- Status Perangkat NFC -->
             <section class="shrink-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <h2 class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 lg:text-xs">Status Perangkat NFC</h2>
-                <div class="mt-2 flex items-center gap-2.5">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full {{ $onlineDevices > 0 ? 'bg-emerald-100' : 'bg-red-100' }}">
-                        <svg class="h-4 w-4 {{ $onlineDevices > 0 ? 'text-emerald-600' : 'text-red-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            @if($onlineDevices > 0)
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v6"></path>
-                            @else
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 00-12.728 0M12 3v6"></path>
-                            @endif
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-base font-bold text-slate-900 lg:text-lg">{{ $onlineDevices }}/{{ $totalDevices }}</p>
-                        <p class="text-[10px] text-slate-500 lg:text-xs">Perangkat online</p>
-                    </div>
+                <div class="mt-2">
+                    <p class="text-base font-bold text-slate-900 lg:text-lg">{{ $onlineDevices }}/{{ $totalDevices }}</p>
+                    <p class="text-[10px] text-slate-500 lg:text-xs">Perangkat online</p>
                 </div>
             </section>
 

@@ -26,44 +26,24 @@
         <div class="flex flex-wrap gap-2">
             <form method="GET" action="{{ route('students.index') }}" class="flex gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari siswa..." />
-                <select name="class" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <option value="">Semua Kelas</option>
-                    <option value="X" @selected(request('class') === 'X')">X</option>
-                    <option value="XI" @selected(request('class') === 'XI')">XI</option>
-                    <option value="XII" @selected(request('class') === 'XII')">XII</option>
-                </select>
-                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <option value="">Semua Status</option>
-                    <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
-                    <option value="tidak_aktif" @selected(request('status') === 'tidak_aktif')>Tidak aktif</option>
-                    <option value="lulus" @selected(request('status') === 'lulus')>Lulus</option>
-                </select>
-                <select name="nfc" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <option value="">Semua NFC</option>
-                    <option value="kartu" @selected(request('nfc') === 'kartu')>Kartu</option>
-                    <option value="handphone" @selected(request('nfc') === 'handphone')>Handphone</option>
-                    <option value="belum_terdaftar" @selected(request('nfc') === 'belum_terdaftar')>Belum terdaftar</option>
-                </select>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
                     Cari
                 </button>
                 <a href="{{ route('students.index') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
             </form>
         </div>
-        <button onclick="document.getElementById('add-student-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+        <button onclick="document.getElementById('add-student-modal').classList.remove('hidden')" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 whitespace-nowrap">
             <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             Tambah Siswa
         </button>
     </div>
+</div>
 
-    <!-- Modal Tambah Siswa -->
-    <div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+<!-- Modal Tambah Siswa -->
+<div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Tambah Siswa Baru</h3>
                 <button onclick="document.getElementById('add-student-modal').classList.add('hidden')" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
@@ -81,21 +61,10 @@
                     <option value="X" @selected(old('class_name') === 'X')>X</option>
                     <option value="XI" @selected(old('class_name') === 'XI')>XI</option>
                     <option value="XII" @selected(old('class_name') === 'XII')>XII</option>
-                </select>
                 <select name="major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                     <option value="Teknik Elektronika Industri" @selected(old('major') === 'Teknik Elektronika Industri')>Teknik Elektronika Industri</option>
-                </select>
                 <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Tanggal Lahir" />
-                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
-                    <option value="tidak_aktif" @selected(old('status') === 'tidak_aktif')>Tidak aktif</option>
-                    <option value="lulus" @selected(old('status') === 'lulus')>Lulus</option>
-                </select>
                 <select name="nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="belum_terdaftar" @selected(old('nfc_type') === 'belum_terdaftar')>Belum terdaftar</option>
-                    <option value="kartu" @selected(old('nfc_type') === 'kartu')>Kartu</option>
-                    <option value="handphone" @selected(old('nfc_type') === 'handphone')>Handphone</option>
-                </select>
                 <input name="uid_kartu" value="{{ old('uid_kartu') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu (opsional)" />
                 <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
                 <input name="username" value="{{ old('username') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
@@ -232,7 +201,6 @@
         {{ $students->links() }}
     </div>
 </div>
-
 <script>
 function openEditModal(id, nis, name, email, className, major, dateOfBirth, status, nfcType, uidKartu, phone, username) {
     document.getElementById('edit-student-id').value = id;
@@ -249,7 +217,11 @@ function openEditModal(id, nis, name, email, className, major, dateOfBirth, stat
     document.getElementById('edit-username').value = username;
     
     const form = document.getElementById('edit-student-form');
+<<<<<<< HEAD
     form.action = '/siswa/' + id;
+=======
+    form.action = '/students/' + id;
+>>>>>>> 68d15e87f2da44ffed6e4ec594909e543ae2ffd9
     
     document.getElementById('edit-student-modal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -259,6 +231,7 @@ function closeEditModal() {
     document.getElementById('edit-student-modal').classList.add('hidden');
     document.body.style.overflow = 'auto';
 }
+<<<<<<< HEAD
 
 // Close modal when pressing Escape key
 document.addEventListener('keydown', function(event) {
@@ -280,5 +253,7 @@ document.getElementById('add-student-modal')?.addEventListener('click', function
         this.classList.add('hidden');
     }
 });
+=======
+>>>>>>> 68d15e87f2da44ffed6e4ec594909e543ae2ffd9
 </script>
 @endsection

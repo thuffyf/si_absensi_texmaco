@@ -128,7 +128,7 @@ Route::post('/login', function (Request $request) {
         }
 
         if ($passwordOk) {
-            Auth::login($adminUser);
+            Auth::login($adminUser, $request->boolean('remember'));
             $request->session()->regenerate();
 
             return redirect()->route('dashboard');
@@ -170,7 +170,7 @@ Route::post('/login', function (Request $request) {
             }
             $user->save();
 
-            Auth::login($user);
+            Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
 
             return redirect()->route('portal.student.dashboard');
@@ -197,7 +197,7 @@ Route::post('/login', function (Request $request) {
             }
             $user->save();
 
-            Auth::login($user);
+            Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
 
             return redirect()->route('portal.teacher.attendance');

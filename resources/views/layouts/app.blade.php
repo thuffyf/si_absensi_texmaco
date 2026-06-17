@@ -110,7 +110,7 @@
                     >
                         <span class="nav-icon" aria-hidden="true">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.288 14.734a.75.75 0 01-1.076-1.044 7.5 7.5 0 0110.576 0 .75.75 0 11-1.076 1.044 6 6 0 00-8.424 0zM12 18.375a.75.75 0 01-.53-.22 3.75 3.75 0 015.06-5.06.75.75 0 11-1.06 1.06 2.25 2.25 0 00-3 0 .75.75 0 01-.53.22zM12 21a.75.75 0 01-.53-.22.75.75 0 111.06 0A.75.75 0 0112 21z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                             </svg>
                         </span>
                         <span class="nav-text">Monitoring NFC</span>
@@ -273,8 +273,13 @@
                                 aria-expanded="false"
                                 aria-label="Buka menu profil"
                             >
-                                @if(auth()->user()->photo)
-                                    <img src="{{ auth()->user()->photo_url }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
+                                @php
+                                    $photoUrl = auth()->user()->photo_url ?? null;
+                                    // Check if it's not the default UI Avatars fallback
+                                    $hasRealPhoto = $photoUrl && !str_contains($photoUrl, 'ui-avatars.com');
+                                @endphp
+                                @if($hasRealPhoto)
+                                    <img src="{{ $photoUrl }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover" />
                                 @else
                                     <span class="inline-flex h-full w-full items-center justify-center">{{ strtoupper(\Illuminate\Support\Str::substr(auth()->user()->name ?? 'A', 0, 1)) }}</span>
                                 @endif
@@ -416,5 +421,85 @@
         })();
     </script>
     @stack('scripts')
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // Notification System
+        (function() {
+            const container = document.getElementById('notification-container');
+            const shownNotifications = new Set();
+            let pollTimer = null;
+            let pollCount = 0;
+
+            function showNotification(notification) {
+                if (!container || shownNotifications.has(notification.id)) return;
+                shownNotifications.add(notification.id);
+
+                const notificationEl = document.createElement('div');
+                notificationEl.className = 'pointer-events-auto max-w-sm rounded-2xl border border-slate-200 bg-white p-4 shadow-lg transition-all duration-300 transform translate-x-full opacity-0';
+                notificationEl.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${notification.type === 'success' ? 'bg-emerald-100 text-emerald-600' : notification.type === 'warning' ? 'bg-amber-100 text-amber-600' : notification.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-sky-100 text-sky-600'}">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${notification.type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' : notification.type === 'warning' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' : notification.type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />' : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'}
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-slate-900">${notification.title}</p>
+                            <p class="mt-1 text-xs text-slate-600">${notification.message}</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="shrink-0 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(notificationEl);
+
+                // Animate in
+                requestAnimationFrame(() => {
+                    notificationEl.classList.remove('translate-x-full', 'opacity-0');
+                });
+
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    notificationEl.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(() => notificationEl.remove(), 300);
+                }, 5000);
+            }
+
+            async function pollNotifications() {
+                try {
+                    const response = await fetch('/api/notifications', {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.notifications && Array.isArray(data.notifications)) {
+                            data.notifications.forEach(showNotification);
+                        }
+                    }
+                } catch (error) {
+                    // Silent fail - don't show errors for notification polling
+                } finally {
+                    // Poll every 30 seconds
+                    pollTimer = setTimeout(pollNotifications, 30000);
+                }
+            }
+
+            // Start polling
+            if (container) {
+                pollNotifications();
+            }
+        })();
+    </script>
 </body>
 </html>
