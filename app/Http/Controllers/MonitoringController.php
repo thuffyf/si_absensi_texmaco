@@ -140,7 +140,7 @@ class MonitoringController extends Controller
         // Sort all events by time (HH:MM:SS)
         $events = $events->sortByDesc(fn ($event) => $event['time'])->values();
 
-        $totalScans = $attendances->whereNotNull('attendance_time')->count() + $unregisteredScans->count();
+        $totalScans = $attendances->count() + $unregisteredScans->count();
         $successCount = $attendances->where('status', 'hadir')->count();
         $failedCount = $attendances->whereIn('status', ['alpa', 'izin', 'sakit'])->count();
         $unknownCount = $unregisteredScans->count();

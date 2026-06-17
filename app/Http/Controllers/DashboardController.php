@@ -157,11 +157,9 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
-        $targetClass = 'X TEI';
         $targetMajor = 'TEI';
 
         $students = Student::query()
-            ->where('class_name', $targetClass)
             ->where('major', $targetMajor)
             ->get();
 
@@ -172,9 +170,8 @@ class DashboardController extends Controller
             ->whereDate('attendance_date', $today)
             ->whereNotNull('attendance_time')
             ->where('attendance_time', '!=', '00:00:00')
-            ->whereHas('student', function ($query) use ($targetClass, $targetMajor) {
-                $query->where('class_name', $targetClass)
-                    ->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor) {
+                $query->where('major', $targetMajor);
             })
             ->with('student')
             ->orderBy('attendance_time', 'desc')
@@ -194,9 +191,8 @@ class DashboardController extends Controller
             $date = $weekStart->copy()->addDays($i);
             $count = Attendance::query()
                 ->whereDate('attendance_date', $date)
-                ->whereHas('student', function ($query) use ($targetClass, $targetMajor) {
-                    $query->where('class_name', $targetClass)
-                        ->where('major', $targetMajor);
+                ->whereHas('student', function ($query) use ($targetMajor) {
+                    $query->where('major', $targetMajor);
                 })
                 ->count();
 
@@ -242,9 +238,8 @@ class DashboardController extends Controller
         $currentTotal = array_sum($counts);
         $lastTotal = Attendance::query()
             ->whereBetween('attendance_date', [$lastWeekStart->toDateString(), $lastWeekEnd->toDateString()])
-            ->whereHas('student', function ($query) use ($targetClass, $targetMajor) {
-                $query->where('class_name', $targetClass)
-                    ->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor) {
+                $query->where('major', $targetMajor);
             })
             ->count();
 
@@ -276,7 +271,6 @@ class DashboardController extends Controller
         }
 
         return view('dashboard.index', compact(
-            'targetClass',
             'targetMajor',
             'totalStudents',
             'presentToday',
