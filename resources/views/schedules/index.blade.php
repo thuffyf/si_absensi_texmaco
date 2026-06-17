@@ -118,9 +118,9 @@
                             </td>
                             <td class="px-3 py-3">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('schedules.edit', $schedule) }}" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+                                    <button onclick="openEditModal({{ $schedule->id }}, '{{ $schedule->teacher_id ?? '' }}', '{{ $schedule->class_name }}', '{{ addslashes($schedule->subject) }}', '{{ $schedule->day_of_week }}', '{{ $schedule->start_time?->format('H:i') }}', '{{ $schedule->end_time?->format('H:i') }}', '{{ $schedule->status }}')" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
                                         Edit
-                                    </a>
+                                    </button>
                                     <form method="POST" action="{{ route('schedules.destroy', $schedule) }}" onsubmit="return confirm('Hapus jadwal ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -185,11 +185,99 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal Edit Jadwal -->
+    <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">Edit Jadwal</h3>
+                <button onclick="closeEditModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form method="POST" id="edit-schedule-form" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="id" id="edit-schedule-id">
+                <select name="teacher_id" id="edit-teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="">Pilih guru</option>
+                    @foreach($teachers as $teacher)
+                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                    @endforeach
+                </select>
+                <select name="class_name" id="edit-class_name" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="">Pilih kelas</option>
+                    @foreach($classOptions as $className)
+                        <option value="{{ $className }}">{{ $className }}</option>
+                    @endforeach
+                </select>
+                <input name="subject" id="edit-subject" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
+                <select name="day_of_week" id="edit-day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="">Pilih hari</option>
+                    @foreach($dayOptions as $dayName)
+                        <option value="{{ $dayName }}">{{ $dayName }}</option>
+                    @endforeach
+                </select>
+                <input name="start_time" type="time" id="edit-start_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                <input name="end_time" type="time" id="edit-end_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                <select name="status" id="edit-status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="aktif">Aktif</option>
+                    <option value="idle">Idle</option>
+                </select>
+                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
+function openEditModal(id, teacherId, className, subject, dayOfWeek, startTime, endTime, status) {
+    document.getElementById('edit-schedule-id').value = id;
+    document.getElementById('edit-teacher_id').value = teacherId;
+    document.getElementById('edit-class_name').value = className;
+    document.getElementById('edit-subject').value = subject;
+    document.getElementById('edit-day_of_week').value = dayOfWeek;
+    document.getElementById('edit-start_time').value = startTime;
+    document.getElementById('edit-end_time').value = endTime;
+    document.getElementById('edit-status').value = status;
+
+    const form = document.getElementById('edit-schedule-form');
+    form.action = '/jadwal/' + id;
+
+    document.getElementById('edit-schedule-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+    document.getElementById('edit-schedule-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when pressing Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeEditModal();
+        document.getElementById('add-schedule-modal').classList.add('hidden');
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('edit-schedule-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
+});
+
+document.getElementById('add-schedule-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.add('hidden');
+    }
+});
+
     (function () {
         const root = document.getElementById('day-of-week-dropdown');
         if (!root) return;

@@ -22,9 +22,9 @@
         </div>
     @endif
 
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div class="flex flex-wrap gap-2">
-            <form method="GET" action="{{ route('students.index') }}" class="flex gap-2">
+    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div class="flex flex-wrap gap-3">
+            <form method="GET" action="{{ route('students.index') }}" class="flex gap-3">
                 <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari siswa..." />
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                     Cari
@@ -40,6 +40,8 @@
         </button>
     </div>
 </div>
+
+<div class="mt-8">
 
 <!-- Modal Tambah Siswa -->
 <div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
@@ -119,6 +121,7 @@
             </form>
         </div>
     </div>
+</div>
 
     <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden min-w-0">
         <div class="overflow-x-auto">
@@ -217,12 +220,8 @@ function openEditModal(id, nis, name, email, className, major, dateOfBirth, stat
     document.getElementById('edit-username').value = username;
     
     const form = document.getElementById('edit-student-form');
-<<<<<<< HEAD
     form.action = '/siswa/' + id;
-=======
-    form.action = '/students/' + id;
->>>>>>> 68d15e87f2da44ffed6e4ec594909e543ae2ffd9
-    
+
     document.getElementById('edit-student-modal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
@@ -231,7 +230,6 @@ function closeEditModal() {
     document.getElementById('edit-student-modal').classList.add('hidden');
     document.body.style.overflow = 'auto';
 }
-<<<<<<< HEAD
 
 // Close modal when pressing Escape key
 document.addEventListener('keydown', function(event) {
@@ -253,7 +251,5 @@ document.getElementById('add-student-modal')?.addEventListener('click', function
         this.classList.add('hidden');
     }
 });
-=======
->>>>>>> 68d15e87f2da44ffed6e4ec594909e543ae2ffd9
 </script>
 @endsection

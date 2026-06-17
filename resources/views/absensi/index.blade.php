@@ -67,11 +67,7 @@
                     @forelse($records as $record)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 font-semibold text-sky-600">
-                                        {{ strtoupper(substr($record->student?->name ?? '-', 0, 1)) }}
-                                    <div>
-                                        <p class="font-medium text-slate-900">{{ $record->student?->name ?? '-' }}</p>
+                                <p class="font-medium text-slate-900">{{ $record->student?->name ?? '-' }}</p>
                             </td>
                             <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-nowrap">{{ $record->student?->nis ?? '-' }}</td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->student?->class_name ?? '-' }}</td>
