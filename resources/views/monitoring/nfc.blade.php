@@ -17,9 +17,6 @@
             <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
                 <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex shrink-0 flex-wrap items-center gap-2">
-                        <button onclick="window.location.reload()" class="rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700 hover:bg-sky-200 transition-colors">
-                            ↻ Refresh
-                        </button>
                         <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800">Hari ini</span>
                     </div>
                 </div>
