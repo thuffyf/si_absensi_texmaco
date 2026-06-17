@@ -46,26 +46,8 @@ class MonitoringController extends Controller
         $now = Carbon::now('Asia/Jakarta');
         $today = $now->toDateString();
 
-        // Get the latest attendance events for display, but keep totals independent.
-        $attendances = Attendance::query()
-            ->with(['student', 'device'])
-            ->whereDate('attendance_date', $today)
-            ->orderByDesc('attendance_time')
-            ->orderByDesc('id')
-            ->limit(40)
-            ->get();
-
-        // Get the latest unregistered card scans for display.
-        $unregisteredScans = ScanAttempt::query()
-            ->with('device')
-            ->whereDate('scanned_at', $today)
-            ->where('status', 'unregistered')
-            ->orderByDesc('scanned_at')
-            ->orderByDesc('id')
-            ->limit(20)
-            ->get();
-
-        $attendanceCount = Attendance::query()
+        // Count totals for today from database (these are the source of truth)
+        $totalAttendanceToday = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->whereNotNull('attendance_time')
             ->where('attendance_time', '!=', '00:00:00')
@@ -86,7 +68,26 @@ class MonitoringController extends Controller
             ->where('status', 'unregistered')
             ->count();
 
-        $totalScans = $attendanceCount + $unknownCount;
+        $totalScans = $totalAttendanceToday + $unknownCount;
+
+        // Get the latest attendance events for display (limited for performance)
+        $attendances = Attendance::query()
+            ->with(['student', 'device'])
+            ->whereDate('attendance_date', $today)
+            ->orderByDesc('attendance_time')
+            ->orderByDesc('id')
+            ->limit(40)
+            ->get();
+
+        // Get the latest unregistered card scans for display
+        $unregisteredScans = ScanAttempt::query()
+            ->with('device')
+            ->whereDate('scanned_at', $today)
+            ->where('status', 'unregistered')
+            ->orderByDesc('scanned_at')
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get();
 
         $events = collect();
 
@@ -140,11 +141,7 @@ class MonitoringController extends Controller
         // Sort all events by time (HH:MM:SS)
         $events = $events->sortByDesc(fn ($event) => $event['time'])->values();
 
-        $totalScans = $attendances->count() + $unregisteredScans->count();
-        $successCount = $attendances->where('status', 'hadir')->count();
-        $failedCount = $attendances->whereIn('status', ['alpa', 'izin', 'sakit'])->count();
-        $unknownCount = $unregisteredScans->count();
-
+        // Use the total counts from database queries (not from limited collections)
         $devicesList = NfcDevice::orderBy('name')->get();
         foreach ($devicesList as $device) {
             $unregisteredCount = ScanAttempt::where('device_id', $device->id)

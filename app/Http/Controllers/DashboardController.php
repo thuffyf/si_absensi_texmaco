@@ -167,20 +167,26 @@ class DashboardController extends Controller
         $today = Carbon::today('Asia/Jakarta');
 
         $todayAttendances = Attendance::query()
+            ->with('student')
             ->whereDate('attendance_date', $today)
-            ->whereNotNull('attendance_time')
-            ->where('attendance_time', '!=', '00:00:00')
             ->whereHas('student', function ($query) use ($targetMajor) {
                 $query->where('major', $targetMajor);
             })
-            ->with('student')
-            ->orderBy('attendance_time', 'desc')
             ->get();
 
-        $presentToday = $todayAttendances->count();
+        // Filter only attendances with valid time (not 00:00:00)
+        $validAttendances = $todayAttendances->filter(function ($att) {
+            return $att->attendance_time && $att->attendance_time !== '00:00:00';
+        });
+
+        $presentToday = $validAttendances->count();
         $absentToday = max($totalStudents - $presentToday, 0);
         $attendancePercentage = $totalStudents > 0 ? round(($presentToday / $totalStudents) * 100, 1) : 0;
-        $recentTapIns = $todayAttendances->take(10);
+        
+        // Recent tap-ins with valid time, ordered by time descending
+        $recentTapIns = $validAttendances
+            ->sortByDesc('attendance_time')
+            ->take(10);
 
         $weekStart = Carbon::now('Asia/Jakarta')->locale('id')->startOfWeek(Carbon::MONDAY);
         $weekEnd = $weekStart->copy()->addDays(4);
