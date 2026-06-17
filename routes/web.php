@@ -176,12 +176,10 @@ Route::post('/login', function (Request $request) {
             return redirect()->route('portal.student.dashboard');
         }
 
-        // --- Coba login Guru (email atau NIP, password = tanggal lahir) ---
-        $teacher = Teacher::where('email', $identifier)
-            ->orWhere('nip', $identifier)
-            ->first();
+        // --- Coba login Guru (email, password = NIP) ---
+        $teacher = Teacher::where('email', $identifier)->first();
 
-        if ($teacher && $teacher->date_of_birth && $teacher->date_of_birth->toDateString() === $parsedDate) {
+        if ($teacher && $teacher->nip && $password === $teacher->nip) {
             $user = User::query()->firstOrNew(['email' => $teacher->email]);
             if ($user->exists && in_array($user->role, ['admin', 'tata_usaha'], true)) {
                 return back()
