@@ -157,10 +157,15 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
+        // Support both 'TEI' and full name for major filtering
         $targetMajor = 'TEI';
+        $targetMajorFull = 'Teknik Elektronika Industri';
 
         $students = Student::query()
-            ->where('major', $targetMajor)
+            ->where(function ($query) use ($targetMajor, $targetMajorFull) {
+                $query->where('major', $targetMajor)
+                      ->orWhere('major', $targetMajorFull);
+            })
             ->get();
 
         $totalStudents = $students->count();
@@ -171,24 +176,27 @@ class DashboardController extends Controller
             ->whereDate('attendance_date', $today)
             ->whereNotNull('attendance_time')
             ->where('attendance_time', '!=', '00:00:00')
-            ->whereHas('student', function ($query) use ($targetMajor) {
-                $query->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor, $targetMajorFull) {
+                $query->where('major', $targetMajor)
+                      ->orWhere('major', $targetMajorFull);
             })
             ->count();
 
         $successCount = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->where('status', 'hadir')
-            ->whereHas('student', function ($query) use ($targetMajor) {
-                $query->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor, $targetMajorFull) {
+                $query->where('major', $targetMajor)
+                      ->orWhere('major', $targetMajorFull);
             })
             ->count();
 
         $failedCount = Attendance::query()
             ->whereDate('attendance_date', $today)
             ->whereIn('status', ['alpa', 'izin', 'sakit'])
-            ->whereHas('student', function ($query) use ($targetMajor) {
-                $query->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor, $targetMajorFull) {
+                $query->where('major', $targetMajor)
+                      ->orWhere('major', $targetMajorFull);
             })
             ->count();
 
@@ -200,8 +208,9 @@ class DashboardController extends Controller
         $todayAttendances = Attendance::query()
             ->with(['student', 'device'])
             ->whereDate('attendance_date', $today)
-            ->whereHas('student', function ($query) use ($targetMajor) {
-                $query->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor, $targetMajorFull) {
+                $query->where('major', $targetMajor)
+                      ->orWhere('major', $targetMajorFull);
             })
             ->orderByDesc('attendance_time')
             ->orderByDesc('id')
@@ -221,8 +230,9 @@ class DashboardController extends Controller
                 ->whereDate('attendance_date', $date)
                 ->whereNotNull('attendance_time')
                 ->where('attendance_time', '!=', '00:00:00')
-                ->whereHas('student', function ($query) use ($targetMajor) {
-                    $query->where('major', $targetMajor);
+                ->whereHas('student', function ($query) use ($targetMajor, $targetMajorFull) {
+                    $query->where('major', $targetMajor)
+                          ->orWhere('major', $targetMajorFull);
                 })
                 ->count();
 
@@ -270,8 +280,9 @@ class DashboardController extends Controller
             ->whereBetween('attendance_date', [$lastWeekStart->toDateString(), $lastWeekEnd->toDateString()])
             ->whereNotNull('attendance_time')
             ->where('attendance_time', '!=', '00:00:00')
-            ->whereHas('student', function ($query) use ($targetMajor) {
-                $query->where('major', $targetMajor);
+            ->whereHas('student', function ($query) use ($targetMajor, $targetMajorFull) {
+                $query->where('major', $targetMajor)
+                      ->orWhere('major', $targetMajorFull);
             })
             ->count();
 
