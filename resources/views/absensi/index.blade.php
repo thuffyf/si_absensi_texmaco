@@ -89,43 +89,80 @@
                                     </button>
 
                                 <!-- Edit Modal -->
-                                <div id="edit-modal-{{ $record->id }}" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm">
-                                    <div class="flex min-h-screen items-center justify-center p-4">
-                                        <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl whitespace-normal text-left">
-                                            <div class="mb-6 flex items-center justify-between">
-                                                <h3 class="text-lg font-semibold text-slate-900">Edit Absensi</h3>
-                                                <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.add('hidden')" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-500">
-                                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                </button>
-                                            <form method="POST" action="{{ route('absensi.update', $record) }}" class="space-y-4">
-                                                @csrf
-                                                @method('PUT')
-                                                <div>
-                                                    <label class="block text-sm font-medium text-slate-700">Status</label>
-                                                <div>
-                                                    <label class="block text-sm font-medium text-slate-700">Keterangan</label>
-                                                    <textarea name="note" class="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" rows="3">{{ $record->note }}</textarea>
-                                                <div class="mt-6 flex justify-end gap-3">
-                                                    <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.add('hidden')" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Batal</button>
-                                                    <button type="submit" class="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">Simpan Perubahan</button>
-                                            </form>
+                                <div id="edit-modal-{{ $record->id }}" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+                                    <!-- Backdrop -->
+                                    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.add('hidden')"></div>
+                                    
+                                    <!-- Modal Content -->
+                                    <div class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-xl mx-4">
+                                        <div class="mb-6 flex items-center justify-between">
+                                            <h3 class="text-lg font-semibold text-slate-900">Edit Absensi</h3>
+                                            <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.add('hidden')" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-500">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </button>
+                                        </div>
+                                        
+                                        <form method="POST" action="{{ route('absensi.update', $record) }}" class="space-y-4">
+                                            @csrf
+                                            @method('PUT')
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-2">Siswa</label>
+                                                <input type="text" value="{{ $record->student?->name }} ({{ $record->student?->nis }})" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600" readonly>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-2">Tanggal & Waktu</label>
+                                                <input type="text" value="{{ $record->attendance_date?->format('d M Y') }} - {{ $record->attendance_time }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600" readonly>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                                                <select name="status" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                                                    <option value="hadir" {{ $record->status === 'hadir' ? 'selected' : '' }}>Hadir</option>
+                                                    <option value="izin" {{ $record->status === 'izin' ? 'selected' : '' }}>Izin</option>
+                                                    <option value="sakit" {{ $record->status === 'sakit' ? 'selected' : '' }}>Sakit</option>
+                                                    <option value="alpa" {{ $record->status === 'alpa' ? 'selected' : '' }}>Alpa</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-2">Keterangan</label>
+                                                <textarea name="note" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" rows="3" placeholder="Tambahkan keterangan (opsional)">{{ $record->note }}</textarea>
+                                            </div>
+                                            
+                                            <div class="mt-6 flex justify-end gap-3">
+                                                <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.add('hidden')" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Batal</button>
+                                                <button type="submit" class="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">Simpan Perubahan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
 
                                 <!-- Delete Modal -->
-                                <div id="delete-modal-{{ $record->id }}" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm">
-                                    <div class="flex min-h-screen items-center justify-center p-4">
-                                        <div class="w-full max-w-sm rounded-3xl bg-white p-6 shadow-xl whitespace-normal text-left">
-                                            <div class="mb-6 flex flex-col items-center justify-center text-center">
-                                                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
-                                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                                <h3 class="text-lg font-semibold text-slate-900">Hapus Data Absensi?</h3>
-                                                <p class="mt-2 text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan. Data absensi untuk <strong>{{ $record->student?->name }}</strong> akan dihapus secara permanen.</p>
-                                            <div class="flex gap-3">
-                                                <button type="button" onclick="document.getElementById('delete-modal-{{ $record->id }}').classList.add('hidden')" class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Batal</button>
-                                                <form method="POST" action="{{ route('absensi.destroy', $record) }}" class="flex-1">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="w-full rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Hapus</button>
-                                                </form>
+                                <div id="delete-modal-{{ $record->id }}" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+                                    <!-- Backdrop -->
+                                    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('delete-modal-{{ $record->id }}').classList.add('hidden')"></div>
+                                    
+                                    <!-- Modal Content -->
+                                    <div class="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-xl mx-4">
+                                        <div class="mb-6 flex flex-col items-center justify-center text-center">
+                                            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+                                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-slate-900">Hapus Data Absensi?</h3>
+                                            <p class="mt-2 text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan. Data absensi untuk <strong>{{ $record->student?->name }}</strong> akan dihapus secara permanen.</p>
+                                        </div>
+                                        <div class="flex gap-3">
+                                            <button type="button" onclick="document.getElementById('delete-modal-{{ $record->id }}').classList.add('hidden')" class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Batal</button>
+                                            <form method="POST" action="{{ route('absensi.destroy', $record) }}" class="flex-1">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-full rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @empty

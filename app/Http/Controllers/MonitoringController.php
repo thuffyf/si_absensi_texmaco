@@ -47,8 +47,10 @@ class MonitoringController extends Controller
         $today = $now->toDateString();
 
         // Count totals for today from database (these are the source of truth)
+        // Total Scans = hanya yang status HADIR saja
         $totalAttendanceToday = Attendance::query()
             ->whereDate('attendance_date', $today)
+            ->where('status', 'hadir')
             ->whereNotNull('attendance_time')
             ->where('attendance_time', '!=', '00:00:00')
             ->count();
@@ -68,8 +70,7 @@ class MonitoringController extends Controller
             ->where('status', 'unregistered')
             ->count();
 
-        // Total scan hanya menghitung dari Attendance yang valid (berhasil masuk database)
-        // Unknown count ditampilkan terpisah untuk informasi
+        // Total scan hanya menghitung status hadir
         $totalScans = $totalAttendanceToday;
 
         // Get the latest attendance events for display (limited for performance)
