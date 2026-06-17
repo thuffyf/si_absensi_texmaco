@@ -144,8 +144,12 @@
     </section>
 
     <!-- Modal Tambah Jadwal -->
-    <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50">
-        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+    <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('add-schedule-modal').classList.add('hidden')"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Tambah Jadwal Baru</h3>
                 <button onclick="document.getElementById('add-schedule-modal').classList.add('hidden')" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
@@ -187,8 +191,12 @@
     </div>
 
     <!-- Modal Edit Jadwal -->
-    <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50">
-        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+    <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeEditModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900">Edit Jadwal</h3>
                 <button onclick="closeEditModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
