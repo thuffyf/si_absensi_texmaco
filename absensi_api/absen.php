@@ -115,8 +115,9 @@ if ($cek_result->num_rows > 0) {
     exit;
 }
 
-// Simpan absen
-$insert = "INSERT INTO attendances (student_id, attendance_date, attendance_time, status, created_at, updated_at) VALUES ($student_id, '$tanggal', '$waktu', 'hadir', NOW(), NOW())";
+// Simpan absen dengan device_id
+$insert = "INSERT INTO attendances (student_id, device_id, attendance_date, attendance_time, status, created_at, updated_at) 
+VALUES ($student_id, $valid_device_id, '$tanggal', '$waktu', 'hadir', NOW(), NOW())";
 
 if ($conn->query($insert)) {
     // Log successful scan
