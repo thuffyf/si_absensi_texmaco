@@ -43,9 +43,9 @@
 
 <!-- Modal Tambah Guru -->
 <!-- Modal Tambah Guru -->
-<div id="add-teacher-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
+<div id="add-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/50" onclick="document.getElementById('add-teacher-modal').classList.add('hidden')"></div>
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('add-teacher-modal').classList.add('hidden')"></div>
     
     <!-- Modal Content -->
     <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
@@ -149,9 +149,9 @@
 </div>
 
 <!-- Modal Edit Guru -->
-<div id="edit-teacher-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
+<div id="edit-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/50" onclick="closeEditModal()"></div>
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeEditModal()"></div>
     
     <!-- Modal Content -->
     <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
