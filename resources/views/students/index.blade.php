@@ -105,6 +105,52 @@
         </div>
     </div>
 
+    <!-- Modal Edit Siswa -->
+    <div id="edit-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">Edit Siswa</h3>
+                <button onclick="closeEditModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form method="POST" id="edit-student-form" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="id" id="edit-student-id">
+                <input name="nis" id="edit-nis" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIS" required />
+                <input name="name" id="edit-name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama siswa" required />
+                <input name="email" type="email" id="edit-email" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" required />
+                <select name="class_name" id="edit-class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="X">X</option>
+                    <option value="XI">XI</option>
+                    <option value="XII">XII</option>
+                </select>
+                <select name="major" id="edit-major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="Teknik Elektronika Industri">Teknik Elektronika Industri</option>
+                </select>
+                <input name="date_of_birth" type="date" id="edit-date_of_birth" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+                <select name="status" id="edit-status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="aktif">Aktif</option>
+                    <option value="tidak_aktif">Tidak aktif</option>
+                    <option value="lulus">Lulus</option>
+                </select>
+                <select name="nfc_type" id="edit-nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="belum_terdaftar">Belum terdaftar</option>
+                    <option value="kartu">Kartu</option>
+                    <option value="handphone">Handphone</option>
+                </select>
+                <input name="uid_kartu" id="edit-uid_kartu" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu" />
+                <input name="phone" id="edit-phone" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+                <input name="username" id="edit-username" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
+                <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password baru (opsional)" />
+                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
     <div class="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden min-w-0">
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -163,7 +209,7 @@
                             <td class="px-4 py-3 font-mono text-sm text-slate-600 whitespace-normal break-words">{{ $student->uid_kartu ?? '-' }}</td>
                             <td class="px-4 py-3 text-right whitespace-nowrap">
                                 <div class="flex justify-end gap-2">
-                                    <a class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2" href="{{ route('students.edit', $student) }}">Edit</a>
+                                    <button onclick="openEditModal({{ $student->id }}, '{{ addslashes($student->nis) }}', '{{ addslashes($student->name) }}', '{{ addslashes($student->email ?? '') }}', '{{ addslashes($student->class_name) }}', '{{ addslashes($student->major ?? '') }}', '{{ $student->date_of_birth?->toDateString() ?? '' }}', '{{ $student->status }}', '{{ $student->nfc_type }}', '{{ addslashes($student->uid_kartu ?? '') }}', '{{ addslashes($student->phone ?? '') }}', '{{ addslashes($student->username ?? '') }}')" class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Edit</button>
                                     <form method="POST" action="{{ route('students.destroy', $student) }}" onsubmit="return confirm('Hapus siswa ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -186,4 +232,53 @@
         {{ $students->links() }}
     </div>
 </div>
+
+<script>
+function openEditModal(id, nis, name, email, className, major, dateOfBirth, status, nfcType, uidKartu, phone, username) {
+    document.getElementById('edit-student-id').value = id;
+    document.getElementById('edit-nis').value = nis;
+    document.getElementById('edit-name').value = name;
+    document.getElementById('edit-email').value = email;
+    document.getElementById('edit-class_name').value = className;
+    document.getElementById('edit-major').value = major;
+    document.getElementById('edit-date_of_birth').value = dateOfBirth;
+    document.getElementById('edit-status').value = status;
+    document.getElementById('edit-nfc_type').value = nfcType;
+    document.getElementById('edit-uid_kartu').value = uidKartu;
+    document.getElementById('edit-phone').value = phone;
+    document.getElementById('edit-username').value = username;
+    
+    const form = document.getElementById('edit-student-form');
+    form.action = '/siswa/' + id;
+    
+    document.getElementById('edit-student-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+    document.getElementById('edit-student-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when pressing Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeEditModal();
+        document.getElementById('add-student-modal').classList.add('hidden');
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('edit-student-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
+});
+
+document.getElementById('add-student-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.add('hidden');
+    }
+});
+</script>
 @endsection
