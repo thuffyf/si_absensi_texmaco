@@ -46,7 +46,7 @@
 <!-- Modal Tambah Siswa -->
 <div id="add-student-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('add-student-modal').classList.add('hidden')"></div>
+    <div class="absolute inset-0 bg-slate-900/50" onclick="document.getElementById('add-student-modal').classList.add('hidden')"></div>
     
     <!-- Modal Content -->
     <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
@@ -83,7 +83,7 @@
     <!-- Modal Edit Siswa -->
     <div id="edit-student-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeEditModal()"></div>
+        <div class="absolute inset-0 bg-slate-900/50" onclick="closeEditModal()"></div>
         
         <!-- Modal Content -->
         <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
