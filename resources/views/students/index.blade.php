@@ -67,10 +67,15 @@
                     <option value="X" @selected(old('class_name') === 'X')>X</option>
                     <option value="XI" @selected(old('class_name') === 'XI')>XI</option>
                     <option value="XII" @selected(old('class_name') === 'XII')>XII</option>
-                <select name="major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="Teknik Elektronika Industri" @selected(old('major') === 'Teknik Elektronika Industri')>Teknik Elektronika Industri</option>
-                <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Tanggal Lahir" />
+                </select>
+                <!-- Jurusan hidden karena semua siswa TEI -->
+                <input type="hidden" name="major" value="Teknik Elektronika Industri" />
+                <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="dd/mm/yyyy" />
                 <select name="nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="belum_terdaftar" @selected(old('nfc_type') === 'belum_terdaftar' || !old('nfc_type'))>Belum terdaftar</option>
+                    <option value="kartu" @selected(old('nfc_type') === 'kartu')>Kartu</option>
+                    <option value="handphone" @selected(old('nfc_type') === 'handphone')>Handphone</option>
+                </select>
                 <input name="uid_kartu" value="{{ old('uid_kartu') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu (opsional)" />
                 <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
                 <input name="username" value="{{ old('username') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
