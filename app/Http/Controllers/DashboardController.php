@@ -81,7 +81,7 @@ class DashboardController extends Controller
             return redirect()->route('login')->with('error', 'Akun siswa belum terhubung dengan data siswa.');
         }
 
-        $today = Carbon::today();
+        $today = Carbon::today('Asia/Jakarta');
         $now = Carbon::now('Asia/Jakarta');
 
         // Get today's attendance
@@ -111,7 +111,7 @@ class DashboardController extends Controller
             ->get();
 
         // Get attendance history for this week
-        $weekStart = Carbon::now()->locale('id')->startOfWeek(Carbon::MONDAY);
+        $weekStart = Carbon::now('Asia/Jakarta')->locale('id')->startOfWeek(Carbon::MONDAY);
         $weekEnd = $weekStart->copy()->addDays(4);
         $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 
@@ -166,7 +166,7 @@ class DashboardController extends Controller
             ->get();
 
         $totalStudents = $students->count();
-        $today = Carbon::today();
+        $today = Carbon::today('Asia/Jakarta');
 
         $todayAttendances = Attendance::query()
             ->whereDate('attendance_date', $today)
@@ -185,7 +185,7 @@ class DashboardController extends Controller
         $attendancePercentage = $totalStudents > 0 ? round(($presentToday / $totalStudents) * 100, 1) : 0;
         $recentTapIns = $todayAttendances->take(10);
 
-        $weekStart = Carbon::now()->locale('id')->startOfWeek(Carbon::MONDAY);
+        $weekStart = Carbon::now('Asia/Jakarta')->locale('id')->startOfWeek(Carbon::MONDAY);
         $weekEnd = $weekStart->copy()->addDays(4);
         $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 

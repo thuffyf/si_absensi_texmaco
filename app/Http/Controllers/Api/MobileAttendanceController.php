@@ -72,6 +72,12 @@ class MobileAttendanceController extends Controller
                 return $now->lte($endTime);
             });
         $status = $data['status'] ?? 'hadir';
+        if ($status === 'alpha') {
+            $status = 'alpa';
+        }
+        if ($status === 'late') {
+            $status = 'hadir';
+        }
 
         // Set MySQL session timezone to Asia/Jakarta
         DB::statement("SET time_zone = '+07:00'");

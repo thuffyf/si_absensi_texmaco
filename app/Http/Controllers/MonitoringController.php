@@ -43,9 +43,10 @@ class MonitoringController extends Controller
      */
     private function buildNfcPayload(bool $includeDevicesAsModels): array
     {
-        $today = Carbon::now()->toDateString();
+        $now = Carbon::now('Asia/Jakarta');
+        $today = $now->toDateString();
 
-        // Get successful attendances
+        // Get the latest attendance events for display, but keep totals independent.
         $attendances = Attendance::query()
             ->with(['student', 'device'])
             ->whereDate('attendance_date', $today)
@@ -54,7 +55,7 @@ class MonitoringController extends Controller
             ->limit(40)
             ->get();
 
-        // Get unregistered card scans
+        // Get the latest unregistered card scans for display.
         $unregisteredScans = ScanAttempt::query()
             ->with('device')
             ->whereDate('scanned_at', $today)
@@ -63,6 +64,29 @@ class MonitoringController extends Controller
             ->orderByDesc('id')
             ->limit(20)
             ->get();
+
+        $attendanceCount = Attendance::query()
+            ->whereDate('attendance_date', $today)
+            ->whereNotNull('attendance_time')
+            ->where('attendance_time', '!=', '00:00:00')
+            ->count();
+
+        $successCount = Attendance::query()
+            ->whereDate('attendance_date', $today)
+            ->where('status', 'hadir')
+            ->count();
+
+        $failedCount = Attendance::query()
+            ->whereDate('attendance_date', $today)
+            ->whereIn('status', ['alpa', 'izin', 'sakit'])
+            ->count();
+
+        $unknownCount = ScanAttempt::query()
+            ->whereDate('scanned_at', $today)
+            ->where('status', 'unregistered')
+            ->count();
+
+        $totalScans = $attendanceCount + $unknownCount;
 
         $events = collect();
 
