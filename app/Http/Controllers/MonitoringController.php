@@ -68,7 +68,9 @@ class MonitoringController extends Controller
             ->where('status', 'unregistered')
             ->count();
 
-        $totalScans = $totalAttendanceToday + $unknownCount;
+        // Total scan hanya menghitung dari Attendance yang valid (berhasil masuk database)
+        // Unknown count ditampilkan terpisah untuk informasi
+        $totalScans = $totalAttendanceToday;
 
         // Get the latest attendance events for display (limited for performance)
         $attendances = Attendance::query()

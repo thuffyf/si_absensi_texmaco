@@ -21,7 +21,6 @@
                             Auto-refresh setiap 2s
                         </span>
                         <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800">Hari ini</span>
-                        <span id="monitoring-connection" class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-700">Live</span>
                     </div>
                 </div>
 
@@ -167,21 +166,9 @@
 <script>
     // Auto-refresh setiap 2 detik menggunakan AJAX
     (function () {
-        const statusBadge = document.getElementById('monitoring-connection');
         let timer = null;
         let consecutiveErrors = 0;
         let delayMs = 2000;
-
-        function setBadge(state, text) {
-            if (!statusBadge) return;
-            statusBadge.textContent = text;
-            statusBadge.className = {
-                live: 'rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800',
-                loading: 'rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800',
-                paused: 'rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-700',
-                error: 'rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-800',
-            }[state] || statusBadge.className;
-        }
 
         function scheduleNext(ms) {
             if (timer) window.clearTimeout(timer);
@@ -190,13 +177,11 @@
 
         async function refresh() {
             if (document.hidden) {
-                setBadge('paused', 'Jeda');
                 scheduleNext(2000);
                 return;
             }
 
             try {
-                setBadge('loading', 'Memuat');
 
                 const response = await fetch('{{ route('monitoring.nfc-data') }}', {
                     headers: {
@@ -356,11 +341,9 @@
                 `;
                 consecutiveErrors = 0;
                 delayMs = 2000;
-                setBadge('live', 'Live');
             } catch (error) {
                 consecutiveErrors += 1;
                 delayMs = Math.min(15000, 2000 * Math.pow(2, consecutiveErrors));
-                setBadge('error', 'Gagal');
             } finally {
                 scheduleNext(delayMs);
             }
