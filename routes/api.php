@@ -27,6 +27,7 @@ Route::prefix('mobile')->group(function () {
     Route::post('/login/teacher', [MobileAuthController::class, 'loginTeacher']);
     Route::post('/register', [MobileAuthController::class, 'registerDevice']);
     Route::post('/attendance', [MobileAttendanceController::class, 'tap'])->middleware('nfc.api.key');
+    Route::post('/heartbeat', [MobileAttendanceController::class, 'heartbeat'])->middleware('nfc.api.key');
 
     Route::get('/student/profile', [MobileStudentController::class, 'profile']);
     Route::get('/student/summary', [MobileStudentController::class, 'summary']);

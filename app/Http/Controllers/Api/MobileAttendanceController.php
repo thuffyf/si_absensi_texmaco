@@ -13,6 +13,22 @@ use Illuminate\Support\Facades\DB;
 
 class MobileAttendanceController extends Controller
 {
+    public function heartbeat(Request $request)
+    {
+        $data = $request->validate([
+            'device_id' => 'required|exists:nfc_devices,id',
+        ]);
+
+        $device = NfcDevice::find($data['device_id']);
+        if ($device) {
+            $device->update([
+                'last_seen_at' => Carbon::now('Asia/Jakarta'),
+            ]);
+        }
+
+        return response()->json(['message' => 'Heartbeat received.']);
+    }
+
     public function tap(Request $request)
     {
         $data = $request->validate([

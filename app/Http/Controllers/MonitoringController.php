@@ -130,6 +130,8 @@ class MonitoringController extends Controller
 
             $attendanceCount = Attendance::where('device_id', $device->id)
                 ->whereDate('attendance_date', $today)
+                ->whereNotNull('attendance_time')
+                ->where('attendance_time', '!=', '00:00:00')
                 ->count();
 
             $device->scan_today = $unregisteredCount + $attendanceCount;
@@ -138,14 +140,14 @@ class MonitoringController extends Controller
             $now = Carbon::now();
             $lastSeen = $device->last_seen_at;
 
-            if ($lastSeen && $now->diffInMinutes($lastSeen) <= 5) {
-                // Perangkat terlihat dalam 5 menit terakhir = online
+            if ($lastSeen && $now->diffInMinutes($lastSeen) <= 2) {
+                // Perangkat terlihat dalam 2 menit terakhir = online
                 $device->status = 'online';
-            } elseif ($lastSeen && $now->diffInMinutes($lastSeen) <= 15) {
-                // Perangkat terlihat 5-15 menit lalu = idle
+            } elseif ($lastSeen && $now->diffInMinutes($lastSeen) <= 5) {
+                // Perangkat terlihat 2-5 menit lalu = idle
                 $device->status = 'idle';
             } else {
-                // Perangkat tidak terlihat lebih dari 15 menit = offline
+                // Perangkat tidak terlihat lebih dari 5 menit = offline
                 $device->status = 'offline';
             }
         }

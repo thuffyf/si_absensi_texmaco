@@ -170,6 +170,8 @@ class DashboardController extends Controller
 
         $todayAttendances = Attendance::query()
             ->whereDate('attendance_date', $today)
+            ->whereNotNull('attendance_time')
+            ->where('attendance_time', '!=', '00:00:00')
             ->whereHas('student', function ($query) use ($targetClass, $targetMajor) {
                 $query->where('class_name', $targetClass)
                     ->where('major', $targetMajor);
@@ -268,7 +270,7 @@ class DashboardController extends Controller
         
         foreach ($devices as $device) {
             $lastSeen = $device->last_seen_at;
-            if ($lastSeen && $now->diffInMinutes($lastSeen) <= 5) {
+            if ($lastSeen && $now->diffInMinutes($lastSeen) <= 2) {
                 $onlineDevices++;
             }
         }
