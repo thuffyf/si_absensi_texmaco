@@ -1,7 +1,5 @@
 <?php
 
-use App\Support\PublicStorageUrl;
-
 return [
 
     /*
@@ -16,21 +14,6 @@ return [
     */
 
     'storage_public_path' => env('STORAGE_PUBLIC_PATH', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Storage Public URL Directory Name
-    |--------------------------------------------------------------------------
-    |
-    | Nama direktori yang digunakan di URL untuk akses file storage.
-    | Jika STORAGE_PUBLIC_PATH diset, akan otomatis ambil basename.
-    | Default: 'storage'
-    |
-    */
-
-    'storage_public_directory' => env('STORAGE_PUBLIC_PATH') 
-        ? basename(rtrim(str_replace('\\', '/', env('STORAGE_PUBLIC_PATH')), '/'))
-        : 'storage',
 
     /*
     |--------------------------------------------------------------------------
@@ -69,18 +52,18 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => config('app.url') . '/storage',
+            'url' => env('APP_URL', 'http://localhost') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
 
         // Disk untuk hosting cPanel/shared hosting yang perlu menyimpan file
         // langsung ke folder public storage yang bisa diakses via /storage
-        // Contoh: /home/username/public_html/storage
+        // Contoh: /home/username/public_html/storage_public
         'public_web' => [
             'driver' => 'local',
-            'root' => config('filesystems.storage_public_path') ?: storage_path('app/public'),
-            'url' => config('app.url') . '/' . config('filesystems.storage_public_directory'),
+            'root' => env('STORAGE_PUBLIC_PATH', storage_path('app/public')),
+            'url' => env('APP_URL', 'http://localhost') . '/' . (env('STORAGE_PUBLIC_PATH') ? basename(env('STORAGE_PUBLIC_PATH')) : 'storage'),
             'visibility' => 'public',
             'throw' => false,
         ],

@@ -38,7 +38,8 @@ class PublicStorageUrl
             }
         }
 
-        $configuredUrl = config('app.url', env('APP_URL', 'http://localhost'));
+        // Try config first (works when cached), fallback to env
+        $configuredUrl = config('app.url') ?? env('APP_URL', 'http://localhost');
         $configuredUrl = trim((string) $configuredUrl, " \t\n\r\0\x0B`'\"");
 
         return rtrim($configuredUrl, '/');
@@ -46,13 +47,17 @@ class PublicStorageUrl
 
     public static function publicDirectory(): string
     {
-        // Use config instead of env for cache compatibility
-        $storagePublicDirectory = config('filesystems.storage_public_directory');
+        // Try config first (works when cached), fallback to env
+        $storagePublicPath = config('filesystems.storage_public_path') ?? env('STORAGE_PUBLIC_PATH');
 
-        if (!$storagePublicDirectory || $storagePublicDirectory === '') {
+        if (!$storagePublicPath || $storagePublicPath === '') {
             return 'storage';
         }
 
-        return $storagePublicDirectory;
+        $normalizedStoragePath = str_replace('\\', '/', trim((string) $storagePublicPath));
+        $normalizedStoragePath = rtrim($normalizedStoragePath, '/');
+        $directoryName = basename($normalizedStoragePath);
+
+        return $directoryName !== '' ? $directoryName : 'storage';
     }
 }
