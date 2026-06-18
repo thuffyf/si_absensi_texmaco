@@ -198,7 +198,7 @@ function openEditModal(id, nip, name, email, subject, role, phone, dateOfBirth, 
     document.getElementById('edit-status').value = status;
     
     const form = document.getElementById('edit-teacher-form');
-    form.action = '/teachers/' + id;
+    form.action = '/guru/' + id;
     
     document.getElementById('edit-teacher-modal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
