@@ -44,6 +44,14 @@ class AbsensiController extends Controller
             });
         }
 
+        if ($request->filled('search')) {
+            $search = $request->string('search');
+            $query->whereHas('student', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('nis', 'like', '%' . $search . '%');
+            });
+        }
+
         $records = $query->orderByDesc('attendance_date')->orderByDesc('attendance_time')->paginate(20)->withQueryString();
         $students = Student::orderBy('name')->get();
 

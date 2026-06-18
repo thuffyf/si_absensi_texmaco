@@ -25,16 +25,77 @@
             </ul>
     @endif
 
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div class="flex flex-wrap gap-2">
-            <form method="GET" action="{{ route('absensi.index') }}" class="flex gap-2">
-                <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Cari siswa..." />
-                <button type="submit" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                    Cari
+    <!-- Filter Section -->
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <form method="GET" action="{{ route('absensi.index') }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Tanggal Mulai -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-2">Tanggal Mulai</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" />
+                </div>
+
+                <!-- Tanggal Akhir -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-2">Tanggal Akhir</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" />
+                </div>
+
+                <!-- Filter Kelas -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-2">Kelas</label>
+                    <select name="class" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                        <option value="">Semua Kelas</option>
+                        <option value="X TEI" {{ request('class') === 'X TEI' ? 'selected' : '' }}>X TEI</option>
+                        <option value="XI TEI" {{ request('class') === 'XI TEI' ? 'selected' : '' }}>XI TEI</option>
+                        <option value="XII TEI" {{ request('class') === 'XII TEI' ? 'selected' : '' }}>XII TEI</option>
+                    </select>
+                </div>
+
+                <!-- Filter Status -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-2">Status</label>
+                    <select name="status" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                        <option value="">Semua Status</option>
+                        <option value="hadir" {{ request('status') === 'hadir' ? 'selected' : '' }}>Hadir</option>
+                        <option value="izin" {{ request('status') === 'izin' ? 'selected' : '' }}>Izin</option>
+                        <option value="sakit" {{ request('status') === 'sakit' ? 'selected' : '' }}>Sakit</option>
+                        <option value="alpa" {{ request('status') === 'alpa' ? 'selected' : '' }}>Alpa</option>
+                    </select>
+                </div>
+
+                <!-- Cari Siswa -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-2">Cari Siswa</label>
+                    <input type="text" name="search" value="{{ request('search') }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Nama/NIS..." />
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-wrap gap-2 pt-2">
+                <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Filter
                 </button>
-                <a href="{{ route('absensi.index') }}" class="flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
-            </form>
-        </div>
+                <a href="{{ route('absensi.index') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Reset
+                </a>
+                @if(request()->hasAny(['start_date', 'end_date', 'class', 'status', 'search']))
+                    <div class="flex items-center px-3 py-2 text-xs text-slate-600 bg-slate-100 rounded-xl">
+                        Filter aktif
+                    </div>
+                @else
+                    <div class="flex items-center px-3 py-2 text-xs text-slate-600 bg-blue-100 rounded-xl">
+                        Menampilkan data hari ini
+                    </div>
+                @endif
+            </div>
+        </form>
     </div>
 
     <!-- Modal Tambah Absensi dihapus - Absensi otomatis dari tap in, notifikasi, dan penolakan siswa sakit/izin -->
