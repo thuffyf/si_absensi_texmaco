@@ -130,37 +130,48 @@
             }
         });
 
-        // Remember Me - Save and Auto-fill Username
+        // Remember Me - Save and Auto-fill Username and Password
         const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
         const rememberCheckbox = document.getElementById('remember');
         const loginForm = document.getElementById('loginForm');
 
-        // Load saved username on page load
+        // Load saved credentials on page load
         window.addEventListener('DOMContentLoaded', function() {
             const savedUsername = localStorage.getItem('remembered_username');
+            const savedPassword = localStorage.getItem('remembered_password');
+            
             if (savedUsername) {
                 usernameInput.value = savedUsername;
                 rememberCheckbox.checked = true;
             }
+            
+            if (savedPassword) {
+                passwordInput.value = savedPassword;
+                rememberCheckbox.checked = true;
+                updatePasswordToggle(); // Update toggle button visibility
+            }
         });
 
-        // Save username when form is submitted
+        // Save credentials when form is submitted
         loginForm.addEventListener('submit', function() {
             if (rememberCheckbox.checked) {
                 localStorage.setItem('remembered_username', usernameInput.value);
+                localStorage.setItem('remembered_password', passwordInput.value);
             } else {
                 localStorage.removeItem('remembered_username');
+                localStorage.removeItem('remembered_password');
             }
         });
 
-        // Clear saved username when checkbox is unchecked
+        // Clear saved credentials when checkbox is unchecked
         rememberCheckbox.addEventListener('change', function() {
             if (!this.checked) {
                 localStorage.removeItem('remembered_username');
+                localStorage.removeItem('remembered_password');
             }
         });
 
-        const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
         const eyeIcon = document.getElementById('eyeIcon');
         const eyeOpenIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
