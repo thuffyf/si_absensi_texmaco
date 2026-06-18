@@ -40,9 +40,9 @@
                     <label class="block text-xs font-medium text-slate-700 mb-2">Kelas</label>
                     <select name="class" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
                         <option value="">Semua Kelas</option>
-                        <option value="X TEI" {{ request('class') === 'X TEI' ? 'selected' : '' }}>X TEI</option>
-                        <option value="XI TEI" {{ request('class') === 'XI TEI' ? 'selected' : '' }}>XI TEI</option>
-                        <option value="XII TEI" {{ request('class') === 'XII TEI' ? 'selected' : '' }}>XII TEI</option>
+                        <option value="X" {{ request('class') === 'X' ? 'selected' : '' }}>X</option>
+                        <option value="XI" {{ request('class') === 'XI' ? 'selected' : '' }}>XI</option>
+                        <option value="XII" {{ request('class') === 'XII' ? 'selected' : '' }}>XII</option>
                     </select>
                 </div>
 
