@@ -118,7 +118,7 @@
                             </td>
                             <td class="px-3 py-3">
                                 <div class="flex justify-end gap-2">
-                                    <button onclick="openEditModal({{ $schedule->id }}, '{{ $schedule->teacher_id ?? '' }}', '{{ $schedule->class_name }}', '{{ addslashes($schedule->subject) }}', '{{ $schedule->day_of_week }}', '{{ $schedule->start_time?->format('H:i') }}', '{{ $schedule->end_time?->format('H:i') }}', '{{ $schedule->status }}')" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+                                    <button onclick='openEditModal(@json($schedule->id), @json($schedule->teacher_id ?? ""), @json($schedule->class_name), @json($schedule->subject), @json($schedule->day_of_week), @json($schedule->start_time?->format("H:i") ?? ""), @json($schedule->end_time?->format("H:i") ?? ""), @json($schedule->status))' class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
                                         Edit
                                     </button>
                                     <form method="POST" action="{{ route('schedules.destroy', $schedule) }}" onsubmit="return confirm('Hapus jadwal ini?')">

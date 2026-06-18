@@ -21,8 +21,8 @@ class Schedule extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i',
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s',
     ];
 
     public function teacher()
