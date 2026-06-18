@@ -23,15 +23,10 @@ class AbsensiController extends Controller
         $query = Attendance::query()->with('student');
 
         // Default filter for today's attendance only
-        if (!$request->filled('start_date') && !$request->filled('end_date')) {
-            $query->whereDate('attendance_date', Carbon::today());
+        if ($request->filled('date')) {
+            $query->whereDate('attendance_date', $request->date);
         } else {
-            if ($request->filled('start_date')) {
-                $query->whereDate('attendance_date', '>=', $request->start_date);
-            }
-            if ($request->filled('end_date')) {
-                $query->whereDate('attendance_date', '<=', $request->end_date);
-            }
+            $query->whereDate('attendance_date', Carbon::today());
         }
 
         if ($request->filled('status')) {

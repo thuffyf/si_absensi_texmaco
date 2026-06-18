@@ -28,17 +28,11 @@
     <!-- Filter Section -->
     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <form method="GET" action="{{ route('absensi.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <!-- Tanggal Mulai -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Tanggal -->
                 <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-2">Tanggal Mulai</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" />
-                </div>
-
-                <!-- Tanggal Akhir -->
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-2">Tanggal Akhir</label>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" />
+                    <label class="block text-xs font-medium text-slate-700 mb-2">Tanggal</label>
+                    <input type="date" name="date" value="{{ request('date') }}" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" />
                 </div>
 
                 <!-- Filter Kelas -->
@@ -85,7 +79,7 @@
                     </svg>
                     Reset
                 </a>
-                @if(request()->hasAny(['start_date', 'end_date', 'class', 'status', 'search']))
+                @if(request()->hasAny(['date', 'class', 'status', 'search']))
                     <div class="flex items-center px-3 py-2 text-xs text-slate-600 bg-slate-100 rounded-xl">
                         Filter aktif
                     </div>
