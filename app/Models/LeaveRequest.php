@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\PublicStorageUrl;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,5 +37,15 @@ class LeaveRequest extends Model
     public function student()
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function photoUrl(): Attribute
+    {
+        return Attribute::get(function () {
+            if (empty($this->photo)) {
+                return null;
+            }
+            return PublicStorageUrl::get($this->photo);
+        });
     }
 }

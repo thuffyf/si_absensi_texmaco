@@ -80,9 +80,9 @@
                 <div>
                     <p class="text-xs text-gray-500 mb-2">Alasan</p>
                     <p class="text-sm text-gray-300 mb-4">{{ $request->reason }}</p>
-                    @if($request->photo)
+                    @if($request->photo_url)
                         <div class="mb-4 overflow-hidden rounded-xl border border-white/10 bg-black/20">
-                            <img src="{{ asset('storage/' . $request->photo) }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-48 w-full object-cover" />
+                            <img src="{{ $request->photo_url }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-48 w-full object-cover" />
                             <div class="px-3 py-2 text-xs text-gray-400">Lampiran bukti</div>
                         </div>
                     @endif
@@ -118,9 +118,9 @@
                 </div>
                 <p class="text-xs text-gray-400">Tanggal: {{ $request->start_date?->format('d M Y') }}{{ $request->end_date ? ' - ' . $request->end_date->format('d M Y') : '' }}</p>
                 <p class="text-xs text-gray-300 mt-2">{{ $request->reason }}</p>
-                @if($request->photo)
+                @if($request->photo_url)
                     <div class="mt-3 overflow-hidden rounded-xl border border-white/10 bg-black/20">
-                        <img src="{{ asset('storage/' . $request->photo) }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-36 w-full object-cover" />
+                        <img src="{{ $request->photo_url }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-36 w-full object-cover" />
                     </div>
                 @endif
             </div>
@@ -144,9 +144,9 @@
                 </div>
                 <p class="text-xs text-gray-400">Tanggal: {{ $request->start_date?->format('d M Y') }}{{ $request->end_date ? ' - ' . $request->end_date->format('d M Y') : '' }}</p>
                 <p class="text-xs text-gray-300 mt-2">{{ $request->reason }}</p>
-                @if($request->photo)
+                @if($request->photo_url)
                     <div class="mt-3 overflow-hidden rounded-xl border border-white/10 bg-black/20">
-                        <img src="{{ asset('storage/' . $request->photo) }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-36 w-full object-cover" />
+                        <img src="{{ $request->photo_url }}" alt="Bukti {{ $request->student?->name ?? 'siswa' }}" class="h-36 w-full object-cover" />
                     </div>
                 @endif
             </div>
