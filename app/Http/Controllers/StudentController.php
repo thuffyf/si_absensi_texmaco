@@ -48,12 +48,16 @@ class StudentController extends Controller
             'password' => 'nullable|string|min:6',
             'class_name' => 'required|string|max:100',
             'major' => 'nullable|string|max:100',
-            'status' => 'required|in:aktif,tidak_aktif,lulus',
+            'status' => 'nullable|in:aktif,tidak_aktif,lulus',
             'nfc_type' => 'required|in:kartu,handphone,belum_terdaftar',
             'uid_kartu' => 'nullable|string|max:100|unique:students,uid_kartu',
             'phone' => 'nullable|string|max:50',
             'date_of_birth' => 'nullable|date',
         ]);
+
+        // Set default values
+        $data['status'] = $data['status'] ?? 'aktif';
+        $data['major'] = $data['major'] ?? 'Teknik Elektronika Industri';
 
         if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
