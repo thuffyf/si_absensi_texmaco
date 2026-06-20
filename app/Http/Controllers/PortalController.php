@@ -241,7 +241,7 @@ class PortalController extends Controller
     {
         $student = $this->currentStudent();
 
-        // Siswa login dengan tanggal lahir, bukan password User — kita update User password
+        // Siswa login dengan tanggal lahir, bukan password User â€” kita update User password
         $request->validate([
             'new_password'              => 'required|string|min:8|confirmed',
             'new_password_confirmation' => 'required|string',
@@ -390,7 +390,7 @@ class PortalController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        $teacherClasses = $dailySchedules->pluck('class_name')->unique()->values();
+        $teacherClasses = $dailySchedules->pluck('class_name')->map(fn($c) => $this->normalizeClassName($c))->unique()->values();
 
         $scopedSchedules = $dailySchedules;
         if ($selectedScheduleId !== '') {
@@ -405,7 +405,7 @@ class PortalController extends Controller
                 ->values();
         }
 
-        $scopedClasses = $scopedSchedules->pluck('class_name')->unique()->values();
+        $scopedClasses = $scopedSchedules->pluck('class_name')->map(fn($c) => $this->normalizeClassName($c))->unique()->values();
 
         $records = collect();
         if ($scopedClasses->isNotEmpty()) {
@@ -496,11 +496,7 @@ class PortalController extends Controller
         }
 
         $date = Carbon::parse($data['date']);
-        $allowedClassrooms = $teacher->schedules()
-            ->where('day_of_week', $this->dayName($date))
-            ->pluck('class_name')
-            ->unique()
-            ->all();
+        $allowedClassrooms = $teacher->schedules()->where('day_of_week', $this->dayName($date))->pluck('class_name')->map(fn($c) => $this->normalizeClassName($c))->unique()->all();
 
         if (! in_array($student->class_name, $allowedClassrooms, true)) {
             abort(403, 'Akses ke data absensi siswa ini ditolak.');
@@ -594,9 +590,9 @@ class PortalController extends Controller
      * Untuk mengatasi inkonsistensi penamaan antara data siswa dan jadwal.
      * 
      * Contoh:
-     * - "X" atau "X-TEI" atau "X IPA" → "X TEI"
-     * - "XI" atau "XI-TEI" → "XI TEI"
-     * - "XII" atau "XII-TEI" → "XII TEI"
+     * - "X" atau "X-TEI" atau "X IPA" â†’ "X TEI"
+     * - "XI" atau "XI-TEI" â†’ "XI TEI"
+     * - "XII" atau "XII-TEI" â†’ "XII TEI"
      */
     private function normalizeClassName(string $className): string
     {
