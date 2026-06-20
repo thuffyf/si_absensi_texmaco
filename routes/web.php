@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
@@ -176,11 +176,17 @@ Route::post('/login', function (Request $request) {
             return redirect()->route('portal.student.dashboard');
         }
 
-        // --- Coba login Guru (email, password = NIP) ---
-        $teacher = Teacher::where('email', $identifier)->first();
+    // --- Coba login Guru (email/NIP, password = tanggal lahir) ---
+    if ($parsedDate) {
+        $teacher = Teacher::where('email', $identifier)
+            ->orWhere('nip', $identifier)
+            ->first();
 
-        if ($teacher && $teacher->nip && $password === $teacher->nip) {
-            $user = User::query()->firstOrNew(['email' => $teacher->email]);
+        if ($teacher && $teacher->date_of_birth && $teacher->date_of_birth->toDateString() === $parsedDate) {
+            // Gunakan email guru jika ada, fallback ke generate email dari NIP jika email kosong
+            $loginEmail = $teacher->email ?: strtolower(preg_replace('/[^\w\d]/', '', $teacher->nip)) . '@guru.texmaco.sch.id';
+
+            $user = User::query()->firstOrNew(['email' => $loginEmail]);
             if ($user->exists && in_array($user->role, ['admin', 'tata_usaha'], true)) {
                 return back()
                     ->withErrors(['login' => 'Akun ini sudah dipakai sebagai admin atau tata usaha.'])
@@ -188,7 +194,7 @@ Route::post('/login', function (Request $request) {
             }
 
             $user->name  = $teacher->name;
-            $user->email = $teacher->email;
+            $user->email = $loginEmail;
             $user->role  = 'guru';
             if (! $user->exists || empty($user->getRawOriginal('password'))) {
                 $user->password = Hash::make(Str::random(40));
@@ -536,3 +542,5 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
         return back()->with('success', 'Password berhasil diubah.');
     })->name('profile.change-password');
 });
+
+
