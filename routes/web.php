@@ -175,6 +175,7 @@ Route::post('/login', function (Request $request) {
 
             return redirect()->route('portal.student.dashboard');
         }
+    }
 
     // --- Coba login Guru (email/NIP, password = tanggal lahir) ---
     if ($parsedDate) {
@@ -251,6 +252,17 @@ Route::prefix('app')->name('portal.')->group(function () {
 });
 
 // Dashboard Routes (Protected by auth middleware)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        $role = Auth::user()->role;
+        return redirect()->route(match ($role) {
+            'siswa' => 'portal.student.dashboard',
+            'guru' => 'portal.teacher.attendance',
+            default => 'dashboard',
+        });
+    });
+});
+
 Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
     Route::post('/logout', function (Request $request) {
         Auth::logout();
@@ -262,8 +274,7 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
     })->name('logout');
 
     // Dashboard Utama
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Student Dashboard (separate from admin)
     Route::get('/student-dashboard', [App\Http\Controllers\StudentDashboardController::class, 'index'])
@@ -542,5 +553,7 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
         return back()->with('success', 'Password berhasil diubah.');
     })->name('profile.change-password');
 });
+
+
 
 
