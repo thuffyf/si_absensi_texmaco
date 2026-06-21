@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Absensi â€” SITEXA Absensi')
+@section('title', 'Absensi ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SITEXA Absensi')
 @section('page_title', 'Absensi')
 @section('page_subtitle', 'Kelola data absensi siswa')
 
@@ -234,7 +234,7 @@
                                         </div>
                                         <div class="flex gap-3">
                                             <button type="button" onclick="document.getElementById('delete-modal-{{ $record->id }}').classList.add('hidden')" class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Batal</button>
-                                            <form method="POST" action="{{ route('absensi.destroy', $record) }}" class="flex-1">
+                                            <form method="POST" action="{{ route('absensi.destroy', $record->id) }}" class="flex-1">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="w-full rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Hapus</button>
