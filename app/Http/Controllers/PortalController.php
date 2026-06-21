@@ -241,7 +241,7 @@ class PortalController extends Controller
     {
         $student = $this->currentStudent();
 
-        // Siswa login dengan tanggal lahir, bukan password User Ã¢â‚¬â€ kita update User password
+        // Siswa login dengan tanggal lahir, bukan password User ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â kita update User password
         $request->validate([
             'new_password'              => 'required|string|min:8|confirmed',
             'new_password_confirmation' => 'required|string',
@@ -411,11 +411,15 @@ class PortalController extends Controller
 
         $records = collect();
         if ($rawScopedClasses->isNotEmpty()) {
+            // Map kelas dari jadwal ("X TEI") ke basenya ("X")
+            $baseClasses = $rawScopedClasses->map(fn($c) => $this->getBaseClassName($c))->unique()->values();
+
             $records = Attendance::query()
                 ->with('student')
                 ->whereDate('attendance_date', $date->toDateString())
-                ->whereHas('student', function ($query) use ($rawScopedClasses) {
-                    $query->whereIn('class_name', $rawScopedClasses);
+                ->whereHas('student', function ($query) use ($rawScopedClasses, $baseClasses) {
+                    $query->whereIn('class_name', $rawScopedClasses)
+                          ->orWhereIn('class_name', $baseClasses);
                 })
                 ->orderBy('attendance_time')
                 ->get()
@@ -436,8 +440,13 @@ class PortalController extends Controller
         $notRecorded = collect();
 
         if ($rawScopedClasses->isNotEmpty()) {
+            $baseClasses = $rawScopedClasses->map(fn($c) => $this->getBaseClassName($c))->unique()->values();
+
             $notRecorded = Student::query()
-                ->whereIn('class_name', $rawScopedClasses)
+                ->where(function($q) use ($rawScopedClasses, $baseClasses) {
+                    $q->whereIn('class_name', $rawScopedClasses)
+                      ->orWhereIn('class_name', $baseClasses);
+                })
                 ->when($recordedNis->isNotEmpty(), fn ($query) => $query->whereNotIn('nis', $recordedNis))
                 ->orderBy('class_name')
                 ->orderBy('name')
@@ -592,9 +601,9 @@ class PortalController extends Controller
      * Untuk mengatasi inkonsistensi penamaan antara data siswa dan jadwal.
      * 
      * Contoh:
-     * - "X" atau "X-TEI" atau "X IPA" Ã¢â€ â€™ "X TEI"
-     * - "XI" atau "XI-TEI" Ã¢â€ â€™ "XI TEI"
-     * - "XII" atau "XII-TEI" Ã¢â€ â€™ "XII TEI"
+     * - "X" atau "X-TEI" atau "X IPA" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "X TEI"
+     * - "XI" atau "XI-TEI" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "XI TEI"
+     * - "XII" atau "XII-TEI" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "XII TEI"
      */
     private function normalizeClassName(string $className): string
     {
@@ -615,6 +624,15 @@ class PortalController extends Controller
         }
         
         // Jika tidak cocok dengan pola di atas, kembalikan apa adanya
+        return $className;
+    }
+
+    private function getBaseClassName(string $className): string
+    {
+        $normalized = strtoupper(trim($className));
+        if (preg_match('/^XII\b/i', $normalized)) return 'XII';
+        if (preg_match('/^XI\b/i', $normalized)) return 'XI';
+        if (preg_match('/^X\b/i', $normalized)) return 'X';
         return $className;
     }
 
