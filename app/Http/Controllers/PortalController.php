@@ -241,7 +241,7 @@ class PortalController extends Controller
     {
         $student = $this->currentStudent();
 
-        // Siswa login dengan tanggal lahir, bukan password User ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â kita update User password
+        // Siswa login dengan tanggal lahir, bukan password User ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â kita update User password
         $request->validate([
             'new_password'              => 'required|string|min:8|confirmed',
             'new_password_confirmation' => 'required|string',
@@ -507,9 +507,18 @@ class PortalController extends Controller
         }
 
         $date = Carbon::parse($data['date']);
-        $allowedClassrooms = $teacher->schedules()->where('day_of_week', $this->dayName($date))->pluck('class_name')->map(fn($c) => $this->normalizeClassName($c))->unique()->all();
+        $allowedClassrooms = $teacher->schedules()->where('day_of_week', $this->dayName($date))->pluck('class_name')->all();
+        // Cek cocok dengan nama asli jadwal, nama ternormalisasi, ATAU nama basis (X/XI/XII)
+        $allowedNormalized = array_map(fn($c) => $this->normalizeClassName($c), $allowedClassrooms);
+        $allowedBase       = array_map(fn($c) => $this->getBaseClassName($c), $allowedClassrooms);
+        $studentClass      = $student->class_name;
 
-        if (! in_array($student->class_name, $allowedClassrooms, true)) {
+        $isAllowed = in_array($studentClass, $allowedClassrooms, true)
+                  || in_array($studentClass, $allowedNormalized, true)
+                  || in_array($studentClass, $allowedBase, true)
+                  || in_array($this->getBaseClassName($studentClass), $allowedBase, true);
+
+        if (! $isAllowed) {
             abort(403, 'Akses ke data absensi siswa ini ditolak.');
         }
 
@@ -601,9 +610,9 @@ class PortalController extends Controller
      * Untuk mengatasi inkonsistensi penamaan antara data siswa dan jadwal.
      * 
      * Contoh:
-     * - "X" atau "X-TEI" atau "X IPA" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "X TEI"
-     * - "XI" atau "XI-TEI" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "XI TEI"
-     * - "XII" atau "XII-TEI" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "XII TEI"
+     * - "X" atau "X-TEI" atau "X IPA" ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ "X TEI"
+     * - "XI" atau "XI-TEI" ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ "XI TEI"
+     * - "XII" atau "XII-TEI" ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ "XII TEI"
      */
     private function normalizeClassName(string $className): string
     {
