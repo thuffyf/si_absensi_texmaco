@@ -20,37 +20,107 @@ class AbsensiController extends Controller
 
     public function index(Request $request)
     {
-        $query = Attendance::query()->with('student');
+        $targetDate = $request->filled('date') ? Carbon::parse($request->date) : Carbon::today();
+        $targetDateString = $targetDate->toDateString();
+        $isPastDate = $targetDate->isBefore(Carbon::today());
+        $isToday = $targetDate->isSameDay(Carbon::today());
 
-        // Default filter for today's attendance only
-        if ($request->filled('date')) {
-            $query->whereDate('attendance_date', $request->date);
-        } else {
-            $query->whereDate('attendance_date', Carbon::today());
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->string('status'));
-        }
-
+        $studentsQuery = Student::query();
         if ($request->filled('class')) {
-            $query->whereHas('student', function ($q) use ($request) {
-                $q->where('class_name', $request->string('class'));
-            });
+            $studentsQuery->where('class_name', $request->string('class'));
         }
-
         if ($request->filled('search')) {
             $search = $request->string('search');
-            $query->whereHas('student', function ($q) use ($search) {
+            $studentsQuery->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('nis', 'like', '%' . $search . '%');
+                  ->orWhere('nis', 'like', '%' . $search . '%');
             });
         }
+        
+        // Cuma ambil students kalau class atau search diisi ATAU isPastDate = true (agar alpa muncul semua)
+        if ($request->filled('class') || $request->filled('search') || $isPastDate) {
+            $studentsList = $studentsQuery->orderBy('class_name')->orderBy('name')->get();
+        } else {
+            // Jika hari ini dan gak ada filter, ambil student yang SUDAH ABSEN saja biar listnya gak penuh org "Belum"
+            // (seperti default lama yg ada aja dulu)
+            $studentsList = collect(); // Nanti akan diisi dari attendanceRecords aja
+        }
 
-        $records = $query->orderByDesc('attendance_date')->orderByDesc('attendance_time')->paginate(20)->withQueryString();
+        // Ambil data attendance di tanggal tersebut
+        $attendanceRecords = Attendance::query()
+            ->with('student')
+            ->whereDate('attendance_date', $targetDate)
+            ->get()
+            ->keyBy('student_id');
+
+        $mergedRecords = collect();
+
+        if ($studentsList->isEmpty() && !$isPastDate) {
+            // Jika hari ini dan gada filter, hanya list yg absen
+            foreach ($attendanceRecords as $att) {
+                if (!$att->student) continue;
+
+                if ($request->filled('status') && $att->status !== $request->string('status')) {
+                    continue;
+                }
+
+                $mergedRecords->push((object)[
+                    'id' => $att->id,
+                    'student_id' => $att->student_id,
+                    'student' => $att->student,
+                    'attendance_date' => $att->attendance_date,
+                    'attendance_time' => $att->attendance_time,
+                    'status' => $att->status,
+                    'note' => $att->note,
+                    'is_existing' => true,
+                ]);
+            }
+        } else {
+            foreach ($studentsList as $student) {
+                $att = $attendanceRecords->get($student->id);
+                
+                // Hitung status jika tidak ada di DB
+                $derivedStatus = 'belum';
+                if ($isPastDate) {
+                    $derivedStatus = 'alpa';
+                }
+
+                if ($request->filled('status')) {
+                    $filterStatus = $request->string('status');
+                    $actualStatus = $att ? $att->status : $derivedStatus;
+                    // pastikan filter sesuai (contoh: cari alpa dapet juga yg belum untuk isPastDate)
+                    if ($actualStatus !== $filterStatus && !($filterStatus === 'alpa' && $actualStatus === 'belum')) {
+                        continue;
+                    }
+                }
+
+                $mergedRecords->push((object)[
+                    'id' => $att ? $att->id : 'new-' . $student->id,
+                    'student_id' => $student->id,
+                    'student' => $student,
+                    'attendance_date' => $att ? $att->attendance_date : clone $targetDate,
+                    'attendance_time' => $att ? $att->attendance_time : '-',
+                    'status' => $att ? $att->status : $derivedStatus,
+                    'note' => $att ? $att->note : null,
+                    'is_existing' => $att ? true : false,
+                ]);
+            }
+        }
+
+        // Paginasi manual untuk collection
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
+        $perPage = 20;
+        $records = new \Illuminate\Pagination\LengthAwarePaginator(
+            $mergedRecords->forPage($page, $perPage),
+            $mergedRecords->count(),
+            $perPage,
+            $page,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'query' => $request->query()]
+        );
+
         $students = Student::orderBy('name')->get();
 
-        return view('absensi.index', compact('records', 'students'));
+        return view('absensi.index', compact('records', 'students', 'targetDate'));
     }
 
     public function store(Request $request)
@@ -142,3 +212,5 @@ class AbsensiController extends Controller
         }
     }
 }
+
+

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Absensi — SITEXA Absensi')
+@section('title', 'Absensi â€” SITEXA Absensi')
 @section('page_title', 'Absensi')
 @section('page_subtitle', 'Kelola data absensi siswa')
 
@@ -129,19 +129,29 @@
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_date?->format('d M Y') }}</td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->attendance_time }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="{{ $statusClasses[$record->status] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
-                                    {{ $record->status === 'alpa' ? 'Alpa' : ucfirst($record->status) }}
-                                </span>
+                                @if($record->status === 'belum')
+                                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800">Belum Absen</span>
+                                @else
+                                    <span class="{{ $statusClasses[$record->status] ?? 'inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800' }}">
+                                        {{ $record->status === 'alpa' ? 'Alpa' : ucfirst($record->status) }}
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->note ?? '-' }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.remove('hidden')" class="inline-flex items-center justify-center rounded-xl bg-amber-100 p-2 text-amber-700 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2" title="Edit">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.remove('hidden')" class="inline-flex items-center justify-center rounded-xl bg-amber-100 p-2 text-amber-700 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2" title="{{ $record->is_existing ? 'Edit' : 'Catat' }}">
+                                        @if($record->is_existing)
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        @else
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        @endif
                                     </button>
+                                    @if($record->is_existing)
                                     <button type="button" onclick="document.getElementById('delete-modal-{{ $record->id }}').classList.remove('hidden')" class="inline-flex items-center justify-center rounded-xl bg-red-100 p-2 text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" title="Hapus">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -162,9 +172,14 @@
                                             </button>
                                         </div>
                                         
-                                        <form method="POST" action="{{ route('absensi.update', $record) }}" class="space-y-4">
+                                        <form method="POST" action="{{ $record->is_existing ? route('absensi.update', $record->id) : route('absensi.store') }}" class="space-y-4">
                                             @csrf
-                                            @method('PUT')
+                                            @if($record->is_existing)
+                                                @method('PUT')
+                                            @else
+                                                <input type="hidden" name="student_id" value="{{ $record->student_id }}">
+                                                <input type="hidden" name="attendance_date" value="{{ $targetDate->toDateString() }}">
+                                            @endif
                                             
                                             <div>
                                                 <label class="block text-sm font-medium text-slate-700 mb-2">Siswa</label>

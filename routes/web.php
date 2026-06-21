@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
@@ -319,7 +319,8 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::put('/absensi/{attendance}', [AbsensiController::class, 'update'])->name('absensi.update');
     Route::delete('/absensi/{attendance}', [AbsensiController::class, 'destroy'])->name('absensi.destroy');
-    // POST /absensi dihapus - Absensi otomatis terisi dari tap in alat NFC, notifikasi siswa sakit/izin, atau penolakan dari TU
+    Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    // POST /absensi diaktifkan kembali untuk keperluan input manual oleh admin
 
     Route::get('/absensi/siswa', function (Request $request) {
         $student = Student::where('email', auth()->user()->email)->first();

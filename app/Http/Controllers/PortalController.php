@@ -241,7 +241,7 @@ class PortalController extends Controller
     {
         $student = $this->currentStudent();
 
-        // Siswa login dengan tanggal lahir, bukan password User â€” kita update User password
+        // Siswa login dengan tanggal lahir, bukan password User Ã¢â‚¬â€ kita update User password
         $request->validate([
             'new_password'              => 'required|string|min:8|confirmed',
             'new_password_confirmation' => 'required|string',
@@ -401,19 +401,21 @@ class PortalController extends Controller
 
         if ($selectedClass !== '') {
             $scopedSchedules = $scopedSchedules
-                ->where('class_name', $selectedClass)
+                ->filter(fn($s) => $this->normalizeClassName($s->class_name) === $selectedClass)
                 ->values();
         }
 
-        $scopedClasses = $scopedSchedules->pluck('class_name')->map(fn($c) => $this->normalizeClassName($c))->unique()->values();
+        // Kita butuh class_name yg murni dr database jadwal buat dicocokin ke student
+        // ATAU kita ambil langsung semua murid, lalu filter di collection
+        $rawScopedClasses = $scopedSchedules->pluck('class_name')->unique()->values();
 
         $records = collect();
-        if ($scopedClasses->isNotEmpty()) {
+        if ($rawScopedClasses->isNotEmpty()) {
             $records = Attendance::query()
                 ->with('student')
                 ->whereDate('attendance_date', $date->toDateString())
-                ->whereHas('student', function ($query) use ($scopedClasses) {
-                    $query->whereIn('class_name', $scopedClasses);
+                ->whereHas('student', function ($query) use ($rawScopedClasses) {
+                    $query->whereIn('class_name', $rawScopedClasses);
                 })
                 ->orderBy('attendance_time')
                 ->get()
@@ -433,9 +435,9 @@ class PortalController extends Controller
         $recordedNis = $records->pluck('nis')->filter()->values();
         $notRecorded = collect();
 
-        if ($scopedClasses->isNotEmpty()) {
+        if ($rawScopedClasses->isNotEmpty()) {
             $notRecorded = Student::query()
-                ->whereIn('class_name', $scopedClasses)
+                ->whereIn('class_name', $rawScopedClasses)
                 ->when($recordedNis->isNotEmpty(), fn ($query) => $query->whereNotIn('nis', $recordedNis))
                 ->orderBy('class_name')
                 ->orderBy('name')
@@ -590,9 +592,9 @@ class PortalController extends Controller
      * Untuk mengatasi inkonsistensi penamaan antara data siswa dan jadwal.
      * 
      * Contoh:
-     * - "X" atau "X-TEI" atau "X IPA" â†’ "X TEI"
-     * - "XI" atau "XI-TEI" â†’ "XI TEI"
-     * - "XII" atau "XII-TEI" â†’ "XII TEI"
+     * - "X" atau "X-TEI" atau "X IPA" Ã¢â€ â€™ "X TEI"
+     * - "XI" atau "XI-TEI" Ã¢â€ â€™ "XI TEI"
+     * - "XII" atau "XII-TEI" Ã¢â€ â€™ "XII TEI"
      */
     private function normalizeClassName(string $className): string
     {
