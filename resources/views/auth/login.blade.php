@@ -90,12 +90,6 @@
                             @endif
                         </div>
 
-                        @if ($captchaError)
-                            <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                {{ $captchaError }}
-                            </div>
-                        @endif
-
                         @unless($recaptchaBypass ?? false)
                             <div class="flex justify-center my-4">
                                 @if($recaptchaSiteKey)
