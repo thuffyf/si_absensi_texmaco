@@ -134,10 +134,14 @@
         window.addEventListener('DOMContentLoaded', function() {
             const savedUsername = localStorage.getItem('remembered_username');
             const savedPassword = localStorage.getItem('remembered_password');
+            const lastUsername = localStorage.getItem('last_username'); // Username dari attempt terakhir
             
+            // Prioritas: gunakan savedUsername jika ada, jika tidak gunakan lastUsername
             if (savedUsername) {
                 usernameInput.value = savedUsername;
                 rememberCheckbox.checked = true;
+            } else if (lastUsername) {
+                usernameInput.value = lastUsername;
             }
             
             if (savedPassword) {
@@ -147,12 +151,17 @@
             }
         });
 
-        // Save credentials when form is submitted
+        // Save credentials when form is submitted (sebelum validasi server)
         loginForm.addEventListener('submit', function() {
+            // Simpan last_username untuk kasus login gagal
+            localStorage.setItem('last_username', usernameInput.value);
+            
+            // Simpan kredensial lengkap jika "Ingat Saya" dicentang
             if (rememberCheckbox.checked) {
                 localStorage.setItem('remembered_username', usernameInput.value);
                 localStorage.setItem('remembered_password', passwordInput.value);
             } else {
+                // Jangan hapus last_username, hanya hapus remembered credentials
                 localStorage.removeItem('remembered_username');
                 localStorage.removeItem('remembered_password');
             }
@@ -163,6 +172,7 @@
             if (!this.checked) {
                 localStorage.removeItem('remembered_username');
                 localStorage.removeItem('remembered_password');
+                // last_username tetap disimpan untuk kasus login gagal
             }
         });
 
