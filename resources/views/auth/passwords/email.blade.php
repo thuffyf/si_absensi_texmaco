@@ -103,6 +103,18 @@
     </div>
 
     <script>
+        // Auto-fill email dari localStorage jika ada
+        window.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            const savedEmail = localStorage.getItem('password_reset_email');
+            
+            if (savedEmail && !emailInput.value) {
+                emailInput.value = savedEmail;
+                // Clear localStorage setelah digunakan
+                localStorage.removeItem('password_reset_email');
+            }
+        });
+
         // Handle form submit untuk mencegah double submit
         const resetForm = document.getElementById('resetForm');
         const submitBtn = document.getElementById('submitBtn');

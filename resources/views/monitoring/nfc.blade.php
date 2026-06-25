@@ -101,7 +101,9 @@
                                     </div>
                                     <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                         <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">{{ $event['device_name'] }}</span>
-                                        <span class="rounded-full {{ $scanStatusClass }} px-2 py-0.5">{{ $scanStatus }}</span>
+                                        @if($event['status'] === 'hadir' || ($event['is_unregistered'] ?? false))
+                                            <span class="rounded-full {{ $scanStatusClass }} px-2 py-0.5">{{ $scanStatus }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +275,7 @@
                                 </div>
                                 <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                     <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">${event.device_name}</span>
-                                    <span class="rounded-full ${scanStatusClass} px-2 py-0.5">${scanStatus}</span>
+                                    ${(event.status === 'hadir' || event.is_unregistered) ? `<span class="rounded-full ${scanStatusClass} px-2 py-0.5">${scanStatus}</span>` : ''}
                                 </div>
                             </div>
                         </div>
