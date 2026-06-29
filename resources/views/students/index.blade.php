@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Siswa — SITEXA Absensi')
+@section('title', 'Data Siswa â€” SITEXA Absensi')
 @section('page_title', 'Data Siswa')
 @section('page_subtitle', 'Kelola data siswa dan status NFC')
 
@@ -66,7 +66,7 @@
 <div class="mt-8">
 
 <!-- Modal Tambah Siswa -->
-<div id="add-student-modal" class="hidden absolute inset-0 z-[9999] flex items-center justify-center">
+<div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
     <!-- Backdrop -->
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="document.getElementById('add-student-modal').classList.add('hidden')"></div>
     
@@ -146,7 +146,7 @@
     </div>
 
     <!-- Modal Edit Siswa -->
-    <div id="edit-student-modal" class="hidden absolute inset-0 z-[9999] flex items-center justify-center">
+    <div id="edit-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="closeEditModal()"></div>
         

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Siswa — SITEXA Absensi')
+@section('title', 'Edit Siswa â€” SITEXA Absensi')
 @section('page_title', 'Edit Siswa')
 
 @section('content')

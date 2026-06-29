@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Alat NFC — SITEXA Absensi')
+@section('title', 'Edit Alat NFC â€” SITEXA Absensi')
 @section('page_title', 'Edit Alat NFC')
 
 @section('content')

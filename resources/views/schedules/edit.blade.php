@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Jadwal — SITEXA Absensi')
+@section('title', 'Edit Jadwal â€” SITEXA Absensi')
 @section('page_title', 'Edit Jadwal')
 
 @section('content')

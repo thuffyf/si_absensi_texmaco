@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Absensi ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SITEXA Absensi')
+@section('title', 'Absensi ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â SITEXA Absensi')
 @section('page_title', 'Absensi')
 @section('page_subtitle', 'Kelola data absensi siswa')
 

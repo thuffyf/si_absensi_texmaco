@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Alat NFC — SITEXA Absensi')
+@section('title', 'Alat NFC â€” SITEXA Absensi')
 @section('page_title', 'Alat NFC')
 
 @section('content')
 <div class="mb-8 animate-fade-in">
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
-            <h1 class="text-4xl font-bold text-gradient mb-2">📡 Monitoring Alat NFC</h1>
+            <h1 class="text-4xl font-bold text-gradient mb-2">ðŸ“¡ Monitoring Alat NFC</h1>
             <p class="text-gray-400">Kelola dan monitor status alat tap-in NFC di berbagai lokasi</p>
         </div>
     </div>
@@ -138,7 +138,7 @@
             </div>
 
             <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl mb-4">
-                📡
+                ðŸ“¡
             </div>
 
             <div class="space-y-3 mb-4 pb-4 border-b border-neon-cyan/10">
@@ -168,11 +168,11 @@
             </div>
 
             <div class="flex gap-2">
-                <a class="btn-secondary text-xs flex-1" href="{{ route('devices.edit', $device) }}">✏️ Edit</a>
+                <a class="btn-secondary text-xs flex-1" href="{{ route('devices.edit', $device) }}">âœï¸ Edit</a>
                 <form method="POST" action="{{ route('devices.destroy', $device) }}" onsubmit="return confirm('Hapus alat ini?')">
                     @csrf
                     @method('DELETE')
-                    <button class="btn-icon text-xs" type="submit">🗑️</button>
+                    <button class="btn-icon text-xs" type="submit">ðŸ—‘ï¸</button>
                 </form>
             </div>
         </div>

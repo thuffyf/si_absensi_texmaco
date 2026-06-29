@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Izin & Sakit — SITEXA Absensi')
+@section('title', 'Izin & Sakit â€” SITEXA Absensi')
 @section('page_title', 'Izin & Sakit')
 
 @section('content')
 <div class="mb-8 animate-fade-in">
     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
-            <h1 class="text-4xl font-bold text-gradient mb-2">📋 Request Izin & Sakit</h1>
+            <h1 class="text-4xl font-bold text-gradient mb-2">ðŸ“‹ Request Izin & Sakit</h1>
             <p class="text-gray-400">Kelola pengajuan izin dan sakit siswa</p>
         </div>
         <div class="flex items-center gap-3">
@@ -104,11 +104,11 @@
                     <div class="flex flex-col gap-2">
                         <form method="POST" action="{{ route('requests.approve', $request) }}">
                             @csrf
-                            <button type="submit" class="btn-success text-sm w-full">✓ Terima</button>
+                            <button type="submit" class="btn-success text-sm w-full">âœ“ Terima</button>
                         </form>
                         <form method="POST" action="{{ route('requests.reject', $request) }}">
                             @csrf
-                            <button type="submit" class="btn-danger text-sm w-full">✕ Tolak</button>
+                            <button type="submit" class="btn-danger text-sm w-full">âœ• Tolak</button>
                         </form>
                     </div>
                 </div>

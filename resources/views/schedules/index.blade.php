@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jadwal — SITEXA Absensi')
+@section('title', 'Jadwal â€” SITEXA Absensi')
 @section('page_title', 'Jadwal')
 
 @section('content')
@@ -106,7 +106,7 @@
                             <td class="px-3 py-3 tabular-nums">{{ $schedule->start_time?->format('H:i') }} - {{ $schedule->end_time?->format('H:i') }}</td>
                             <td class="px-3 py-3">{{ $schedule->class_name }}</td>
                             <td class="px-3 py-3">{{ $schedule->subject }}</td>
-                            <td class="px-3 py-3">{{ $schedule->teacher?->name ?? '—' }}</td>
+                            <td class="px-3 py-3">{{ $schedule->teacher?->name ?? 'â€”' }}</td>
                             <td class="px-3 py-3">
                                 <span @class([
                                     'rounded-full px-2.5 py-1 text-xs font-semibold',
@@ -144,7 +144,7 @@
     </section>
 
     <!-- Modal Tambah Jadwal -->
-    <div id="add-schedule-modal" class="hidden absolute inset-0 z-[9999] flex items-center justify-center">
+    <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="document.getElementById('add-schedule-modal').classList.add('hidden')"></div>
         
@@ -209,7 +209,7 @@
     </div>
 
     <!-- Modal Edit Jadwal -->
-    <div id="edit-schedule-modal" class="hidden absolute inset-0 z-[9999] flex items-center justify-center">
+    <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="closeEditModal()"></div>
         
