@@ -42,7 +42,7 @@
 </div>
 
 <!-- Modal Tambah Guru -->
-<div id="add-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
+<div id="add-teacher-modal" class="hidden absolute inset-0 z-[9999] flex items-center justify-center">
     <!-- Backdrop -->
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="document.getElementById('add-teacher-modal').classList.add('hidden')"></div>
     
@@ -183,7 +183,7 @@
 </div>
 
 <!-- Modal Edit Guru -->
-<div id="edit-teacher-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
+<div id="edit-teacher-modal" class="hidden absolute inset-0 z-[9999] flex items-center justify-center">
     <!-- Backdrop -->
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="closeEditModal()"></div>
     

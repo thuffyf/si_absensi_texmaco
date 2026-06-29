@@ -303,7 +303,7 @@
                     'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden lg:py-3 lg:pb-4' => request()->routeIs('dashboard'),
                 ])
             >
-                <div id="content-area" class="flex-1 min-h-screen overflow-y-auto {{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }}">
+                <div id="content-area" class="flex-1 min-h-screen overflow-y-auto {{ request()->routeIs('dashboard') ? 'lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden' : '' }} relative">
                     @yield('content')
                 </div>
             </main>
