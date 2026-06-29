@@ -144,7 +144,7 @@
     </section>
 
     <!-- Modal Tambah Jadwal -->
-    <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+    <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('add-schedule-modal').classList.add('hidden')"></div>
         
@@ -209,7 +209,7 @@
     </div>
 
     <!-- Modal Edit Jadwal -->
-    <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+    <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeEditModal()"></div>
         

@@ -66,7 +66,7 @@
 <div class="mt-8">
 
 <!-- Modal Tambah Siswa -->
-<div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+<div id="add-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
     <!-- Backdrop -->
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('add-student-modal').classList.add('hidden')"></div>
     
@@ -138,7 +138,7 @@
     </div>
 
     <!-- Modal Edit Siswa -->
-    <div id="edit-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+    <div id="edit-student-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeEditModal()"></div>
         

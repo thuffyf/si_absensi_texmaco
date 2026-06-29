@@ -135,20 +135,33 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    // --- Coba login Siswa (email atau NIP, password = tanggal lahir teks, mis. 2005-01-15) ---
-    $parsedDate = null;
-    try {
-        $parsedDate = Carbon::parse($password)->toDateString();
-    } catch (\Exception $e) {
-        // bukan format tanggal, lewati portal login
-    }
+    // --- Coba login Siswa ---
+    $student = Student::where('email', $identifier)
+        ->orWhere('nis', $identifier)
+        ->orWhere('username', $identifier)
+        ->first();
 
-    if ($parsedDate) {
-        $student = Student::where('email', $identifier)
-            ->orWhere('nis', $identifier)
-            ->first();
+    if ($student) {
+        $passwordOk = false;
+        
+        // 1. Coba verifikasi dengan password hash kustom jika ada
+        if ($student->password) {
+            $passwordOk = Hash::check($password, $student->password);
+        }
+        
+        // 2. Fallback ke verifikasi tanggal lahir jika password belum diatur atau salah
+        if (!$passwordOk) {
+            try {
+                $parsedDate = Carbon::parse($password)->toDateString();
+                if ($student->date_of_birth && $student->date_of_birth->toDateString() === $parsedDate) {
+                    $passwordOk = true;
+                }
+            } catch (\Exception $e) {
+                // bukan format tanggal valid, abaikan fallback ini
+            }
+        }
 
-        if ($student && $student->date_of_birth && $student->date_of_birth->toDateString() === $parsedDate) {
+        if ($passwordOk) {
             if (! $student->uid_kartu) {
                 return back()
                     ->withErrors(['login' => 'UID siswa belum diatur oleh admin.'])
@@ -165,7 +178,10 @@ Route::post('/login', function (Request $request) {
             $user->name  = $student->name;
             $user->email = $student->email;
             $user->role  = 'siswa';
-            if (! $user->exists || empty($user->getRawOriginal('password'))) {
+            // Set password User Laravel web agar sinkron dengan password kustom siswa/guru
+            if ($student->password) {
+                $user->password = $student->password;
+            } else if (! $user->exists || empty($user->getRawOriginal('password'))) {
                 $user->password = Hash::make(Str::random(40));
             }
             $user->save();
@@ -177,13 +193,32 @@ Route::post('/login', function (Request $request) {
         }
     }
 
-    // --- Coba login Guru (email/NIP, password = tanggal lahir) ---
-    if ($parsedDate) {
-        $teacher = Teacher::where('email', $identifier)
-            ->orWhere('nip', $identifier)
-            ->first();
+    // --- Coba login Guru ---
+    $teacher = Teacher::where('email', $identifier)
+        ->orWhere('nip', $identifier)
+        ->first();
 
-        if ($teacher && $teacher->date_of_birth && $teacher->date_of_birth->toDateString() === $parsedDate) {
+    if ($teacher) {
+        $passwordOk = false;
+
+        // 1. Coba verifikasi dengan password hash kustom jika ada
+        if ($teacher->password) {
+            $passwordOk = Hash::check($password, $teacher->password);
+        }
+
+        // 2. Fallback ke verifikasi tanggal lahir jika password belum diatur atau salah
+        if (!$passwordOk) {
+            try {
+                $parsedDate = Carbon::parse($password)->toDateString();
+                if ($teacher->date_of_birth && $teacher->date_of_birth->toDateString() === $parsedDate) {
+                    $passwordOk = true;
+                }
+            } catch (\Exception $e) {
+                // bukan format tanggal valid, abaikan fallback ini
+            }
+        }
+
+        if ($passwordOk) {
             // Gunakan email guru jika ada, fallback ke generate email dari NIP jika email kosong
             $loginEmail = $teacher->email ?: strtolower(preg_replace('/[^\w\d]/', '', $teacher->nip)) . '@guru.texmaco.sch.id';
 
@@ -197,7 +232,10 @@ Route::post('/login', function (Request $request) {
             $user->name  = $teacher->name;
             $user->email = $loginEmail;
             $user->role  = 'guru';
-            if (! $user->exists || empty($user->getRawOriginal('password'))) {
+            // Set password User Laravel web agar sinkron dengan password kustom siswa/guru
+            if ($teacher->password) {
+                $user->password = $teacher->password;
+            } else if (! $user->exists || empty($user->getRawOriginal('password'))) {
                 $user->password = Hash::make(Str::random(40));
             }
             $user->save();
