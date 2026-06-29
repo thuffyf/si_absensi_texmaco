@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Guru â€” SITEXA Absensi')
+@section('title', 'Data Guru Ã¢â‚¬â€ SITEXA Absensi')
 @section('page_title', 'Data Guru')
 @section('page_subtitle', 'Kelola data guru dan monitoring kehadiran')
 
@@ -24,10 +24,17 @@
 
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-wrap gap-2">
-            <form method="GET" action="{{ route('teachers.index') }}" class="flex gap-2">
-                <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari guru..." />
+            <form method="GET" action="{{ route('teachers.index') }}" class="flex flex-wrap gap-2 items-center">
+                <input type="text" name="search" value="{{ request('search') }}" class="w-48 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari nama/NIP/mapel..." />
+                <select name="status" class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua Status</option>
+                    <option value="aktif" {{ request('status') === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                    <option value="cuti" {{ request('status') === 'cuti' ? 'selected' : '' }}>Cuti</option>
+                    <option value="non_aktif" {{ request('status') === 'non_aktif' ? 'selected' : '' }}>Non Aktif</option>
+                </select>
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                    Cari
+                    <svg class="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    Filter
                 </button>
                 <a href="{{ route('teachers.index') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
             </form>
