@@ -12,11 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Mark students as alpa if they haven't scanned by 8:00 AM
+        // Tandai siswa alpa: jalankan jam 00:05 dini hari untuk memproses kemarin
         $schedule->command('app:mark-absent-students')
-            ->dailyAt('08:00')
+            ->dailyAt('00:05')
             ->timezone('Asia/Jakarta')
-            ->description('Mark absent students as alpa at 8:00 AM');
+            ->description('Tandai siswa alpa otomatis setiap tengah malam');
     }
 
     /**
