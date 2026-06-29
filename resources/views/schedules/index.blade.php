@@ -196,14 +196,14 @@
                     <label class="text-xs font-semibold text-slate-700 ml-1">Jam Selesai</label>
                     <input name="end_time" type="time" value="{{ old('end_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
                 </div>
-                <div class="flex flex-col gap-1 col-span-1 md:col-span-2">
+                <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
                     <select name="status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                         <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
                         <option value="idle" @selected(old('status') === 'idle')>Idle</option>
                     </select>
                 </div>
-                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Jadwal</button>
+                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 mt-2">Simpan Jadwal</button>
             </form>
         </div>
     </div>
@@ -263,14 +263,14 @@
                     <label class="text-xs font-semibold text-slate-700 ml-1">Jam Selesai</label>
                     <input name="end_time" type="time" id="edit-end_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
                 </div>
-                <div class="flex flex-col gap-1 col-span-1 md:col-span-2">
+                <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
                     <select name="status" id="edit-status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                         <option value="aktif">Aktif</option>
                         <option value="idle">Idle</option>
                     </select>
                 </div>
-                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
+                <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 mt-2">Simpan Perubahan</button>
             </form>
         </div>
     </div>
