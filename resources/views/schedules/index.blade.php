@@ -160,31 +160,52 @@
             </div>
             <form method="POST" action="{{ route('schedules.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @csrf
-                <select name="teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih guru</option>
-                    @foreach($teachers as $teacher)
-                        <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
-                    @endforeach
-                </select>
-                <select name="class_name" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih kelas</option>
-                    @foreach($classOptions as $className)
-                        <option value="{{ $className }}" @selected(old('class_name') === $className)>{{ $className }}</option>
-                    @endforeach
-                </select>
-                <input name="subject" value="{{ old('subject') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
-                <select name="day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih hari</option>
-                    @foreach($dayOptions as $dayName)
-                        <option value="{{ $dayName }}" @selected(old('day_of_week') === $dayName)>{{ $dayName }}</option>
-                    @endforeach
-                </select>
-                <input name="start_time" type="time" value="{{ old('start_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
-                <input name="end_time" type="time" value="{{ old('end_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
-                <select name="status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
-                    <option value="idle" @selected(old('status') === 'idle')>Idle</option>
-                </select>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Guru</label>
+                    <select name="teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="">Pilih guru</option>
+                        @foreach($teachers as $teacher)
+                            <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Kelas</label>
+                    <select name="class_name" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="">Pilih kelas</option>
+                        @foreach($classOptions as $className)
+                            <option value="{{ $className }}" @selected(old('class_name') === $className)>{{ $className }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
+                    <input name="subject" value="{{ old('subject') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Hari</label>
+                    <select name="day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="">Pilih hari</option>
+                        @foreach($dayOptions as $dayName)
+                            <option value="{{ $dayName }}" @selected(old('day_of_week') === $dayName)>{{ $dayName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Jam Mulai</label>
+                    <input name="start_time" type="time" value="{{ old('start_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Jam Selesai</label>
+                    <input name="end_time" type="time" value="{{ old('end_time') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                </div>
+                <div class="flex flex-col gap-1 col-span-1 md:col-span-2">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
+                    <select name="status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
+                        <option value="idle" @selected(old('status') === 'idle')>Idle</option>
+                    </select>
+                </div>
                 <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Jadwal</button>
             </form>
         </div>
@@ -209,31 +230,52 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="id" id="edit-schedule-id">
-                <select name="teacher_id" id="edit-teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih guru</option>
-                    @foreach($teachers as $teacher)
-                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                    @endforeach
-                </select>
-                <select name="class_name" id="edit-class_name" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih kelas</option>
-                    @foreach($classOptions as $className)
-                        <option value="{{ $className }}">{{ $className }}</option>
-                    @endforeach
-                </select>
-                <input name="subject" id="edit-subject" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
-                <select name="day_of_week" id="edit-day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="">Pilih hari</option>
-                    @foreach($dayOptions as $dayName)
-                        <option value="{{ $dayName }}">{{ $dayName }}</option>
-                    @endforeach
-                </select>
-                <input name="start_time" type="time" id="edit-start_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
-                <input name="end_time" type="time" id="edit-end_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
-                <select name="status" id="edit-status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="aktif">Aktif</option>
-                    <option value="idle">Idle</option>
-                </select>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Guru</label>
+                    <select name="teacher_id" id="edit-teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="">Pilih guru</option>
+                        @foreach($teachers as $teacher)
+                            <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Kelas</label>
+                    <select name="class_name" id="edit-class_name" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="">Pilih kelas</option>
+                        @foreach($classOptions as $className)
+                            <option value="{{ $className }}">{{ $className }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
+                    <input name="subject" id="edit-subject" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Hari</label>
+                    <select name="day_of_week" id="edit-day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="">Pilih hari</option>
+                        @foreach($dayOptions as $dayName)
+                            <option value="{{ $dayName }}">{{ $dayName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Jam Mulai</label>
+                    <input name="start_time" type="time" id="edit-start_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Jam Selesai</label>
+                    <input name="end_time" type="time" id="edit-end_time" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required />
+                </div>
+                <div class="flex flex-col gap-1 col-span-1 md:col-span-2">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
+                    <select name="status" id="edit-status" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="aktif">Aktif</option>
+                        <option value="idle">Idle</option>
+                    </select>
+                </div>
                 <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
             </form>
         </div>
@@ -273,15 +315,15 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Close modal when clicking outside
-document.getElementById('edit-schedule-modal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
+// Close modal when clicking outside (using mousedown to prevent accidental dismissals)
+document.getElementById('edit-schedule-modal')?.addEventListener('mousedown', function(e) {
+    if (e.target === this || e.target.classList.contains('absolute')) {
         closeEditModal();
     }
 });
 
-document.getElementById('add-schedule-modal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
+document.getElementById('add-schedule-modal')?.addEventListener('mousedown', function(e) {
+    if (e.target === this || e.target.classList.contains('absolute')) {
         this.classList.add('hidden');
     }
 });

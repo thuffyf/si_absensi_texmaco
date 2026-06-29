@@ -40,16 +40,34 @@
     <h2 class="text-lg font-bold text-white mb-4">Tambah Alat NFC</h2>
     <form method="POST" action="{{ route('devices.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @csrf
-        <input name="name" value="{{ old('name') }}" class="input-field" placeholder="Nama alat" required />
-        <input name="location" value="{{ old('location') }}" class="input-field" placeholder="Lokasi" />
-        <input name="ip_address" value="{{ old('ip_address') }}" class="input-field" placeholder="IP Address" />
-        <select name="status" class="input-field text-sm" required>
-            <option value="online" @selected(old('status') === 'online')>Online</option>
-            <option value="idle" @selected(old('status') === 'idle')>Idle</option>
-            <option value="offline" @selected(old('status') === 'offline')>Offline</option>
-        </select>
-        <input name="scan_today" type="number" min="0" value="{{ old('scan_today') }}" class="input-field" placeholder="Scan hari ini" />
-        <input name="success_rate" type="number" min="0" max="100" step="0.01" value="{{ old('success_rate') }}" class="input-field" placeholder="Success rate (%)" />
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-white ml-1">Nama Alat</label>
+            <input name="name" value="{{ old('name') }}" class="input-field" placeholder="Nama alat" required />
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-white ml-1">Lokasi</label>
+            <input name="location" value="{{ old('location') }}" class="input-field" placeholder="Lokasi" />
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-white ml-1">IP Address</label>
+            <input name="ip_address" value="{{ old('ip_address') }}" class="input-field" placeholder="IP Address" />
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-white ml-1">Status</label>
+            <select name="status" class="input-field text-sm" required>
+                <option value="online" @selected(old('status') === 'online')>Online</option>
+                <option value="idle" @selected(old('status') === 'idle')>Idle</option>
+                <option value="offline" @selected(old('status') === 'offline')>Offline</option>
+            </select>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-white ml-1">Scan Hari Ini</label>
+            <input name="scan_today" type="number" min="0" value="{{ old('scan_today') }}" class="input-field" placeholder="Scan hari ini" />
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-white ml-1">Success Rate (%)</label>
+            <input name="success_rate" type="number" min="0" max="100" step="0.01" value="{{ old('success_rate') }}" class="input-field" placeholder="Success rate (%)" />
+        </div>
         <button type="submit" class="btn-primary col-span-1 md:col-span-2 lg:col-span-4">Simpan Alat</button>
     </form>
 </div>

@@ -39,19 +39,34 @@
     <h2 class="text-lg font-bold text-white mb-4">Buat Request Baru</h2>
     <form method="POST" action="{{ route('requests.store') }}" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @csrf
-        <select name="student_id" class="input-field text-sm" required>
-            <option value="">Pilih siswa</option>
-            @foreach($students as $student)
-                <option value="{{ $student->id }}" @selected(old('student_id') == $student->id)>{{ $student->name }} ({{ $student->nis }})</option>
-            @endforeach
-        </select>
-        <select name="type" class="input-field text-sm" required>
-            <option value="izin" @selected(old('type') === 'izin')>Izin</option>
-            <option value="sakit" @selected(old('type') === 'sakit')>Sakit</option>
-        </select>
-        <input name="start_date" type="date" value="{{ old('start_date') }}" class="input-field" required />
-        <input name="end_date" type="date" value="{{ old('end_date') }}" class="input-field" />
-        <textarea name="reason" class="input-field md:col-span-2 lg:col-span-4" rows="3" placeholder="Alasan" required>{{ old('reason') }}</textarea>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-300 ml-1">Siswa</label>
+            <select name="student_id" class="input-field text-sm" required>
+                <option value="">Pilih siswa</option>
+                @foreach($students as $student)
+                    <option value="{{ $student->id }}" @selected(old('student_id') == $student->id)>{{ $student->name }} ({{ $student->nis }})</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-300 ml-1">Jenis Pengajuan</label>
+            <select name="type" class="input-field text-sm" required>
+                <option value="izin" @selected(old('type') === 'izin')>Izin</option>
+                <option value="sakit" @selected(old('type') === 'sakit')>Sakit</option>
+            </select>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-300 ml-1">Tanggal Mulai</label>
+            <input name="start_date" type="date" value="{{ old('start_date') }}" class="input-field" required />
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-300 ml-1">Tanggal Selesai</label>
+            <input name="end_date" type="date" value="{{ old('end_date') }}" class="input-field" />
+        </div>
+        <div class="flex flex-col gap-1 md:col-span-2 lg:col-span-4">
+            <label class="text-xs font-semibold text-gray-300 ml-1">Alasan</label>
+            <textarea name="reason" class="input-field" rows="3" placeholder="Alasan" required>{{ old('reason') }}</textarea>
+        </div>
         <div class="md:col-span-2 lg:col-span-4">
             <label class="block text-sm font-medium text-gray-300 mb-2">Bukti gambar opsional</label>
             <input type="file" name="photo" accept="image/*" class="input-field" />

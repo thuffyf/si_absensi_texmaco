@@ -24,10 +24,32 @@
 
     <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-wrap gap-3">
-            <form method="GET" action="{{ route('students.index') }}" class="flex gap-3">
-                <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari siswa..." />
+            <form method="GET" action="{{ route('students.index') }}" class="flex flex-wrap items-center gap-3">
+                <input type="text" name="search" value="{{ request('search') }}" class="w-64 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Cari nama atau NIS..." />
+                
+                <select name="class" class="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua Kelas</option>
+                    <option value="X" @selected(request('class') === 'X')>X</option>
+                    <option value="XI" @selected(request('class') === 'XI')>XI</option>
+                    <option value="XII" @selected(request('class') === 'XII')>XII</option>
+                </select>
+
+                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua Status</option>
+                    <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
+                    <option value="tidak_aktif" @selected(request('status') === 'tidak_aktif')>Tidak Aktif</option>
+                    <option value="lulus" @selected(request('status') === 'lulus')>Lulus</option>
+                </select>
+
+                <select name="nfc" class="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="">Semua NFC</option>
+                    <option value="kartu" @selected(request('nfc') === 'kartu')>Kartu</option>
+                    <option value="handphone" @selected(request('nfc') === 'handphone')>Handphone</option>
+                    <option value="belum_terdaftar" @selected(request('nfc') === 'belum_terdaftar')>Belum terdaftar</option>
+                </select>
+
                 <button type="submit" class="flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                    Cari
+                    Filter & Cari
                 </button>
                 <a href="{{ route('students.index') }}" class="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Reset</a>
             </form>
@@ -60,26 +82,56 @@
             </div>
             <form method="POST" action="{{ route('students.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @csrf
-                <input name="nis" value="{{ old('nis') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIS" required />
-                <input name="name" value="{{ old('name') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama siswa" required />
-                <input name="email" type="email" value="{{ old('email') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" required />
-                <select name="class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="X" @selected(old('class_name') === 'X')>X</option>
-                    <option value="XI" @selected(old('class_name') === 'XI')>XI</option>
-                    <option value="XII" @selected(old('class_name') === 'XII')>XII</option>
-                </select>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">NIS</label>
+                    <input name="nis" value="{{ old('nis') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Masukkan NIS" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Nama Siswa</label>
+                    <input name="name" value="{{ old('name') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Masukkan nama siswa" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Email</label>
+                    <input name="email" type="email" value="{{ old('email') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Masukkan email" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Kelas</label>
+                    <select name="class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="X" @selected(old('class_name') === 'X')>X</option>
+                        <option value="XI" @selected(old('class_name') === 'XI')>XI</option>
+                        <option value="XII" @selected(old('class_name') === 'XII')>XII</option>
+                    </select>
+                </div>
                 <!-- Jurusan hidden karena semua siswa TEI -->
                 <input type="hidden" name="major" value="Teknik Elektronika Industri" />
-                <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="dd/mm/yyyy" />
-                <select name="nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="belum_terdaftar" @selected(old('nfc_type') === 'belum_terdaftar' || !old('nfc_type'))>Belum terdaftar</option>
-                    <option value="kartu" @selected(old('nfc_type') === 'kartu')>Kartu</option>
-                    <option value="handphone" @selected(old('nfc_type') === 'handphone')>Handphone</option>
-                </select>
-                <input name="uid_kartu" value="{{ old('uid_kartu') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu (opsional)" />
-                <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
-                <input name="username" value="{{ old('username') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
-                <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Tanggal Lahir</label>
+                    <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Tipe NFC</label>
+                    <select name="nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="belum_terdaftar" @selected(old('nfc_type') === 'belum_terdaftar' || !old('nfc_type'))>Belum terdaftar</option>
+                        <option value="kartu" @selected(old('nfc_type') === 'kartu')>Kartu</option>
+                        <option value="handphone" @selected(old('nfc_type') === 'handphone')>Handphone</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">UID Kartu</label>
+                    <input name="uid_kartu" value="{{ old('uid_kartu') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu (opsional)" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">No Telepon</label>
+                    <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Username</label>
+                    <input name="username" value="{{ old('username') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Password</label>
+                    <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+                </div>
                 <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Siswa</button>
             </form>
         </div>
@@ -104,32 +156,68 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="id" id="edit-student-id">
-                <input name="nis" id="edit-nis" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIS" required />
-                <input name="name" id="edit-name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama siswa" required />
-                <input name="email" type="email" id="edit-email" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" required />
-                <select name="class_name" id="edit-class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="X">X</option>
-                    <option value="XI">XI</option>
-                    <option value="XII">XII</option>
-                </select>
-                <select name="major" id="edit-major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="Teknik Elektronika Industri">Teknik Elektronika Industri</option>
-                </select>
-                <input name="date_of_birth" type="date" id="edit-date_of_birth" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
-                <select name="status" id="edit-status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="aktif">Aktif</option>
-                    <option value="tidak_aktif">Tidak aktif</option>
-                    <option value="lulus">Lulus</option>
-                </select>
-                <select name="nfc_type" id="edit-nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="belum_terdaftar">Belum terdaftar</option>
-                    <option value="kartu">Kartu</option>
-                    <option value="handphone">Handphone</option>
-                </select>
-                <input name="uid_kartu" id="edit-uid_kartu" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu" />
-                <input name="phone" id="edit-phone" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
-                <input name="username" id="edit-username" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
-                <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password baru (opsional)" />
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">NIS</label>
+                    <input name="nis" id="edit-nis" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIS" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Nama Siswa</label>
+                    <input name="name" id="edit-name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama siswa" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Email</label>
+                    <input name="email" type="email" id="edit-email" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Kelas</label>
+                    <select name="class_name" id="edit-class_name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="X">X</option>
+                        <option value="XI">XI</option>
+                        <option value="XII">XII</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Jurusan</label>
+                    <select name="major" id="edit-major" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="Teknik Elektronika Industri">Teknik Elektronika Industri</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Tanggal Lahir</label>
+                    <input name="date_of_birth" type="date" id="edit-date_of_birth" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
+                    <select name="status" id="edit-status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="aktif">Aktif</option>
+                        <option value="tidak_aktif">Tidak aktif</option>
+                        <option value="lulus">Lulus</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Tipe NFC</label>
+                    <select name="nfc_type" id="edit-nfc_type" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="belum_terdaftar">Belum terdaftar</option>
+                        <option value="kartu">Kartu</option>
+                        <option value="handphone">Handphone</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">UID Kartu</label>
+                    <input name="uid_kartu" id="edit-uid_kartu" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="UID kartu" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">No Telepon</label>
+                    <input name="phone" id="edit-phone" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Username</label>
+                    <input name="username" id="edit-username" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Username (opsional)" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Password Baru</label>
+                    <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password baru (opsional)" />
+                </div>
                 <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
             </form>
         </div>
@@ -253,14 +341,15 @@ document.addEventListener('keydown', function(event) {
 });
 
 // Close modal when clicking outside
-document.getElementById('edit-student-modal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
+document.getElementById('edit-student-modal')?.addEventListener('mousedown', function(e) {
+    // Only close if click is exactly on the backdrop/outer overlay, not the content container
+    if (e.target === this || e.target.classList.contains('absolute')) {
         closeEditModal();
     }
 });
 
-document.getElementById('add-student-modal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
+document.getElementById('add-student-modal')?.addEventListener('mousedown', function(e) {
+    if (e.target === this || e.target.classList.contains('absolute')) {
         this.classList.add('hidden');
     }
 });

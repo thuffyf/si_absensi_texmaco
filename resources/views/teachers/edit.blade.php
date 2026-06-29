@@ -29,19 +29,46 @@
         <form method="POST" action="{{ route('teachers.update', $teacher) }}" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             @csrf
             @method('PUT')
-            <input name="nip" value="{{ old('nip', $teacher->nip) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
-            <input name="name" value="{{ old('name', $teacher->name) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
-            <input name="email" value="{{ old('email', $teacher->email) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
-            <input name="subject" value="{{ old('subject', $teacher->subject) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
-            <input name="role" value="{{ old('role', $teacher->role) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
-            <input name="phone" value="{{ old('phone', $teacher->phone) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
-            <input name="date_of_birth" type="date" value="{{ old('date_of_birth', optional($teacher->date_of_birth)->format('Y-m-d')) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
-            <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                <option value="aktif" @selected(old('status', $teacher->status) === 'aktif')>Aktif</option>
-                <option value="cuti" @selected(old('status', $teacher->status) === 'cuti')>Cuti</option>
-                <option value="non_aktif" @selected(old('status', $teacher->status) === 'non_aktif')>Non aktif</option>
-            </select>
-            <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password baru (opsional)" />
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">NIP</label>
+                <input name="nip" value="{{ old('nip', $teacher->nip) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Nama Guru</label>
+                <input name="name" value="{{ old('name', $teacher->name) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Email</label>
+                <input name="email" value="{{ old('email', $teacher->email) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
+                <input name="subject" value="{{ old('subject', $teacher->subject) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Role</label>
+                <input name="role" value="{{ old('role', $teacher->role) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">No Telepon</label>
+                <input name="phone" value="{{ old('phone', $teacher->phone) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Tanggal Lahir</label>
+                <input name="date_of_birth" type="date" value="{{ old('date_of_birth', optional($teacher->date_of_birth)->format('Y-m-d')) }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
+                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <option value="aktif" @selected(old('status', $teacher->status) === 'aktif')>Aktif</option>
+                    <option value="cuti" @selected(old('status', $teacher->status) === 'cuti')>Cuti</option>
+                    <option value="non_aktif" @selected(old('status', $teacher->status) === 'non_aktif')>Non aktif</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-1 col-span-1 md:col-span-2 lg:col-span-3">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Password Baru</label>
+                <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password baru (opsional)" />
+            </div>
             <button type="submit" class="col-span-1 md:col-span-2 lg:col-span-3 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
         </form>
     </div>

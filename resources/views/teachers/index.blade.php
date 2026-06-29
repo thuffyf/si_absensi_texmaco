@@ -59,19 +59,46 @@
             </div>
             <form method="POST" action="{{ route('teachers.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @csrf
-                <input name="nip" value="{{ old('nip') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
-                <input name="name" value="{{ old('name') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
-                <input name="email" value="{{ old('email') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
-                <input name="subject" value="{{ old('subject') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
-                <input name="role" value="{{ old('role') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
-                <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
-                <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
-                <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
-                    <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
-                    <option value="cuti" @selected(old('status') === 'cuti')>Cuti</option>
-                    <option value="non_aktif" @selected(old('status') === 'non_aktif')>Non Aktif</option>
-                </select>
-                <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">NIP</label>
+                    <input name="nip" value="{{ old('nip') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Nama Guru</label>
+                    <input name="name" value="{{ old('name') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Email</label>
+                    <input name="email" value="{{ old('email') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
+                    <input name="subject" value="{{ old('subject') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Role</label>
+                    <input name="role" value="{{ old('role') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">No Telepon</label>
+                    <input name="phone" value="{{ old('phone') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Tanggal Lahir</label>
+                    <input name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
+                    <select name="status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                        <option value="aktif" @selected(old('status', 'aktif') === 'aktif')>Aktif</option>
+                        <option value="cuti" @selected(old('status') === 'cuti')>Cuti</option>
+                        <option value="non_aktif" @selected(old('status') === 'non_aktif')>Non Aktif</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1 col-span-1 md:col-span-2">
+                    <label class="text-xs font-semibold text-slate-700 ml-1">Password</label>
+                    <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+                </div>
                 <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Guru</button>
             </form>
         </div>
@@ -167,19 +194,46 @@
             @csrf
             @method('PUT')
             <input type="hidden" name="id" id="edit-teacher-id">
-            <input name="nip" id="edit-nip" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
-            <input name="name" id="edit-name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
-            <input name="email" id="edit-email" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
-            <input name="subject" id="edit-subject" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
-            <input name="role" id="edit-role" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
-            <input name="phone" id="edit-phone" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
-            <input name="date_of_birth" type="date" id="edit-date_of_birth" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
-            <select name="status" id="edit-status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                <option value="aktif">Aktif</option>
-                <option value="cuti">Cuti</option>
-                <option value="non_aktif">Non Aktif</option>
-            </select>
-            <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">NIP</label>
+                <input name="nip" id="edit-nip" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="NIP" required />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Nama Guru</label>
+                <input name="name" id="edit-name" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Nama guru" required />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Email</label>
+                <input name="email" id="edit-email" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Email" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
+                <input name="subject" id="edit-subject" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Role</label>
+                <input name="role" id="edit-role" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Role" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">No Telepon</label>
+                <input name="phone" id="edit-phone" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="No telepon" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Tanggal Lahir</label>
+                <input name="date_of_birth" type="date" id="edit-date_of_birth" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Status</label>
+                <select name="status" id="edit-status" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <option value="aktif">Aktif</option>
+                    <option value="cuti">Cuti</option>
+                    <option value="non_aktif">Non Aktif</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-1 col-span-1 md:col-span-2">
+                <label class="text-xs font-semibold text-slate-700 ml-1">Password Baru</label>
+                <input name="password" type="password" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Password (opsional)" />
+            </div>
             <button type="submit" class="col-span-1 md:col-span-2 flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Simpan Perubahan</button>
         </form>
     </div>
@@ -208,5 +262,26 @@ function closeEditModal() {
     document.getElementById('edit-teacher-modal').classList.add('hidden');
     document.body.style.overflow = 'auto';
 }
+
+// Close modal when pressing Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeEditModal();
+        document.getElementById('add-teacher-modal')?.classList.add('hidden');
+    }
+});
+
+// Close modal when clicking outside (using mousedown to prevent accidental dismissals)
+document.getElementById('edit-teacher-modal')?.addEventListener('mousedown', function(e) {
+    if (e.target === this || e.target.classList.contains('absolute')) {
+        closeEditModal();
+    }
+});
+
+document.getElementById('add-teacher-modal')?.addEventListener('mousedown', function(e) {
+    if (e.target === this || e.target.classList.contains('absolute')) {
+        this.classList.add('hidden');
+    }
+});
 </script>
 @endsection
