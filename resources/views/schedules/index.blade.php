@@ -146,7 +146,7 @@
     <!-- Modal Tambah Jadwal -->
     <div id="add-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('add-schedule-modal').classList.add('hidden')"></div>
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="document.getElementById('add-schedule-modal').classList.add('hidden')"></div>
         
         <!-- Modal Content -->
         <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
@@ -211,7 +211,7 @@
     <!-- Modal Edit Jadwal -->
     <div id="edit-schedule-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center lg:pl-64">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeEditModal()"></div>
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" onclick="closeEditModal()"></div>
         
         <!-- Modal Content -->
         <div class="relative mx-4 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
