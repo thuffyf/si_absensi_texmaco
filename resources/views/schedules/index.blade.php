@@ -162,10 +162,10 @@
                 @csrf
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-slate-700 ml-1">Guru</label>
-                    <select name="teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
+                    <select name="teacher_id" id="add_teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                         <option value="">Pilih guru</option>
                         @foreach($teachers as $teacher)
-                            <option value="{{ $teacher->id }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }}</option>
+                            <option value="{{ $teacher->id }}" data-subject="{{ $teacher->subject }}" @selected(old('teacher_id') == $teacher->id)>{{ $teacher->name }} ({{ $teacher->subject ?? 'Tidak ada mapel' }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -178,10 +178,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
-                    <input name="subject" value="{{ old('subject') }}" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
-                </div>
+                <input type="hidden" name="subject" id="add_subject" value="{{ old('subject') }}" />
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-slate-700 ml-1">Hari</label>
                     <select name="day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
@@ -235,7 +232,7 @@
                     <select name="teacher_id" id="edit-teacher_id" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
                         <option value="">Pilih guru</option>
                         @foreach($teachers as $teacher)
-                            <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                            <option value="{{ $teacher->id }}" data-subject="{{ $teacher->subject }}">{{ $teacher->name }} ({{ $teacher->subject ?? 'Tidak ada mapel' }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -248,10 +245,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <label class="text-xs font-semibold text-slate-700 ml-1">Mata Pelajaran</label>
-                    <input name="subject" id="edit-subject" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" placeholder="Mata pelajaran" required />
-                </div>
+                <input type="hidden" name="subject" id="edit-subject" />
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-slate-700 ml-1">Hari</label>
                     <select name="day_of_week" id="edit-day_of_week" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500" required>
@@ -285,6 +279,20 @@
 
 @push('scripts')
 <script>
+// Auto fill subject based on selected teacher in Add Modal
+document.getElementById('add_teacher_id')?.addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subject = selectedOption.getAttribute('data-subject') || '';
+    document.getElementById('add_subject').value = subject;
+});
+
+// Auto fill subject based on selected teacher in Edit Modal
+document.getElementById('edit-teacher_id')?.addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subject = selectedOption.getAttribute('data-subject') || '';
+    document.getElementById('edit-subject').value = subject;
+});
+
 function openEditModal(id, teacherId, className, subject, dayOfWeek, startTime, endTime, status) {
     document.getElementById('edit-schedule-id').value = id;
     document.getElementById('edit-teacher_id').value = teacherId;
