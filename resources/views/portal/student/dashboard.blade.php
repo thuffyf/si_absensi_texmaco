@@ -17,67 +17,50 @@
         $periodDisplay = \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('F Y');
     @endphp
 
-    <section class="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-700 px-5 py-6 text-white shadow-lg sm:px-6 lg:p-7">
+    <section class="mb-5">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-700 px-6 py-6 text-white shadow-lg">
             <div class="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-white/10"></div>
             <div class="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white/5"></div>
 
-            <div class="relative flex items-start justify-between gap-4">
+            <div class="relative flex items-center justify-between gap-4">
                 <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-sky-100">Selamat datang</p>
-                    <h2 class="mt-1 break-words text-2xl font-bold sm:text-3xl">{{ strtok($student->name, ' ') }}</h2>
-                    <p class="mt-1 text-sm font-medium text-sky-100">{{ $student->class_name }}</p>
-                    <p class="mt-2 text-xs text-sky-100/80">NIS {{ $student->nis }} &middot; {{ $periodDisplay }}</p>
+                    <p class="text-sm font-medium text-sky-100">Selamat datang kembali, 👋</p>
+                    <h2 class="mt-1 break-words text-2xl font-bold">{{ $student->name }}</h2>
+                    <p class="mt-1 text-sm text-sky-100/90">{{ $student->class_name }} &middot; NIS: {{ $student->nis }}</p>
                 </div>
 
-                <div class="relative shrink-0">
-                    <svg class="portal-progress-ring h-20 w-20" viewBox="0 0 80 80" aria-hidden="true">
-                        <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6" />
+                <div class="relative shrink-0 hidden sm:block">
+                    <svg class="portal-progress-ring h-16 w-16" viewBox="0 0 80 80" aria-hidden="true">
+                        <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8" />
                         <circle
                             cx="40" cy="40" r="36" fill="none"
-                            stroke="white" stroke-width="6" stroke-linecap="round"
+                            stroke="white" stroke-width="8" stroke-linecap="round"
                             stroke-dasharray="{{ $ringCircumference }}"
                             stroke-dashoffset="{{ $ringOffset }}"
                         />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-lg font-bold leading-none">{{ $attendanceRate }}%</span>
-                        <span class="mt-0.5 text-[9px] uppercase tracking-wider text-sky-100/70">Hadir</span>
+                        <span class="text-sm font-bold">{{ $attendanceRate }}%</span>
                     </div>
                 </div>
             </div>
-
-            <div class="relative mt-6 grid gap-3 sm:grid-cols-2 lg:mt-8">
-                <a href="{{ route('portal.student.schedule') }}" class="group flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 backdrop-blur transition hover:bg-white/20 active:scale-[0.98]">
-                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </span>
-                    <span class="text-sm font-semibold">Jadwal</span>
-                </a>
-                <a href="{{ route('portal.student.leave') }}" class="group flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 backdrop-blur transition hover:bg-white/20 active:scale-[0.98]">
-                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    </span>
-                    <span class="text-sm font-semibold">Ajukan Izin</span>
-                </a>
-            </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 lg:grid-cols-1">
+        <div class="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
             @foreach ([
-                ['key' => 'hadir', 'label' => 'Hadir', 'dot' => 'bg-emerald-500', 'text' => 'text-emerald-600', 'bg' => 'bg-emerald-50'],
-                ['key' => 'izin', 'label' => 'Izin', 'dot' => 'bg-amber-500', 'text' => 'text-amber-600', 'bg' => 'bg-amber-50'],
-                ['key' => 'sakit', 'label' => 'Sakit', 'dot' => 'bg-rose-500', 'text' => 'text-rose-600', 'bg' => 'bg-rose-50'],
-                ['key' => 'alpa', 'label' => 'Alpa', 'dot' => 'bg-slate-500', 'text' => 'text-slate-700', 'bg' => 'bg-slate-50'],
+                ['key' => 'hadir', 'label' => 'Hadir', 'dot' => 'bg-emerald-500', 'text' => 'text-emerald-700', 'bg' => 'bg-emerald-50'],
+                ['key' => 'izin', 'label' => 'Izin', 'dot' => 'bg-amber-500', 'text' => 'text-amber-700', 'bg' => 'bg-amber-50'],
+                ['key' => 'sakit', 'label' => 'Sakit', 'dot' => 'bg-rose-500', 'text' => 'text-rose-700', 'bg' => 'bg-rose-50'],
+                ['key' => 'alpa', 'label' => 'Alpa', 'dot' => 'bg-slate-500', 'text' => 'text-slate-700', 'bg' => 'bg-slate-100'],
             ] as $stat)
-                <div class="rounded-2xl bg-white p-4 shadow-sm">
-                    <div class="flex items-center gap-2">
-                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ $stat['bg'] }}">
-                            <span class="h-2.5 w-2.5 rounded-full {{ $stat['dot'] }}"></span>
+                <div class="flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg {{ $stat['bg'] }}">
+                            <span class="h-2 w-2 rounded-full {{ $stat['dot'] }}"></span>
                         </span>
-                        <p class="text-xs font-medium text-slate-500">{{ $stat['label'] }}</p>
+                        <p class="text-xs font-semibold text-slate-600">{{ $stat['label'] }}</p>
                     </div>
-                    <p class="mt-3 text-2xl font-bold {{ $stat['text'] }}">{{ $summary[$stat['key']] }}</p>
+                    <p class="text-lg font-bold {{ $stat['text'] }}">{{ $summary[$stat['key']] }}</p>
                 </div>
             @endforeach
         </div>
@@ -135,7 +118,6 @@
                             <p class="text-xs text-slate-500">4 absensi terakhir</p>
                         </div>
                     </div>
-                    <a href="{{ route('portal.student.history') }}" class="text-xs font-semibold text-sky-600 hover:text-sky-700">Lihat semua →</a>
                 </div>
 
                 <div class="mt-4 space-y-2">
@@ -181,7 +163,7 @@
                             <p class="text-xs text-slate-500">Status terbaru</p>
                         </div>
                     </div>
-                    <a href="{{ route('portal.student.leave') }}" class="text-xs font-semibold text-sky-600 hover:text-sky-700">Buka →</a>
+                    <a href="{{ route('portal.student.absensi') }}" class="text-xs font-semibold text-sky-600 hover:text-sky-700">Buka →</a>
                 </div>
 
                 <div class="mt-4 space-y-2">

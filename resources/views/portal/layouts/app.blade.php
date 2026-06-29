@@ -14,11 +14,10 @@
         $isStudentPortal = $userRole === 'siswa';
 
         $studentNavItems = [
-            ['route' => 'portal.student.dashboard', 'match' => 'portal.student.dashboard', 'label' => 'Dashboard', 'icon' => 'M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z'],
+            ['route' => 'portal.student.dashboard', 'match' => 'portal.student.dashboard', 'label' => 'Dashboard', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+            ['route' => 'portal.student.absensi', 'match' => 'portal.student.absensi*', 'label' => 'Absensi', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
             ['route' => 'portal.student.schedule', 'match' => 'portal.student.schedule', 'label' => 'Jadwal', 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
-            ['route' => 'portal.student.leave', 'match' => 'portal.student.leave*', 'label' => 'Izin & Sakit', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
-            ['route' => 'portal.student.history', 'match' => 'portal.student.history', 'label' => 'Riwayat', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-            ['route' => 'portal.student.profile', 'match' => 'portal.student.profile', 'label' => 'Profil', 'icon' => 'M12 3a9 9 0 100 18 9 9 0 000-18zm3.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM6.75 18a6.75 6.75 0 0110.5 0'],
+            ['route' => 'portal.student.profile', 'match' => 'portal.student.profile', 'label' => 'Profil', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
         ];
     @endphp
 
@@ -96,7 +95,7 @@
                 <div class="sidebar-brand-hide mt-auto border-t border-sky-100/80 bg-white/50 p-4 text-[11px] leading-relaxed text-slate-500 backdrop-blur-sm">
                     <p class="font-medium text-slate-600">{{ $portalTitle }}</p>
                     <p class="mt-1 text-slate-400">
-                        {{ $userRole === 'guru' ? 'Monitoring kehadiran siswa.' : 'Lihat jadwal, izin, dan riwayat absensi.' }}
+                        {{ $userRole === 'guru' ? 'Monitoring kehadiran siswa.' : 'Dashboard, absensi, jadwal, dan profil.' }}
                     </p>
                     <form method="POST" action="{{ route('portal.logout') }}" class="mt-3">
                         @csrf
@@ -134,8 +133,73 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <div class="hidden text-right text-sm sm:block">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        @if(auth()->user()->role === 'siswa')
+                            @php
+                                $recentResponses = collect();
+                                $recentResponsesCount = 0;
+                                $student = \App\Models\Student::where('email', auth()->user()->email)->first();
+                                if ($student) {
+                                    $recentResponses = \App\Models\LeaveRequest::where('student_id', $student->id)
+                                        ->whereNotNull('responded_at')
+                                        ->orderBy('responded_at', 'desc')
+                                        ->take(5)
+                                        ->get();
+                                    
+                                    $recentResponsesCount = $recentResponses->where('responded_at', '>=', now()->subDays(3))->count();
+                                }
+                            @endphp
+
+                            {{-- Notification Bell --}}
+                            <div class="relative">
+                                <button type="button" id="portal-notification-btn" class="relative inline-flex rounded-xl p-2.5 text-slate-600 hover:bg-slate-100 transition-colors focus:outline-none" aria-haspopup="true" aria-expanded="false">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    @if($recentResponsesCount > 0)
+                                        <span class="absolute right-2 top-2 flex h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                                    @endif
+                                </button>
+
+                                {{-- Notification Dropdown --}}
+                                <div id="portal-notification-menu" class="profile-menu hidden w-[280px] sm:w-80" role="menu" aria-hidden="true" style="right:0;left:auto;top:110%;transform-origin:top right;">
+                                    <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+                                        <h3 class="text-sm font-bold text-slate-800">Notifikasi Izin & Sakit</h3>
+                                    </div>
+                                    <div class="max-h-80 overflow-y-auto p-2">
+                                        @forelse($recentResponses as $req)
+                                            <div class="px-3 py-3 rounded-xl hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full {{ $req->status === 'approved' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600' }}">
+                                                        @if($req->status === 'approved')
+                                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                                        @else
+                                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                                        @endif
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-semibold text-slate-800">Izin/Sakit {{ $req->status === 'approved' ? 'Disetujui' : 'Ditolak' }}</p>
+                                                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-2">Pengajuan {{ ucfirst($req->type) }} Anda untuk {{ \Carbon\Carbon::parse($req->start_date ?? $req->request_date)->format('d M') }} telah {{ $req->status === 'approved' ? 'disetujui' : 'ditolak (' . ($req->rejection_reason ?? 'Tanpa alasan') . ')' }}.</p>
+                                                        <p class="text-[10px] text-slate-400 mt-1 font-medium">{{ \Carbon\Carbon::parse($req->responded_at)->diffForHumans() }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <div class="px-4 py-8 text-center">
+                                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 mb-2">
+                                                    <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                                                </div>
+                                                <p class="text-sm font-medium text-slate-500">Belum ada notifikasi</p>
+                                            </div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="h-6 w-px bg-slate-200 hidden sm:block mx-1"></div>
+                        @endif
+
+                        <div class="hidden text-right text-sm sm:block pr-2">
                             <p class="font-semibold leading-tight text-slate-900">{{ auth()->user()->name ?? 'Pengguna' }}</p>
                             <p class="text-xs text-slate-500">{{ auth()->user()->email ?? $portalTitle }}</p>
                         </div>
@@ -270,6 +334,8 @@
 
             var portalProfileButton = document.getElementById('portal-profile-menu-button');
             var portalProfileMenu = document.getElementById('portal-profile-menu');
+            var portalNotificationButton = document.getElementById('portal-notification-btn');
+            var portalNotificationMenu = document.getElementById('portal-notification-menu');
 
             function closePortalProfileMenu() {
                 if (!portalProfileMenu || !portalProfileButton) return;
@@ -278,9 +344,17 @@
                 portalProfileMenu.setAttribute('aria-hidden', 'true');
             }
 
+            function closePortalNotificationMenu() {
+                if (!portalNotificationMenu || !portalNotificationButton) return;
+                portalNotificationMenu.classList.add('hidden');
+                portalNotificationButton.setAttribute('aria-expanded', 'false');
+                portalNotificationMenu.setAttribute('aria-hidden', 'true');
+            }
+
             if (portalProfileButton) {
                 portalProfileButton.addEventListener('click', function (event) {
                     event.stopPropagation();
+                    closePortalNotificationMenu();
                     var isHidden = portalProfileMenu.classList.contains('hidden');
                     if (isHidden) {
                         portalProfileMenu.classList.remove('hidden');
@@ -292,14 +366,35 @@
                 });
             }
 
+            if (portalNotificationButton) {
+                portalNotificationButton.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    closePortalProfileMenu();
+                    var isHidden = portalNotificationMenu.classList.contains('hidden');
+                    if (isHidden) {
+                        portalNotificationMenu.classList.remove('hidden');
+                        portalNotificationButton.setAttribute('aria-expanded', 'true');
+                        portalNotificationMenu.setAttribute('aria-hidden', 'false');
+                    } else {
+                        closePortalNotificationMenu();
+                    }
+                });
+            }
+
             document.addEventListener('click', function (event) {
-                if (!portalProfileMenu || !portalProfileButton) return;
-                if (portalProfileMenu.contains(event.target) || portalProfileButton.contains(event.target)) return;
-                closePortalProfileMenu();
+                if (portalProfileMenu && portalProfileButton && (!portalProfileMenu.contains(event.target) && !portalProfileButton.contains(event.target))) {
+                    closePortalProfileMenu();
+                }
+                if (portalNotificationMenu && portalNotificationButton && (!portalNotificationMenu.contains(event.target) && !portalNotificationButton.contains(event.target))) {
+                    closePortalNotificationMenu();
+                }
             });
 
             document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') closePortalProfileMenu();
+                if (event.key === 'Escape') {
+                    closePortalProfileMenu();
+                    closePortalNotificationMenu();
+                }
             });
 
             window.addEventListener('resize', function () {

@@ -268,10 +268,15 @@ Route::prefix('app')->name('portal.')->group(function () {
 
         Route::middleware('role:siswa')->prefix('siswa')->name('student.')->group(function () {
             Route::get('/dashboard', [PortalController::class, 'studentDashboard'])->name('dashboard');
+            Route::get('/absensi', [PortalController::class, 'studentAbsensi'])->name('absensi');
+            Route::post('/absensi/leave-store', [PortalController::class, 'storeStudentLeave'])->name('absensi.leave.store');
             Route::get('/jadwal', [PortalController::class, 'studentSchedule'])->name('schedule');
-            Route::get('/riwayat', [PortalController::class, 'studentHistory'])->name('history');
-            Route::get('/izin-sakit', [PortalController::class, 'studentLeave'])->name('leave');
-            Route::post('/izin-sakit', [PortalController::class, 'storeStudentLeave'])->name('leave.store');
+            Route::get('/riwayat', function() {
+                return redirect()->route('portal.student.dashboard');
+            })->name('history');
+            Route::get('/izin-sakit', function() {
+                return redirect()->route('portal.student.absensi');
+            })->name('leave');
             Route::get('/profil', [PortalController::class, 'studentProfile'])->name('profile');
             Route::post('/profil/foto', [PortalController::class, 'updateStudentPhoto'])->name('profile.photo');
             Route::post('/profil/foto/hapus', [PortalController::class, 'deleteStudentPhoto'])->name('profile.photo.delete');

@@ -183,6 +183,78 @@ class PortalController extends Controller
             ->with('success', 'Pengajuan berhasil dikirim ke TU.');
     }
 
+    public function studentAbsensi(): View
+    {
+        $student = $this->currentStudent();
+        $normalizedClassName = $this->normalizeClassName($student->class_name);
+
+        $today = Carbon::today('Asia/Jakarta');
+        $weekStart = $today->copy()->startOfWeek(Carbon::MONDAY);
+
+        // Determine week type (Normatif / Produktif)
+        $normativeStart = Carbon::create(2026, 5, 25)->startOfWeek(Carbon::MONDAY);
+        $weekNumber     = $weekStart->diffInWeeks($normativeStart);
+        $isNormative    = $weekNumber % 2 === 0;
+
+        $dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $dayCards = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $date = $weekStart->copy()->addDays($i);
+            $dayName = $dayNames[$i];
+
+            // Ambil jadwal hari ini untuk kelas siswa
+            $schedules = Schedule::query()
+                ->where(function ($q) use ($student, $normalizedClassName) {
+                    $q->where('class_name', $student->class_name);
+                    if ($normalizedClassName !== $student->class_name) {
+                        $q->orWhere('class_name', $normalizedClassName);
+                    }
+                })
+                ->where('day_of_week', $dayName)
+                ->with('teacher')
+                ->orderBy('start_time')
+                ->get();
+
+            // Ambil attendance record
+            $attendance = Attendance::query()
+                ->where('student_id', $student->id)
+                ->whereDate('attendance_date', $date)
+                ->first();
+
+            // Cek leave request yang aktif untuk hari ini
+            $leaveRequest = LeaveRequest::query()
+                ->where('student_id', $student->id)
+                ->whereDate('start_date', $date)
+                ->whereIn('status', ['pending_teacher', 'pending_admin', 'approved'])
+                ->first();
+
+            $isToday   = $date->isSameDay($today);
+            $isPast    = $date->lt($today);
+            $isFuture  = $date->gt($today);
+
+            $dayCards[] = [
+                'name'          => $dayName,
+                'date'          => $date->format('d M Y'),
+                'date_raw'      => $date->toDateString(),
+                'schedules'     => $schedules,
+                'attendance'    => $attendance,
+                'leave_request' => $leaveRequest,
+                'is_today'      => $isToday,
+                'is_past'       => $isPast,
+                'is_future'     => $isFuture,
+                'room'          => $isNormative ? 'X TEI' : 'Lab TEI',
+            ];
+        }
+
+        return view('portal.student.absensi', [
+            'student'   => $student,
+            'dayCards'  => $dayCards,
+            'today'     => $today->toDateString(),
+            'now'       => Carbon::now('Asia/Jakarta'),
+        ]);
+    }
+
     public function studentProfile(): View
     {
         return view('portal.student.profile', [
