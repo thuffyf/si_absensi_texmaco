@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Jadwal â€” SITEXA Absensi')
 @section('page_title', 'Jadwal')
@@ -68,8 +68,20 @@
 
         <div class="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="flex flex-wrap gap-2">
-                <form method="GET" action="{{ route('schedules.index') }}" class="flex gap-2">
-                    <input type="text" name="subject" value="{{ request('subject') }}" class="w-64 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" />
+                <form method="GET" action="{{ route('schedules.index') }}" class="flex flex-wrap gap-2">
+                    <input type="text" name="subject" value="{{ request('subject') }}" class="w-48 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100" placeholder="Mata pelajaran" />
+                    <select name="day_of_week" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                        <option value="all" {{ request('day_of_week', 'all') === 'all' ? 'selected' : '' }}>Semua Hari</option>
+                        @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $day)
+                            <option value="{{ $day }}" {{ request('day_of_week') === $day ? 'selected' : '' }}>{{ $day }}</option>
+                        @endforeach
+                    </select>
+                    <select name="class_name" class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100">
+                        <option value="all" {{ request('class_name', 'all') === 'all' ? 'selected' : '' }}>Semua Kelas</option>
+                        @foreach(['X TEI', 'XI TEI', 'XII TEI'] as $cls)
+                            <option value="{{ $cls }}" {{ request('class_name') === $cls ? 'selected' : '' }}>{{ $cls }}</option>
+                        @endforeach
+                    </select>
                     <button type="submit" class="flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                         Cari
                     </button>
@@ -336,57 +348,5 @@ document.getElementById('add-schedule-modal')?.addEventListener('mousedown', fun
     }
 });
 
-    (function () {
-        const root = document.getElementById('day-of-week-dropdown');
-        if (!root) return;
-
-        const button = document.getElementById('day_of_week_button');
-        const menu = document.getElementById('day_of_week_menu');
-        const input = document.getElementById('day_of_week_input');
-        const label = document.getElementById('day_of_week_label');
-
-        const openMenu = () => {
-            menu.classList.remove('hidden');
-            button.setAttribute('aria-expanded', 'true');
-        };
-
-        const closeMenu = () => {
-            menu.classList.add('hidden');
-            button.setAttribute('aria-expanded', 'false');
-        };
-
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (menu.classList.contains('hidden')) {
-                openMenu();
-            } else {
-                closeMenu();
-            }
-        });
-
-        menu.addEventListener('click', function (e) {
-            const target = e.target;
-            if (!(target instanceof HTMLElement)) return;
-            const value = target.getAttribute('data-value');
-            if (value === null) return;
-
-            input.value = value;
-            label.textContent = value === '' ? 'Pilih hari' : (value === 'all' ? 'Semua hari' : value);
-            closeMenu();
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!root.contains(e.target)) {
-                closeMenu();
-            }
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeMenu();
-            }
-        });
-    })();
 </script>
 @endpush
