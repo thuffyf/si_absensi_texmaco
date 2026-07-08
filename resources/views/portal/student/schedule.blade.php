@@ -74,7 +74,9 @@
                     </div>
 
                     {{-- Baris 2: Kamis - Jumat --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 max-w-4xl">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {{-- Spacer kiri agar Kamis-Jumat centered --}}
+                        <div class="hidden lg:block"></div>
                         @foreach (['Kamis', 'Jumat'] as $day)
                             @php
                                 $items = $schedulesByDay->get($day) ?? collect();
