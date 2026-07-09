@@ -213,4 +213,3 @@ class AbsensiController extends Controller
     }
 }
 
-

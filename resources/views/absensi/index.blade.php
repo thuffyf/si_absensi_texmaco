@@ -251,7 +251,12 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center mt-4">
         {{ $records->links() }}
+    </div>
+</div>
+
 @endsection
