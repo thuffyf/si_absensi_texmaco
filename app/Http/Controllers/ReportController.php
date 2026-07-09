@@ -67,19 +67,50 @@ class ReportController extends Controller
         }
 
         $attendances = $attendanceQuery->get();
-        $totalRecords = $attendances->count();
-
-        $statusCounts = $attendances->countBy('status');
 
         $students = Student::query()
+            ->where('status', 'aktif')
             ->when($className, function ($builder) use ($className) {
                 $builder->where('class_name', $className);
             })
             ->orderBy('name')
             ->get();
 
-        $rows = $students->map(function ($student) use ($attendances) {
+        // Hitung expected hari kerja (Senin-Jumat) dalam rentang tanggal
+        $start = $startDate ? \Carbon\Carbon::parse($startDate) : null;
+        $end = $endDate ? \Carbon\Carbon::parse($endDate) : null;
+        
+        $expectedDays = 0;
+        if ($start && $end) {
+            $current = $start->copy();
+            while ($current->lte($end)) {
+                // Hitung hanya hari Senin-Jumat
+                if ($current->dayOfWeek >= 1 && $current->dayOfWeek <= 5) {
+                    $expectedDays++;
+                }
+                $current->addDay();
+            }
+        }
+
+        $rows = $students->map(function ($student) use ($attendances, $expectedDays, $start, $end) {
             $studentRecords = $attendances->where('student_id', $student->id);
+            
+            $hadirCount = $studentRecords->where('status', 'hadir')->count();
+            $izinCount = $studentRecords->where('status', 'izin')->count();
+            $sakitCount = $studentRecords->where('status', 'sakit')->count();
+            $alpaCount = $studentRecords->where('status', 'alpa')->count();
+            $totalCount = $studentRecords->count();
+
+            // Hitung alpa otomatis jika ada rentang tanggal dan expected days
+            if ($expectedDays > 0 && $start && $end) {
+                // Alpa = expected days - (hadir + izin + sakit)
+                $calculatedAlpa = max(0, $expectedDays - ($hadirCount + $izinCount + $sakitCount));
+                // Gunakan yang lebih besar antara alpa dari DB atau calculated
+                $alpaCount = max($alpaCount, $calculatedAlpa);
+                // Update total dengan alpa yang dihitung
+                $totalCount = $hadirCount + $izinCount + $sakitCount + $alpaCount;
+            }
+
             $lastWithTime = $studentRecords
                 ->whereNotNull('attendance_time')
                 ->sortByDesc(function ($record) {
@@ -96,11 +127,11 @@ class ReportController extends Controller
 
             return [
                 'student' => $student,
-                'hadir' => $studentRecords->where('status', 'hadir')->count(),
-                'izin' => $studentRecords->where('status', 'izin')->count(),
-                'sakit' => $studentRecords->where('status', 'sakit')->count(),
-                'alpa' => $studentRecords->where('status', 'alpa')->count(),
-                'total' => $studentRecords->count(),
+                'hadir' => $hadirCount,
+                'izin' => $izinCount,
+                'sakit' => $sakitCount,
+                'alpa' => $alpaCount,
+                'total' => $totalCount,
                 'last_time' => $lastTime,
             ];
         });
@@ -111,15 +142,22 @@ class ReportController extends Controller
             })->values();
         }
 
+        // Hitung total status counts dengan alpa yang sudah diperhitungkan
+        $totalHadir = $rows->sum('hadir');
+        $totalIzin = $rows->sum('izin');
+        $totalSakit = $rows->sum('sakit');
+        $totalAlpa = $rows->sum('alpa');
+        $totalRecords = $totalHadir + $totalIzin + $totalSakit + $totalAlpa;
+
         return view('reports.absensi', [
             'rows' => $rows,
             'totalStudents' => $students->count(),
             'totalRecords' => $totalRecords,
             'statusCounts' => [
-                'hadir' => $statusCounts->get('hadir', 0),
-                'izin' => $statusCounts->get('izin', 0),
-                'sakit' => $statusCounts->get('sakit', 0),
-                'alpa' => $statusCounts->get('alpa', 0),
+                'hadir' => $totalHadir,
+                'izin' => $totalIzin,
+                'sakit' => $totalSakit,
+                'alpa' => $totalAlpa,
             ],
             'classOptions' => $classOptions,
             'filters' => [
@@ -158,21 +196,50 @@ class ReportController extends Controller
         $attendances = $attendanceQuery->get();
 
         $students = Student::query()
+            ->where('status', 'aktif')
             ->when($className, function ($builder) use ($className) {
                 $builder->where('class_name', $className);
             })
             ->orderBy('name')
             ->get();
 
-        $rows = $students->map(function ($student) use ($attendances) {
+        // Hitung expected hari kerja (Senin-Jumat) dalam rentang tanggal
+        $start = $startDate ? \Carbon\Carbon::parse($startDate) : null;
+        $end = $endDate ? \Carbon\Carbon::parse($endDate) : null;
+        
+        $expectedDays = 0;
+        if ($start && $end) {
+            $current = $start->copy();
+            while ($current->lte($end)) {
+                if ($current->dayOfWeek >= 1 && $current->dayOfWeek <= 5) {
+                    $expectedDays++;
+                }
+                $current->addDay();
+            }
+        }
+
+        $rows = $students->map(function ($student) use ($attendances, $expectedDays, $start, $end) {
             $studentRecords = $attendances->where('student_id', $student->id);
+            
+            $hadirCount = $studentRecords->where('status', 'hadir')->count();
+            $izinCount = $studentRecords->where('status', 'izin')->count();
+            $sakitCount = $studentRecords->where('status', 'sakit')->count();
+            $alpaCount = $studentRecords->where('status', 'alpa')->count();
+            $totalCount = $studentRecords->count();
+
+            if ($expectedDays > 0 && $start && $end) {
+                $calculatedAlpa = max(0, $expectedDays - ($hadirCount + $izinCount + $sakitCount));
+                $alpaCount = max($alpaCount, $calculatedAlpa);
+                $totalCount = $hadirCount + $izinCount + $sakitCount + $alpaCount;
+            }
+
             return [
                 'student' => $student,
-                'hadir' => $studentRecords->where('status', 'hadir')->count(),
-                'izin' => $studentRecords->where('status', 'izin')->count(),
-                'sakit' => $studentRecords->where('status', 'sakit')->count(),
-                'alpa' => $studentRecords->where('status', 'alpa')->count(),
-                'total' => $studentRecords->count(),
+                'hadir' => $hadirCount,
+                'izin' => $izinCount,
+                'sakit' => $sakitCount,
+                'alpa' => $alpaCount,
+                'total' => $totalCount,
             ];
         });
         
@@ -243,21 +310,50 @@ class ReportController extends Controller
         $attendances = $attendanceQuery->get();
 
         $students = Student::query()
+            ->where('status', 'aktif')
             ->when($className, function ($builder) use ($className) {
                 $builder->where('class_name', $className);
             })
             ->orderBy('name')
             ->get();
 
-        $rows = $students->map(function ($student) use ($attendances) {
+        // Hitung expected hari kerja (Senin-Jumat) dalam rentang tanggal
+        $start = $startDate ? \Carbon\Carbon::parse($startDate) : null;
+        $end = $endDate ? \Carbon\Carbon::parse($endDate) : null;
+        
+        $expectedDays = 0;
+        if ($start && $end) {
+            $current = $start->copy();
+            while ($current->lte($end)) {
+                if ($current->dayOfWeek >= 1 && $current->dayOfWeek <= 5) {
+                    $expectedDays++;
+                }
+                $current->addDay();
+            }
+        }
+
+        $rows = $students->map(function ($student) use ($attendances, $expectedDays, $start, $end) {
             $studentRecords = $attendances->where('student_id', $student->id);
+            
+            $hadirCount = $studentRecords->where('status', 'hadir')->count();
+            $izinCount = $studentRecords->where('status', 'izin')->count();
+            $sakitCount = $studentRecords->where('status', 'sakit')->count();
+            $alpaCount = $studentRecords->where('status', 'alpa')->count();
+            $totalCount = $studentRecords->count();
+
+            if ($expectedDays > 0 && $start && $end) {
+                $calculatedAlpa = max(0, $expectedDays - ($hadirCount + $izinCount + $sakitCount));
+                $alpaCount = max($alpaCount, $calculatedAlpa);
+                $totalCount = $hadirCount + $izinCount + $sakitCount + $alpaCount;
+            }
+
             return [
                 'student' => $student,
-                'hadir' => $studentRecords->where('status', 'hadir')->count(),
-                'izin' => $studentRecords->where('status', 'izin')->count(),
-                'sakit' => $studentRecords->where('status', 'sakit')->count(),
-                'alpa' => $studentRecords->where('status', 'alpa')->count(),
-                'total' => $studentRecords->count(),
+                'hadir' => $hadirCount,
+                'izin' => $izinCount,
+                'sakit' => $sakitCount,
+                'alpa' => $alpaCount,
+                'total' => $totalCount,
             ];
         });
 
