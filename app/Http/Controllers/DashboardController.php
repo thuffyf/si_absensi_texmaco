@@ -202,7 +202,11 @@ class DashboardController extends Controller
 
         $presentToday = $successCount;
         $absentToday = $failedCount;
-        $attendancePercentage = $totalStudents > 0 ? round(($presentToday / $totalStudents) * 100, 1) : 0;
+        
+        // Persentase kehadiran: hadir / (hadir + izin + sakit + alpa) × 100%
+        // Bukan: hadir / total siswa (karena tidak semua siswa sudah absen)
+        $totalAttendedToday = $presentToday + $absentToday;
+        $attendancePercentage = $totalAttendedToday > 0 ? round(($presentToday / $totalAttendedToday) * 100, 1) : 0;
 
         // Recent tap-ins (sama dengan monitoring)
         $todayAttendances = Attendance::query()
