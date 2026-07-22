@@ -140,6 +140,11 @@
                             <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ $record->note ?? '-' }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
+                                    @if($record->is_existing)
+                                    <button type="button" onclick="showLogsModal({{ $record->id }})" class="inline-flex items-center justify-center rounded-xl bg-blue-100 p-2 text-blue-700 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" title="Riwayat Perubahan">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </button>
+                                    @endif
                                     <button type="button" onclick="document.getElementById('edit-modal-{{ $record->id }}').classList.remove('hidden')" class="inline-flex items-center justify-center rounded-xl bg-amber-100 p-2 text-amber-700 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2" title="{{ $record->is_existing ? 'Edit' : 'Catat' }}">
                                         @if($record->is_existing)
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -258,5 +263,106 @@
         {{ $records->links() }}
     </div>
 </div>
+
+<!-- Modal Riwayat Perubahan -->
+<div id="logs-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="hideLogsModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-3xl rounded-3xl bg-white p-6 shadow-xl mx-4 max-h-[80vh] overflow-y-auto">
+        <div class="mb-6 flex items-center justify-between sticky top-0 bg-white pb-4 border-b border-slate-200">
+            <h3 class="text-lg font-semibold text-slate-900">📋 Riwayat Perubahan Absensi</h3>
+            <button type="button" onclick="hideLogsModal()" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-500">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <div id="logs-content" class="space-y-4">
+            <!-- Logs will be inserted here -->
+        </div>
+    </div>
+</div>
+
+<script>
+function showLogsModal(attendanceId) {
+    const modal = document.getElementById('logs-modal');
+    const content = document.getElementById('logs-content');
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Show loading
+    content.innerHTML = '<div class="text-center py-8"><div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-sky-600 border-r-transparent"></div><p class="mt-2 text-sm text-slate-500">Memuat riwayat...</p></div>';
+    
+    // Fetch logs
+    fetch(`/absensi/${attendanceId}/logs`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.logs.length > 0) {
+                let html = '<div class="relative">';
+                html += '<div class="absolute left-[1.625rem] top-8 bottom-8 w-0.5 bg-slate-200"></div>';
+                
+                data.logs.forEach((log, index) => {
+                    const actionColor = log.action === 'created' ? 'bg-green-100 text-green-700' : (log.action === 'updated' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700');
+                    const actionLabel = log.action === 'created' ? 'Dibuat' : (log.action === 'updated' ? 'Diubah' : 'Dihapus');
+                    
+                    html += `<div class="relative flex gap-4 pb-6">
+                        <div class="relative z-10 flex h-14 w-14 items-center justify-center rounded-full ${actionColor} border-4 border-white shadow-sm shrink-0">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${log.action === 'created' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>' : 
+                                  log.action === 'updated' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>' :
+                                  '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>'}
+                            </svg>
+                        </div>
+                        <div class="flex-1 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="flex items-start justify-between mb-2">
+                                <div>
+                                    <span class="inline-flex items-center rounded-full ${actionColor} px-2.5 py-0.5 text-xs font-semibold">${actionLabel}</span>
+                                    <p class="mt-2 text-sm font-semibold text-slate-900">${log.changed_by_name}</p>
+                                    <p class="text-xs text-slate-500">${log.changed_by_role === 'admin' ? 'Administrator' : log.changed_by_role === 'guru' ? 'Guru' : 'Tata Usaha'}</p>
+                                </div>
+                                <p class="text-xs text-slate-500">${log.created_at}</p>
+                            </div>
+                            ${log.action !== 'deleted' ? `
+                            <div class="mt-3 space-y-2 text-sm">
+                                ${log.old_status || log.new_status ? `
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-500">Status:</span>
+                                    ${log.old_status ? `<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">${log.old_status}</span>` : ''}
+                                    ${log.old_status && log.new_status ? '<span class="text-slate-400">→</span>' : ''}
+                                    ${log.new_status ? `<span class="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-700">${log.new_status}</span>` : ''}
+                                </div>
+                                ` : ''}
+                                ${(log.old_note || log.new_note) && log.old_note !== log.new_note ? `
+                                <div>
+                                    <span class="text-slate-500">Keterangan:</span>
+                                    ${log.old_note ? `<p class="mt-1 text-slate-600 line-through">${log.old_note}</p>` : ''}
+                                    ${log.new_note ? `<p class="mt-1 text-slate-900 font-medium">${log.new_note}</p>` : ''}
+                                </div>
+                                ` : ''}
+                            </div>
+                            ` : `
+                            <p class="mt-3 text-sm text-red-600">Data absensi dengan status <strong>${log.old_status}</strong> telah dihapus.</p>
+                            `}
+                        </div>
+                    </div>`;
+                });
+                
+                html += '</div>';
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = '<div class="text-center py-8"><svg class="mx-auto h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><p class="mt-4 text-sm text-slate-500">Belum ada riwayat perubahan</p></div>';
+            }
+        })
+        .catch(error => {
+            content.innerHTML = '<div class="text-center py-8"><p class="text-sm text-red-600">Gagal memuat riwayat perubahan</p></div>';
+        });
+}
+
+function hideLogsModal() {
+    document.getElementById('logs-modal').classList.add('hidden');
+}
+</script>
 
 @endsection

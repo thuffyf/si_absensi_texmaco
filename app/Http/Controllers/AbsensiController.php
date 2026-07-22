@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\AttendanceLog;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -149,7 +150,20 @@ class AbsensiController extends Controller
 
         $data['attendance_time'] = $data['attendance_time'] ?? Carbon::now('Asia/Jakarta')->format('H:i:s');
 
-        Attendance::create($data);
+        $attendance = Attendance::create($data);
+
+        // Log attendance creation
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'user_id' => auth()->id(),
+            'action' => 'created',
+            'old_status' => null,
+            'new_status' => $data['status'],
+            'old_note' => null,
+            'new_note' => $data['note'] ?? null,
+            'changed_by_name' => auth()->user()->name ?? auth()->user()->email,
+            'changed_by_role' => auth()->user()->role ?? 'admin',
+        ]);
 
         return back()->with('success', 'Data absensi berhasil disimpan dan disinkronisasi.');
     }
@@ -161,9 +175,26 @@ class AbsensiController extends Controller
             'note' => 'nullable|string',
         ]);
 
+        // Save old values for log
+        $oldStatus = $attendance->status;
+        $oldNote = $attendance->note;
+
         $attendance->update([
             'status' => $data['status'],
             'note' => $data['note'],
+        ]);
+
+        // Log attendance update
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'user_id' => auth()->id(),
+            'action' => 'updated',
+            'old_status' => $oldStatus,
+            'new_status' => $data['status'],
+            'old_note' => $oldNote,
+            'new_note' => $data['note'] ?? null,
+            'changed_by_name' => auth()->user()->name ?? auth()->user()->email,
+            'changed_by_role' => auth()->user()->role ?? 'admin',
         ]);
 
         $student = $attendance->student;
@@ -185,8 +216,45 @@ class AbsensiController extends Controller
 
     public function destroy(Attendance $attendance)
     {
+        // Log before deletion
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'user_id' => auth()->id(),
+            'action' => 'deleted',
+            'old_status' => $attendance->status,
+            'new_status' => null,
+            'old_note' => $attendance->note,
+            'new_note' => null,
+            'changed_by_name' => auth()->user()->name ?? auth()->user()->email,
+            'changed_by_role' => auth()->user()->role ?? 'admin',
+        ]);
+
         $attendance->delete();
         return back()->with('success', 'Data absensi berhasil dihapus.');
+    }
+
+    public function showLogs(Attendance $attendance)
+    {
+        $logs = $attendance->logs()
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'logs' => $logs->map(function ($log) {
+                return [
+                    'id' => $log->id,
+                    'action' => $log->action,
+                    'old_status' => $log->old_status,
+                    'new_status' => $log->new_status,
+                    'old_note' => $log->old_note,
+                    'new_note' => $log->new_note,
+                    'changed_by_name' => $log->changed_by_name,
+                    'changed_by_role' => $log->changed_by_role,
+                    'created_at' => $log->created_at->format('d M Y H:i'),
+                ];
+            }),
+        ]);
     }
 
 

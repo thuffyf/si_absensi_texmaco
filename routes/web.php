@@ -363,6 +363,7 @@ Route::middleware(['auth', 'role:tata_usaha,admin'])->group(function () {
     Route::put('/absensi/{attendance}', [AbsensiController::class, 'update'])->name('absensi.update');
     Route::delete('/absensi/{attendance}', [AbsensiController::class, 'destroy'])->name('absensi.destroy');
     Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    Route::get('/absensi/{attendance}/logs', [AbsensiController::class, 'showLogs'])->name('absensi.logs');
     // POST /absensi diaktifkan kembali untuk keperluan input manual oleh admin
 
     Route::get('/absensi/siswa', function (Request $request) {

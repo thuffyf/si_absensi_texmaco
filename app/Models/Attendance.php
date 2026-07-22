@@ -38,4 +38,9 @@ class Attendance extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(AttendanceLog::class)->orderBy('created_at', 'desc');
+    }
 }
